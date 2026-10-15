@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CSS Animation 综合练习</title>
+	<style>
+		:root {
+			--ink: #203039;
+			--muted: #617078;
+			--paper: #f2f5f1;
+			--line: #d7dfda;
+			--green: #226b58;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			min-height: 100vh;
+			margin: 0;
+			color: var(--ink);
+			background-color: var(--paper);
+			background-image: radial-gradient(#cfd9d2 0.8px, transparent 0.8px);
+			background-size: 18px 18px;
+			font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+		}
+
+		main {
+			width: min(920px, calc(100% - 36px));
+			margin: 0 auto;
+			padding: 48px 0 64px;
+		}
+
+		.eyebrow {
+			margin: 0 0 8px;
+			color: var(--green);
+			font-size: 13px;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+		}
+
+		h1, p {
+			margin-top: 0;
+		}
+
+		h1 {
+			margin-bottom: 10px;
+			font-size: clamp(30px, 6vw, 46px);
+			line-height: 1.2;
+		}
+
+		.intro {
+			margin-bottom: 28px;
+			color: var(--muted);
+			line-height: 1.7;
+		}
+
+		.section-heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 16px;
+			margin: 36px 0 14px;
+		}
+
+		.section-heading h2 {
+			margin: 0;
+			font-size: 21px;
+		}
+
+		.section-heading p {
+			margin: 0;
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.main-demo {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 230px;
+			gap: 30px;
+			align-items: center;
+			padding: 24px;
+			border: 1px solid var(--line);
+			background: rgba(255, 255, 255, 0.84);
+		}
+
+		.color-stage {
+			display: grid;
+			min-height: 240px;
+			place-items: center;
+			overflow: hidden;
+			background: #e8eeea;
+		}
+
+		.color-box {
+			display: grid;
+			width: 150px;
+			aspect-ratio: 1;
+			place-items: center;
+			border-radius: 12px;
+			background: #e45848;
+			color: #fff;
+			font-size: 18px;
+			font-weight: 700;
+			animation: color-cycle 8s linear infinite;
+		}
+
+		@keyframes color-cycle {
+			0%, 100% { background-color: #e45848; }
+			25% { background-color: #e7b83f; }
+			50% { background-color: #2b9b91; }
+			75% { background-color: #3979bd; }
+		}
+
+		.demo-copy h3 {
+			margin: 0 0 10px;
+			font-size: 18px;
+		}
+
+		.demo-copy p {
+			margin: 0 0 14px;
+			color: var(--muted);
+			font-size: 14px;
+			line-height: 1.7;
+		}
+
+		code {
+			padding: 3px 6px;
+			color: #205b4b;
+			background: #e6f0ea;
+			font-family: Consolas, monospace;
+			font-size: 13px;
+		}
+
+		.color-key {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px 12px;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			color: var(--muted);
+			font-size: 12px;
+		}
+
+		.color-key li {
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+		}
+
+		.swatch {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+		}
+
+		.extra-demos {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 14px;
+		}
+
+		.extra-demo {
+			display: grid;
+			min-height: 140px;
+			justify-items: center;
+			align-content: center;
+			gap: 14px;
+			overflow: hidden;
+			border: 1px solid var(--line);
+			background: rgba(255, 255, 255, 0.84);
+		}
+
+		.extra-demo p {
+			margin: 0;
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.motion-track {
+			display: grid;
+			width: 110px;
+			height: 44px;
+			align-items: center;
+			justify-items: start;
+		}
+
+		.motion-shape {
+			width: 32px;
+			height: 32px;
+			border-radius: 7px;
+			background: #e45848;
+		}
+
+		.move .motion-shape {
+			animation: move-side 1.8s ease-in-out infinite alternate;
+		}
+
+		.rotate .motion-shape {
+			background: #3979bd;
+			animation: rotate 2.4s linear infinite;
+		}
+
+		.pulse .motion-shape {
+			border-radius: 50%;
+			background: #e7b83f;
+			animation: pulse 1.2s ease-in-out infinite alternate;
+		}
+
+		@keyframes move-side {
+			to { transform: translateX(76px); }
+		}
+
+		@keyframes rotate {
+			to { transform: rotate(360deg); }
+		}
+
+		@keyframes pulse {
+			to { transform: scale(1.35); }
+		}
+
+		.slideshow {
+			position: relative;
+			height: min(70vh, 540px);
+			min-height: 360px;
+			overflow: hidden;
+			border: 1px solid #d7dfda;
+			background: #fff;
+			box-shadow: 0 20px 48px rgba(32, 48, 57, 0.12);
+		}
+
+		.slide-track {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			flex-direction: column;
+			height: 400%;
+			animation: slide-position 12s linear infinite;
+		}
+
+		.slide {
+			display: flex;
+			min-height: 0;
+			flex: 0 0 25%;
+			flex-direction: column;
+		}
+
+		.slide img {
+			display: block;
+			width: 100%;
+			min-height: 0;
+			flex: 1 1 auto;
+			object-fit: cover;
+		}
+
+		.caption {
+			display: flex;
+			min-height: 78px;
+			flex: 0 0 78px;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+			padding: 14px 22px;
+			border-top: 1px solid #e2e8e3;
+			background: #fff;
+		}
+
+		.caption h2 {
+			margin: 0 0 4px;
+			font-size: 17px;
+		}
+
+		.caption p {
+			margin: 0;
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.author {
+			flex: 0 0 auto;
+			color: var(--green);
+			font-size: 14px;
+			font-weight: 700;
+		}
+
+		@keyframes slide-position {
+			0% { transform: translateY(0); }
+			20% {
+				transform: translateY(0);
+				animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			25% { transform: translateY(-25%); }
+			45% {
+				transform: translateY(-25%);
+				animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			50% { transform: translateY(-50%); }
+			70% {
+				transform: translateY(-50%);
+				animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			75% { transform: translateY(-75%); }
+			95% {
+				transform: translateY(-75%);
+				animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			100% { transform: translateY(-75%); }
+		}
+
+		@media (max-width: 650px) {
+			main {
+				padding-top: 32px;
+			}
+
+			.section-heading {
+				align-items: start;
+				flex-direction: column;
+				gap: 4px;
+			}
+
+			.main-demo {
+				grid-template-columns: 1fr;
+				gap: 20px;
+				padding: 18px;
+			}
+
+			.color-stage {
+				min-height: 210px;
+			}
+
+			.extra-demos {
+				grid-template-columns: 1fr;
+			}
+
+			.extra-demo {
+				min-height: 120px;
+			}
+
+			.slideshow {
+				height: min(68vh, 430px);
+				min-height: 320px;
+			}
+
+			.caption {
+				min-height: 72px;
+				flex-basis: 72px;
+				padding: 12px 14px;
+			}
+
+			.caption h2 {
+				font-size: 15px;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.color-box, .motion-shape, .slide-track {
+				animation: none;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<p class="eyebrow">CSS3 · ANIMATION</p>
+		<h1>CSS Animation 综合练习</h1>
+		<p class="intro">从背景颜色变化到图片幻灯片，使用纯 CSS animation 演示关键帧动画的不同效果。</p>
+
+		<section aria-labelledby="color-title">
+			<div class="section-heading">
+				<h2 id="color-title">01 · 背景颜色与附加动画</h2>
+				<p>animation 属性与 @keyframes</p>
+			</div>
+			<div class="main-demo">
+				<div class="color-stage">
+					<div class="color-box">四色循环</div>
+				</div>
+				<div class="demo-copy">
+					<h3>背景颜色变化</h3>
+					<p>8 秒循环一次，依次经过红、黄、青、蓝四种颜色。</p>
+					<p><code>animation: color-cycle 8s linear infinite;</code></p>
+					<ul class="color-key" aria-label="动画颜色顺序">
+						<li><span class="swatch" style="background:#e45848"></span>红</li>
+						<li><span class="swatch" style="background:#e7b83f"></span>黄</li>
+						<li><span class="swatch" style="background:#2b9b91"></span>青</li>
+						<li><span class="swatch" style="background:#3979bd"></span>蓝</li>
+					</ul>
+				</div>
+			</div>
+			<div class="section-heading">
+				<h2>附加动画</h2>
+				<p>平移、旋转与缩放</p>
+			</div>
+			<div class="extra-demos">
+				<div class="extra-demo move">
+					<div class="motion-track"><span class="motion-shape"></span></div>
+					<p>平移 · translateX</p>
+				</div>
+				<div class="extra-demo rotate">
+					<div class="motion-track"><span class="motion-shape"></span></div>
+					<p>旋转 · rotate</p>
+				</div>
+				<div class="extra-demo pulse">
+					<div class="motion-track"><span class="motion-shape"></span></div>
+					<p>缩放 · scale</p>
+				</div>
+			</div>
+		</section>
+
+		<div class="section-heading">
+			<h2 id="slide-title">02 · 图片位置动画幻灯片</h2>
+			<p>上图下文 · 图片沿轨道向上切换</p>
+		</div>
+
+		<section class="slideshow" aria-labelledby="slide-title">
+			<div class="slide-track">
+				<article class="slide">
+					<img src="./img/1.jpg" alt="会见交流场景">
+					<div class="caption">
+						<div>
+							<h2>会见交流</h2>
+							<p>图片一 · CSS 位置动画</p>
+						</div>
+						<span class="author">庞智元</span>
+					</div>
+				</article>
+				<article class="slide">
+					<img src="./img/2.jpg" alt="道路欢迎仪式">
+					<div class="caption">
+						<div>
+							<h2>道路欢迎仪式</h2>
+							<p>图片二 · 向上切换</p>
+						</div>
+						<span class="author">庞智元</span>
+					</div>
+				</article>
+				<article class="slide">
+					<img src="./img/3.jpg" alt="访问留影">
+					<div class="caption">
+						<div>
+							<h2>访问留影</h2>
+							<p>图片三 · 向上切换</p>
+						</div>
+						<span class="author">庞智元</span>
+					</div>
+				</article>
+				<article class="slide" aria-hidden="true">
+					<img src="./img/1.jpg" alt="">
+					<div class="caption">
+						<div>
+							<h2>会见交流</h2>
+							<p>图片一 · CSS 位置动画</p>
+						</div>
+						<span class="author">庞智元</span>
+					</div>
+				</article>
+			</div>
+		</section>
+	</main>
+</body>
+</html>

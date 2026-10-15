@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CSS 长度单位</title>
+	<style>
+		:root {
+			font-size: 16px;
+			color-scheme: light;
+			--ink: #203039;
+			--muted: #617078;
+			--paper: #f2f5f1;
+			--line: #d7dfda;
+			--accent: #226b58;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-width: 320px;
+			min-height: 100vh;
+			margin: 0;
+			color: var(--ink);
+			background-color: var(--paper);
+			background-image: radial-gradient(#cfd9d2 0.8px, transparent 0.8px);
+			background-size: 18px 18px;
+			font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+		}
+
+		.pang_main {
+			width: min(1180px, calc(100% - 32px));
+			margin: 0 auto;
+			padding: 44px 0 60px;
+		}
+
+		.pang_eyebrow {
+			margin: 0 0 8px;
+			color: var(--accent);
+			font-size: 0.85rem;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+		}
+
+		.pang_h1 {
+			margin: 0;
+			font-size: 2.6rem;
+			line-height: 1.2;
+		}
+
+		.pang_intro {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+			gap: 1rem;
+			margin: 0 0 1.5rem;
+		}
+
+		.pang_author {
+			flex: 0 0 auto;
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.pang_demo-bar {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+			padding: 1rem;
+			background: #fff;
+			border: 1px solid var(--line);
+			border-radius: 8px;
+		}
+
+		.pang_demo-bar label {
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		.pang_demo-bar input[type="range"] {
+			flex: 1;
+			min-width: 160px;
+			accent-color: var(--accent);
+		}
+
+		.pang_demo-bar output {
+			min-width: 3.5em;
+			color: var(--accent);
+			font-weight: 700;
+			text-align: right;
+		}
+
+		.pang_demo-box {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 4rem;
+			height: 2rem;
+			color: #fff;
+			background: var(--accent);
+			border-radius: 4px;
+			font-size: 0.8rem;
+			transition: width 0.15s ease;
+		}
+
+		.pang_unit-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+			gap: 12px;
+		}
+
+		.pang_unit-card {
+			padding: 1.25rem;
+			background: #fff;
+			border: 1px solid var(--line);
+			border-radius: 8px;
+		}
+
+		.pang_unit-card h2 {
+			display: flex;
+			align-items: baseline;
+			gap: 0.5rem;
+			margin: 0 0 0.5rem;
+			font-size: 1.1rem;
+		}
+
+		.pang_unit-card h2 code {
+			color: var(--accent);
+			font-family: Consolas, monospace;
+			font-size: 1.2rem;
+		}
+
+		.pang_tag {
+			padding: 0.1em 0.5em;
+			color: var(--muted);
+			background: var(--paper);
+			border: 1px solid var(--line);
+			border-radius: 999px;
+			font-size: 0.7rem;
+		}
+
+		.pang_unit-card p {
+			margin: 0 0 0.75rem;
+			color: var(--muted);
+			font-size: 0.85rem;
+			line-height: 1.6;
+		}
+
+		.pang_preview {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+			min-height: 3rem;
+			padding: 0.5rem;
+			background: var(--paper);
+			border-radius: 6px;
+			overflow: hidden;
+		}
+
+		.pang_preview .pang_box {
+			flex: 0 0 auto;
+			background: var(--accent);
+			border-radius: 4px;
+		}
+
+		.pang_val {
+			color: var(--muted);
+			font-family: Consolas, monospace;
+			font-size: 0.8rem;
+			white-space: nowrap;
+		}
+
+		.pang_section-title {
+			margin: 2rem 0 1rem;
+			font-size: 1.3rem;
+		}
+
+		@media (max-width: 480px) {
+			.pang_main { padding-top: 30px; }
+			.pang_intro { align-items: start; flex-direction: column; gap: 0.5rem; }
+			.pang_h1 { font-size: 2.1rem; }
+		}
+	</style>
+</head>
+<body>
+	<main class="pang_main">
+		<p class="pang_eyebrow">CSS · LENGTH UNITS</p>
+		<div class="pang_intro">
+			<h1 class="pang_h1">Web 前端长度单位</h1>
+			<p class="pang_author">页面作者：庞智元</p>
+		</div>
+
+		<div class="pang_demo-bar">
+			<label for="pang_rootSize">根字体大小</label>
+			<input type="range" id="pang_rootSize" min="12" max="24" value="16" step="1">
+			<output id="pang_rootSizeVal">16px</output>
+			<span class="pang_demo-box" id="pang_demoBox">rem</span>
+		</div>
+
+		<h2 class="pang_section-title">绝对单位</h2>
+		<section class="pang_unit-grid" aria-label="绝对单位">
+			<div class="pang_unit-card">
+				<h2><code>px</code><span class="pang_tag">最常用</span></h2>
+				<p>像素，屏幕显示的最小单位。1px 对应一个物理像素点（CSS 像素）。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:16px;height:16px"></span><span class="pang_val">16px</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>pt</code><span class="pang_tag">印刷</span></h2>
+				<p>点，印刷单位。1pt = 1/72 英寸，常用于打印样式。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:21.33px;height:21.33px"></span><span class="pang_val">16pt ≈ 21.33px</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>in</code><span class="pang_tag">印刷</span></h2>
+				<p>英寸。1in = 96px = 2.54cm，多用于打印。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:96px;height:24px"></span><span class="pang_val">1in = 96px</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>cm</code><span class="pang_tag">印刷</span></h2>
+				<p>厘米。1cm ≈ 37.8px，适合打印排版。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:37.8px;height:24px"></span><span class="pang_val">1cm ≈ 37.8px</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>mm</code><span class="pang_tag">印刷</span></h2>
+				<p>毫米。1mm ≈ 3.78px，常用于打印。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:3.78px;height:3.78px"></span><span class="pang_val">1mm ≈ 3.78px</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>pc</code><span class="pang_tag">印刷</span></h2>
+				<p>派卡。1pc = 12pt = 1/6 英寸，较少使用。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:16px;height:16px"></span><span class="pang_val">1pc = 16px</span></div>
+			</div>
+		</section>
+
+		<h2 class="pang_section-title">相对单位</h2>
+		<section class="pang_unit-grid" aria-label="相对单位">
+			<div class="pang_unit-card">
+				<h2><code>em</code><span class="pang_tag">相对父级</span></h2>
+				<p>相对于父元素的字体大小。常用于 padding、margin 等。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:2em;height:1em;font-size:16px"></span><span class="pang_val">2em = 32px</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>rem</code><span class="pang_tag">相对根级</span></h2>
+				<p>相对于根元素（html）的字体大小，全局统一，最推荐。</p>
+				<div class="pang_preview"><span class="pang_box" id="pang_remBox" style="width:2rem;height:1rem"></span><span class="pang_val" id="pang_remVal">2rem = 32px</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>%</code><span class="pang_tag">相对父级</span></h2>
+				<p>百分比，相对于父元素的对应属性值。</p>
+				<div class="pang_preview" style="width:100%"><span class="pang_box" style="width:50%;height:16px"></span><span class="pang_val">50%</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>vw</code><span class="pang_tag">相对视口</span></h2>
+				<p>视口宽度的 1%。1vw = 视口宽度的 1/100。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:10vw;height:16px"></span><span class="pang_val">10vw</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>vh</code><span class="pang_tag">相对视口</span></h2>
+				<p>视口高度的 1%。1vh = 视口高度的 1/100。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:16px;height:10vh"></span><span class="pang_val">10vh</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>vmin</code><span class="pang_tag">相对视口</span></h2>
+				<p>取 vw 和 vh 中较小值的 1%。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:10vmin;height:16px"></span><span class="pang_val">10vmin</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>vmax</code><span class="pang_tag">相对视口</span></h2>
+				<p>取 vw 和 vh 中较大值的 1%。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:10vmax;height:16px"></span><span class="pang_val">10vmax</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>ch</code><span class="pang_tag">相对字符</span></h2>
+				<p>相对于字符 "0" 的宽度，常用于限制文本行宽。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:40ch;height:16px;max-width:100%"></span><span class="pang_val">40ch</span></div>
+			</div>
+			<div class="pang_unit-card">
+				<h2><code>lh</code><span class="pang_tag">相对行高</span></h2>
+				<p>相对于元素自身的行高（line-height）。</p>
+				<div class="pang_preview"><span class="pang_box" style="width:3lh;height:16px;line-height:16px"></span><span class="pang_val">3lh</span></div>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		const pang_root = document.documentElement;
+		const pang_slider = document.getElementById('pang_rootSize');
+		const pang_output = document.getElementById('pang_rootSizeVal');
+		const pang_demoBox = document.getElementById('pang_demoBox');
+		const pang_remBox = document.getElementById('pang_remBox');
+		const pang_remVal = document.getElementById('pang_remVal');
+
+		function pang_update() {
+			const pang_size = pang_slider.value;
+			pang_root.style.fontSize = pang_size + 'px';
+			pang_output.textContent = pang_size + 'px';
+			pang_remVal.textContent = '2rem = ' + (pang_size * 2) + 'px';
+		}
+
+		pang_slider.addEventListener('input', pang_update);
+		pang_update();
+	</script>
+</body>
+</html>

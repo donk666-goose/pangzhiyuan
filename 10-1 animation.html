@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CSS Animation 动画</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--ink: #203039;
+			--muted: #617078;
+			--paper: #f2f5f1;
+			--line: #d7dfda;
+			--green: #226b58;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			min-height: 100vh;
+			margin: 0;
+			color: var(--ink);
+			background-color: var(--paper);
+			background-image: radial-gradient(#cfd9d2 0.8px, transparent 0.8px);
+			background-size: 18px 18px;
+			font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+		}
+
+		main {
+			width: min(920px, calc(100% - 36px));
+			margin: 0 auto;
+			padding: 48px 0 64px;
+		}
+
+		.eyebrow {
+			margin: 0 0 8px;
+			color: var(--green);
+			font-size: 13px;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+		}
+
+		h1, h2, p {
+			margin-top: 0;
+		}
+
+		h1 {
+			margin-bottom: 10px;
+			font-size: clamp(30px, 6vw, 48px);
+			line-height: 1.2;
+		}
+
+		.intro {
+			margin-bottom: 32px;
+			color: var(--muted);
+			line-height: 1.7;
+		}
+
+		.main-demo {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 230px;
+			gap: 30px;
+			align-items: center;
+			padding: 30px;
+			border: 1px solid var(--line);
+			background: rgba(255, 255, 255, 0.84);
+		}
+
+		.color-stage {
+			display: grid;
+			min-height: 250px;
+			place-items: center;
+			overflow: hidden;
+			background: #e8eeea;
+		}
+
+		.color-box {
+			display: grid;
+			width: 150px;
+			aspect-ratio: 1;
+			place-items: center;
+			border-radius: 12px;
+			color: #fff;
+			font-size: 18px;
+			font-weight: 700;
+			animation: color-cycle 8s linear infinite;
+		}
+
+		@keyframes color-cycle {
+			0%, 100% { background-color: #e45848; }
+			25% { background-color: #e7b83f; }
+			50% { background-color: #2b9b91; }
+			75% { background-color: #3979bd; }
+		}
+
+		.demo-copy h2 {
+			margin-bottom: 10px;
+			font-size: 20px;
+		}
+
+		.demo-copy p {
+			margin-bottom: 16px;
+			color: var(--muted);
+			font-size: 14px;
+			line-height: 1.7;
+		}
+
+		code {
+			padding: 3px 6px;
+			color: #205b4b;
+			background: #e6f0ea;
+			font-family: Consolas, monospace;
+			font-size: 13px;
+		}
+
+		.color-key {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px 12px;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			color: var(--muted);
+			font-size: 12px;
+		}
+
+		.color-key li {
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+		}
+
+		.swatch {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+		}
+
+		.more-heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 16px;
+			margin: 38px 0 14px;
+		}
+
+		.more-heading h2 {
+			margin: 0;
+			font-size: 21px;
+		}
+
+		.more-heading p {
+			margin: 0;
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.extra-demos {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 14px;
+		}
+
+		.extra-demo {
+			display: grid;
+			min-height: 166px;
+			justify-items: center;
+			align-content: center;
+			gap: 16px;
+			overflow: hidden;
+			border: 1px solid var(--line);
+			background: rgba(255, 255, 255, 0.84);
+		}
+
+		.extra-demo p {
+			margin: 0;
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.motion-track {
+			display: grid;
+			width: 110px;
+			height: 44px;
+			align-items: center;
+			justify-items: start;
+		}
+
+		.motion-shape {
+			width: 32px;
+			height: 32px;
+			border-radius: 7px;
+			background: #e45848;
+		}
+
+		.move .motion-shape {
+			animation: move-side 1.8s ease-in-out infinite alternate;
+		}
+
+		.rotate .motion-shape {
+			background: #3979bd;
+			animation: rotate 2.4s linear infinite;
+		}
+
+		.pulse .motion-shape {
+			border-radius: 50%;
+			background: #e7b83f;
+			animation: pulse 1.2s ease-in-out infinite alternate;
+		}
+
+		@keyframes move-side {
+			to { transform: translateX(76px); }
+		}
+
+		@keyframes rotate {
+			to { transform: rotate(360deg); }
+		}
+
+		@keyframes pulse {
+			to { transform: scale(1.35); }
+		}
+
+		@media (max-width: 650px) {
+			main {
+				padding-top: 32px;
+			}
+
+			.main-demo {
+				grid-template-columns: 1fr;
+				gap: 22px;
+				padding: 18px;
+			}
+
+			.color-stage {
+				min-height: 220px;
+			}
+
+			.extra-demos {
+				grid-template-columns: 1fr;
+			}
+
+			.extra-demo {
+				min-height: 130px;
+			}
+
+			.more-heading {
+				align-items: start;
+				flex-direction: column;
+				gap: 4px;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation-duration: 0.01ms !important;
+				animation-iteration-count: 1 !important;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<p class="eyebrow">CSS3 · ANIMATION</p>
+		<h1>让盒子动起来</h1>
+		<p class="intro">使用纯 CSS 的关键帧动画，让背景颜色按时间连续变化。无需鼠标操作，也不需要 JavaScript。</p>
+
+		<section class="main-demo" aria-labelledby="color-title">
+			<div class="color-stage">
+				<div class="color-box">四色循环</div>
+			</div>
+			<div class="demo-copy">
+				<h2 id="color-title">背景颜色变化</h2>
+				<p>动画持续 8 秒并无限循环，在关键帧中依次设置四种背景色。</p>
+				<p><code>animation: color-cycle 8s linear infinite;</code></p>
+				<ul class="color-key" aria-label="动画颜色顺序">
+					<li><span class="swatch" style="background:#e45848"></span>红</li>
+					<li><span class="swatch" style="background:#e7b83f"></span>黄</li>
+					<li><span class="swatch" style="background:#2b9b91"></span>青</li>
+					<li><span class="swatch" style="background:#3979bd"></span>蓝</li>
+				</ul>
+			</div>
+		</section>
+
+		<div class="more-heading">
+			<h2>附加动画</h2>
+			<p>同样由 @keyframes 定义，可组合不同的动画效果。</p>
+		</div>
+		<section class="extra-demos" aria-label="其他 CSS 动画示例">
+			<div class="extra-demo move">
+				<div class="motion-track"><span class="motion-shape"></span></div>
+				<p>平移 · translateX</p>
+			</div>
+			<div class="extra-demo rotate">
+				<div class="motion-track"><span class="motion-shape"></span></div>
+				<p>旋转 · rotate</p>
+			</div>
+			<div class="extra-demo pulse">
+				<div class="motion-track"><span class="motion-shape"></span></div>
+				<p>缩放 · scale</p>
+			</div>
+		</section>
+	</main>
+</body>
+</html>

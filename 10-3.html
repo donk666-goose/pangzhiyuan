@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Media Query 全屏背景</title>
+	<style>
+		:root {
+			font-size: 16px;
+			color-scheme: light;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			min-width: 320px;
+			min-height: 100vh;
+			margin: 0;
+			font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+		}
+
+		.viewport-box {
+			display: grid;
+			min-height: 100vh;
+			min-height: 100svh;
+			place-items: center;
+			padding: 2rem;
+			color: #fff;
+			text-align: center;
+			background-color: #ce553e;
+			background-image:
+				linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+			background-size: 34px 34px;
+			transition: background-color 300ms ease;
+		}
+
+		.content {
+			width: min(100%, 56rem);
+		}
+
+		.eyebrow {
+			margin: 0 0 1.25rem;
+			font-size: 0.9rem;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 4.5rem;
+			line-height: 1.1;
+		}
+
+		.description {
+			max-width: 38rem;
+			margin: 1.5rem auto 0;
+			font-size: 1.15rem;
+			line-height: 1.8;
+		}
+
+		.viewport-state {
+			display: inline-flex;
+			min-height: 2.75rem;
+			align-items: center;
+			margin-top: 2rem;
+			padding: 0.5rem 1rem;
+			border: 1px solid rgba(255, 255, 255, 0.7);
+			font-size: 1rem;
+		}
+
+		.viewport-state::before {
+			content: "小屏 · 背景 A";
+		}
+
+		@media (min-width: 600px) {
+			:root { font-size: 18px; }
+			.viewport-box { background-color: #277c68; }
+			.viewport-state::before { content: "中屏 · 背景 B"; }
+		}
+
+		@media (min-width: 900px) {
+			:root { font-size: 20px; }
+			.viewport-box { background-color: #bd8a24; }
+			.viewport-state::before { content: "大屏 · 背景 C"; }
+		}
+
+		@media (min-width: 1200px) {
+			:root { font-size: 22px; }
+			.viewport-box { background-color: #326f9c; }
+			.viewport-state::before { content: "超宽屏 · 背景 D"; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.viewport-box { transition: none; }
+		}
+	</style>
+</head>
+<body>
+	<main class="viewport-box">
+		<div class="content">
+			<p class="eyebrow">CSS3 · MEDIA QUERY</p>
+			<h1>庞智元</h1>
+			<p class="description">调整浏览器视口宽度，媒体查询会切换全屏背景颜色；根字号也会改变，标题和说明使用 rem 随之缩放。</p>
+			<div class="viewport-state" aria-label="当前视口响应状态"></div>
+		</div>
+	</main>
+</body>
+</html>

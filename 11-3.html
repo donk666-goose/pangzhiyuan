@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CSS3 3D 画廊</title>
+	<style>
+		:root {
+			font-size: 16px;
+			color-scheme: light;
+			--ink: #203039;
+			--muted: #617078;
+			--paper: #f2f5f1;
+			--line: #d7dfda;
+			--accent: #226b58;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-width: 320px;
+			min-height: 100vh;
+			margin: 0;
+			color: var(--ink);
+			background-color: var(--paper);
+			background-image: radial-gradient(#cfd9d2 0.8px, transparent 0.8px);
+			background-size: 18px 18px;
+			font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+			overflow: hidden;
+		}
+
+		.pang_main {
+			width: min(1180px, calc(100% - 32px));
+			margin: 0 auto;
+			padding: 32px 0 40px;
+			height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.pang_eyebrow {
+			margin: 0 0 6px;
+			color: var(--accent);
+			font-size: 0.85rem;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+		}
+
+		.pang_h1 {
+			margin: 0;
+			font-size: 2.2rem;
+			line-height: 1.2;
+		}
+
+		.pang_intro {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+			gap: 1rem;
+			margin-bottom: 0.75rem;
+		}
+
+		.pang_author {
+			flex: 0 0 auto;
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.pang_controls {
+			display: flex;
+			gap: 0.5rem;
+			flex-wrap: wrap;
+			margin-bottom: 0.75rem;
+		}
+
+		.pang_btn {
+			padding: 0.35rem 0.9rem;
+			color: var(--accent);
+			background: #fff;
+			border: 1px solid var(--accent);
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 0.82rem;
+		}
+
+		.pang_btn:hover { color: #fff; background: var(--accent); }
+		.pang_btn_active { color: #fff; background: var(--accent); }
+
+		.pang_gallery-wrap {
+			flex: 1;
+			position: relative;
+			overflow: hidden;
+			border-radius: 12px;
+			background: linear-gradient(180deg, #1a2530 0%, #2a3a45 60%, #1a2530 100%);
+			perspective: 900px;
+			cursor: grab;
+			min-height: 380px;
+		}
+
+		.pang_gallery-wrap:active { cursor: grabbing; }
+
+		.pang_floor {
+			position: absolute;
+			left: 50%;
+			bottom: 8%;
+			width: 70%;
+			height: 30%;
+			transform: translateX(-50%) rotateX(75deg);
+			background:
+				repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 60px),
+				repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 40px),
+				radial-gradient(ellipse at center, rgba(34,107,88,0.25) 0%, transparent 70%);
+			border-radius: 50%;
+			pointer-events: none;
+		}
+
+		.pang_gallery {
+			position: absolute;
+			left: 50%;
+			top: 42%;
+			width: 0;
+			height: 0;
+			transform-style: preserve-3d;
+		}
+
+		.pang_frame {
+			position: absolute;
+			width: 180px;
+			height: 240px;
+			left: -90px;
+			top: -120px;
+			padding: 10px;
+			background: linear-gradient(135deg, #3a2f28, #2a211c);
+			border: 2px solid #5a4a3a;
+			box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.3);
+			backface-visibility: hidden;
+			transform-style: preserve-3d;
+		}
+
+		.pang_frame::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 40%);
+			pointer-events: none;
+		}
+
+		.pang_art {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			gap: 8px;
+			color: rgba(255,255,255,0.85);
+			font-size: 0.75rem;
+			text-align: center;
+			overflow: hidden;
+		}
+
+		.pang_art .pang_art-title {
+			font-size: 0.85rem;
+			font-weight: 700;
+			letter-spacing: 0.05em;
+		}
+
+		.pang_art .pang_art-sub {
+			font-size: 0.65rem;
+			opacity: 0.7;
+		}
+
+		.pang_art-1 { background: linear-gradient(160deg, #c44e3b, #8b2e20); }
+		.pang_art-2 { background: linear-gradient(160deg, #226b58, #154a3c); }
+		.pang_art-3 { background: linear-gradient(160deg, #b9841d, #7a5510); }
+		.pang_art-4 { background: linear-gradient(160deg, #326f9c, #1e4a6b); }
+		.pang_art-5 { background: linear-gradient(160deg, #795d43, #4a3828); }
+		.pang_art-6 { background: linear-gradient(160deg, #5a4a8b, #3a2e5e); }
+		.pang_art-7 { background: linear-gradient(160deg, #ab5f36, #6e3a1e); }
+		.pang_art-8 { background: linear-gradient(160deg, #4a7a6b, #2e5248); }
+
+		.pang_caption {
+			position: absolute;
+			left: 50%;
+			bottom: 20px;
+			transform: translateX(-50%);
+			padding: 0.5rem 1.25rem;
+			color: #fff;
+			background: rgba(0,0,0,0.55);
+			border-radius: 999px;
+			font-size: 0.85rem;
+			white-space: nowrap;
+			pointer-events: none;
+			backdrop-filter: blur(4px);
+		}
+
+		.pang_hint {
+			margin-top: 0.5rem;
+			color: var(--muted);
+			font-size: 0.8rem;
+			text-align: center;
+		}
+
+		@media (max-width: 480px) {
+			.pang_main { padding-top: 20px; }
+			.pang_intro { align-items: start; flex-direction: column; gap: 0.5rem; }
+			.pang_h1 { font-size: 1.7rem; }
+			.pang_frame { width: 140px; height: 190px; left: -70px; top: -95px; }
+		}
+	</style>
+</head>
+<body>
+	<main class="pang_main">
+		<p class="pang_eyebrow">CSS3 · 3D GALLERY</p>
+		<div class="pang_intro">
+			<h1 class="pang_h1">3D 画廊</h1>
+			<p class="pang_author">页面作者：庞智元</p>
+		</div>
+
+		<div class="pang_controls">
+			<button class="pang_btn pang_btn_active" id="pang_autoBtn">自动旋转</button>
+			<button class="pang_btn" id="pang_resetBtn">重置视角</button>
+			<button class="pang_btn" id="pang_zoomIn">放大</button>
+			<button class="pang_btn" id="pang_zoomOut">缩小</button>
+		</div>
+
+		<div class="pang_gallery-wrap" id="pang_wrap">
+			<div class="pang_floor"></div>
+			<div class="pang_gallery" id="pang_gallery"></div>
+			<div class="pang_caption" id="pang_caption">拖拽旋转 · 滚轮缩放</div>
+		</div>
+
+		<p class="pang_hint">使用 perspective + transform-style: preserve-3d 构建环形画廊，拖拽改变旋转角度</p>
+	</main>
+
+	<script>
+		const pang_gallery = document.getElementById('pang_gallery');
+		const pang_wrap = document.getElementById('pang_wrap');
+		const pang_caption = document.getElementById('pang_caption');
+		const pang_autoBtn = document.getElementById('pang_autoBtn');
+		const pang_resetBtn = document.getElementById('pang_resetBtn');
+		const pang_zoomIn = document.getElementById('pang_zoomIn');
+		const pang_zoomOut = document.getElementById('pang_zoomOut');
+
+		const pang_count = 8;
+		const pang_radius = 320;
+		const pang_titles = ['晨曦', '松林', '秋收', '远航', '山居', '暮光', '暖阳', '溪谷'];
+		const pang_subs = ['OIL ON CANVAS', 'WATERCOLOR', 'ACRYLIC', 'OIL', 'INK', 'PASTEL', 'OIL', 'WATERCOLOR'];
+
+		for (let i = 0; i < pang_count; i++) {
+			const pang_angle = (360 / pang_count) * i;
+			const pang_frame = document.createElement('div');
+			pang_frame.className = 'pang_frame';
+			pang_frame.style.transform = 'rotateY(' + pang_angle + 'deg) translateZ(' + pang_radius + 'px)';
+			pang_frame.innerHTML = '<div class="pang_art pang_art-' + (i + 1) + '"><span class="pang_art-title">' + pang_titles[i] + '</span><span class="pang_art-sub">' + pang_subs[i] + '</span></div>';
+			pang_gallery.appendChild(pang_frame);
+		}
+
+		let pang_rotateX = -10;
+		let pang_rotateY = 0;
+		let pang_targetX = -10;
+		let pang_targetY = 0;
+		let pang_auto = true;
+		let pang_zoom = 1;
+		let pang_dragging = false;
+		let pang_lastX = 0;
+		let pang_lastY = 0;
+
+		function pang_render() {
+			pang_rotateX += (pang_targetX - pang_rotateX) * 0.08;
+			pang_rotateY += (pang_targetY - pang_rotateY) * 0.08;
+			pang_gallery.style.transform = 'rotateX(' + pang_rotateX + 'deg) rotateY(' + pang_rotateY + 'deg) scale(' + pang_zoom + ')';
+		}
+
+		function pang_loop() {
+			if (pang_auto && !pang_dragging) {
+				pang_targetY += 0.3;
+			}
+			pang_render();
+			requestAnimationFrame(pang_loop);
+		}
+
+		pang_wrap.addEventListener('pointerdown', function(e) {
+			pang_dragging = true;
+			pang_lastX = e.clientX;
+			pang_lastY = e.clientY;
+			pang_wrap.setPointerCapture(e.pointerId);
+		});
+
+		pang_wrap.addEventListener('pointermove', function(e) {
+			if (!pang_dragging) return;
+			const pang_dx = e.clientX - pang_lastX;
+			const pang_dy = e.clientY - pang_lastY;
+			pang_targetY += pang_dx * 0.4;
+			pang_targetX -= pang_dy * 0.3;
+			pang_targetX = Math.max(-60, Math.min(60, pang_targetX));
+			pang_lastX = e.clientX;
+			pang_lastY = e.clientY;
+		});
+
+		pang_wrap.addEventListener('pointerup', function() { pang_dragging = false; });
+		pang_wrap.addEventListener('pointercancel', function() { pang_dragging = false; });
+
+		pang_wrap.addEventListener('wheel', function(e) {
+			e.preventDefault();
+			pang_zoom += e.deltaY > 0 ? -0.08 : 0.08;
+			pang_zoom = Math.max(0.4, Math.min(2, pang_zoom));
+		}, { passive: false });
+
+		pang_autoBtn.addEventListener('click', function() {
+			pang_auto = !pang_auto;
+			pang_autoBtn.classList.toggle('pang_btn_active', pang_auto);
+			pang_autoBtn.textContent = pang_auto ? '自动旋转' : '手动模式';
+		});
+
+		pang_resetBtn.addEventListener('click', function() {
+			pang_targetX = -10;
+			pang_targetY = 0;
+			pang_zoom = 1;
+		});
+
+		pang_zoomIn.addEventListener('click', function() {
+			pang_zoom = Math.min(2, pang_zoom + 0.15);
+		});
+
+		pang_zoomOut.addEventListener('click', function() {
+			pang_zoom = Math.max(0.4, pang_zoom - 0.15);
+		});
+
+		pang_loop();
+	</script>
+</body>
+</html>

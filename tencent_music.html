@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>腾讯音乐App - 高仿界面</title>
+    <style>
+        /* ================= 全局公共 CSS ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #e0e0e0; /* 电脑背景色 */
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        /* 模拟手机屏幕容器 */
+        .app-container {
+            width: 390px; /* 模拟 iPhone 宽度 */
+            background-color: #f7f7f7; /* 浅灰色背景 */
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            min-height: 844px;
+            padding-bottom: 130px; /* 给底部导航 + 播放条留出空间 */
+        }
+
+        /* 图片基础样式 */
+        img {
+            display: block;
+            object-fit: cover;
+        }
+
+        /* ================= 1. 顶部区域 ================= */
+        .top-section {
+            background-color: #f7f7f7;
+            padding: 10px 15px 0;
+        }
+
+        /* 搜索栏行 */
+        .search-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background-color: #e6e6e6;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .search-bar span {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .top-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .top-icons img {
+            display: block;
+            width: 26px;
+            height: 26px;
+            object-fit: contain;
+        }
+
+        .top-icons .top-icon-money {
+            width: 32px;
+            height: 30px;
+        }
+
+        /* Tab 导航 */
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            font-size: 16px;
+            color: #666;
+            scrollbar-width: none;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+
+        .nav-tabs .tab {
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .nav-tabs .tab.active {
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            background-color: #e2f3d9;
+            padding: 2px 12px;
+            border-radius: 15px;
+        }
+
+        /* ================= 2. 推荐歌单卡片 (左图右文) ================= */
+        .recommend-cards {
+            display: flex;
+            gap: 10px;
+            padding: 0 15px;
+            margin-top: 15px;
+        }
+
+        .card {
+            flex: 1;
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 160px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-purple {
+            background: linear-gradient(135deg, #a5b4fc, #818cf8);
+        }
+
+        .card-orange {
+            background: linear-gradient(135deg, #fcd34d, #f59e0b);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+        }
+
+        .card-text {
+            flex: 1;
+            font-size: 12px;
+            color: #fff;
+            line-height: 1.4;
+            margin-right: 5px;
+        }
+
+        .play-btn {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .play-btn::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 10px solid #333;
+            margin-left: 3px;
+        }
+
+        .card-img {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* ================= 3. 歌曲列表 (左图右文) ================= */
+        .song-section {
+            padding: 20px 15px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .song-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .song-cover {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .song-cover img {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 模拟左下角播放小图标 */
+        .song-cover::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 12px;
+            height: 12px;
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 50%;
+        }
+
+        .song-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .song-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .song-title {
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .song-tag {
+            font-size: 10px;
+            color: #888;
+            border: 1px solid #ccc;
+            padding: 1px 4px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .song-artist {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .song-likes {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #888;
+            flex-shrink: 0;
+        }
+
+        /* 纯 CSS 绘制爱心 */
+        .heart-icon {
+            width: 14px;
+            height: 14px;
+            position: relative;
+            transform: rotate(-45deg);
+            background-color: transparent;
+            border: 1.5px solid #999;
+            border-top: none;
+            border-right: none;
+            border-radius: 0 0 0 4px;
+            margin-top: 3px;
+        }
+        .heart-icon::before, .heart-icon::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background-color: transparent;
+            border: 1.5px solid #999;
+            border-radius: 8px 8px 0 0;
+        }
+        .heart-icon::before { top: -7px; left: -1px; transform: rotate(45deg); }
+        .heart-icon::after { top: -7px; right: -1px; transform: rotate(135deg); }
+
+        /* ================= 4. 底部固定区域 (播放条 + 导航) ================= */
+        .bottom-fixed-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 390px;
+            z-index: 100;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
+        }
+
+        /* 正在播放条 */
+        .now-playing-bar {
+            background-color: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .playing-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #eee;
+        }
+
+        .playing-cover img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .playing-info {
+            flex: 1;
+            margin-left: 12px;
+            min-width: 0;
+        }
+
+        .playing-title {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .playing-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .play-icon-solid {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #000;
+            position: relative;
+            cursor: pointer;
+        }
+        .play-icon-solid::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 55%;
+            transform: translate(-50%, -50%);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid #fff;
+        }
+
+        .list-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .list-icon span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background-color: #666;
+            border-radius: 2px;
+        }
+        .list-icon span:nth-child(2) { width: 14px; }
+
+        /* 底部导航 */
+        .bottom-nav {
+            background-color: #fff;
+            height: 70px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .nav-icon {
+            display: block;
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .nav-item.active { color: #333; font-weight: bold; }
+
+        .nav-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: -20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- ================= 1. 顶部区域 ================= -->
+        <header class="top-section">
+            <div class="search-row">
+                <div class="search-bar">
+                    <span>AI帮唱「不存在的情人」解锁限免...</span>
+                </div>
+                <div class="top-icons">
+                    <img src="./img/icon-top-music.png" alt="音乐">
+                    <img class="top-icon-money" src="./img/icon-top-money.png" alt="提现">
+                </div>
+            </div>
+
+            <nav class="nav-tabs">
+                <span class="tab active">推荐</span>
+                <span class="tab">刷歌</span>
+                <span class="tab">乐馆</span>
+                <span class="tab">听书</span>
+                <span class="tab">AI作歌</span>
+                <span class="tab">金币</span>
+            </nav>
+        </header>
+
+        <!-- ================= 2. 推荐卡片 ================= -->
+        <div class="recommend-cards">
+            <div class="card card-purple">
+                <img class="card-img" src="./img/music-featured.jpg" alt="推荐歌单封面">
+                <h3>For<br>You</h3>
+                <div class="card-bottom">
+                    <div class="card-text">
+                        猜你喜欢-沉浸刷歌<br>
+                        下完这场雨 - 后弦
+                    </div>
+                    <div class="play-btn"></div>
+                </div>
+            </div>
+
+            <div class="card card-orange">
+                <img class="card-img" src="./img/music-01.jpg" alt="每日推荐专辑封面">
+                <h3>Daily<br>30</h3>
+                <div class="card-bottom">
+                    <div class="card-text">
+                        每日30首<br>
+                        我不难过-孙燕姿
+                    </div>
+                    <div class="play-btn"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 3. 歌曲列表 ================= -->
+        <section class="song-section">
+            <div class="section-header">
+                <h2>今日周四，宜疯狂听歌 🍗</h2>
+                <div style="width: 24px; height: 24px; background: #333; border-radius: 50%;"></div>
+            </div>
+            <ul class="song-list">
+                <li class="song-item">
+                    <div class="song-cover">
+                        <img src="./img/music-04.jpg" alt="最长的电影专辑封面">
+                    </div>
+                    <div class="song-info">
+                        <div class="song-title-row">
+                            <span class="song-title">最长的电影</span>
+                            <span class="song-tag">动人心弦的歌词</span>
+                        </div>
+                        <div class="song-artist">周杰伦</div>
+                    </div>
+                    <div class="song-likes">
+                        <div class="heart-icon filled"></div>
+                        <span>2200w+</span>
+                    </div>
+                </li>
+
+                <li class="song-item">
+                    <div class="song-cover">
+                        <img src="./img/music-05.jpg" alt="去北极忘记你专辑封面">
+                    </div>
+                    <div class="song-info">
+                        <div class="song-title-row">
+                            <span class="song-title">去北极忘记你</span>
+                        </div>
+                        <div class="song-artist">Gareth.T</div>
+                    </div>
+                    <div class="song-likes">
+                        <div class="heart-icon"></div>
+                        <span>25w+</span>
+                    </div>
+                </li>
+
+                <li class="song-item">
+                    <div class="song-cover">
+                        <img src="./img/music-06.jpg" alt="会不会专辑封面">
+                    </div>
+                    <div class="song-info">
+                        <div class="song-title-row">
+                            <span class="song-title">会不会</span>
+                            <span class="song-tag">难过时听了有安慰</span>
+                        </div>
+                        <div class="song-artist">刘大壮</div>
+                    </div>
+                    <div class="song-likes">
+                        <div class="heart-icon"></div>
+                        <span>10w+</span>
+                    </div>
+                </li>
+
+                <li class="song-item">
+                    <div class="song-cover">
+                        <img src="./img/music-01.jpg" alt="我不难过专辑封面">
+                    </div>
+                    <div class="song-info">
+                        <div class="song-title-row">
+                            <span class="song-title">我不难过</span>
+                            <span class="song-tag">听歌识曲榜 No.30</span>
+                        </div>
+                        <div class="song-artist">孙燕姿</div>
+                    </div>
+                    <div class="song-likes">
+                        <div class="heart-icon"></div>
+                        <span>740w+</span>
+                    </div>
+                </li>
+
+                <li class="song-item">
+                    <div class="song-cover">
+                        <img src="./img/music-02.jpg" alt="一个人去巴黎专辑封面">
+                    </div>
+                    <div class="song-info">
+                        <div class="song-title-row">
+                            <span class="song-title">一个人去巴黎</span>
+                            <span class="song-tag">清新曲风 温暖澄澈</span>
+                        </div>
+                        <div class="song-artist">Jeffrey 董又霖</div>
+                    </div>
+                    <div class="song-likes">
+                        <div class="heart-icon"></div>
+                        <span>470w+</span>
+                    </div>
+                </li>
+
+                <li class="song-item">
+                    <div class="song-cover">
+                        <img src="./img/music-03.jpg" alt="不流泪的机场专辑封面">
+                    </div>
+                    <div class="song-info">
+                        <div class="song-title-row">
+                            <span class="song-title">不流泪的机场</span>
+                            <span class="song-tag">前奏一响都是泪</span>
+                        </div>
+                        <div class="song-artist">林俊杰</div>
+                    </div>
+                    <div class="song-likes">
+                        <div class="heart-icon"></div>
+                        <span>170w+</span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- ================= 4. 底部固定区域 (播放条 + 导航) ================= -->
+        <div class="bottom-fixed-wrapper">
+            <!-- 正在播放条 -->
+            <div class="now-playing-bar">
+                <div class="playing-cover">
+                    <img src="./img/music-02.jpg" alt="一个人去巴黎专辑封面">
+                </div>
+                <div class="playing-info">
+                    <div class="playing-title">一个人去巴黎 - Jeffrey 董又霖</div>
+                </div>
+                <div class="playing-controls">
+                    <div class="heart-icon" style="margin-top:0;"></div>
+                    <div class="play-icon-solid"></div>
+                    <div class="list-icon">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部导航 -->
+            <nav class="bottom-nav">
+                <div class="nav-item active">
+                    <img class="nav-icon" src="./img/icon-nav-home.png" alt="">
+                    <span>首页</span>
+                </div>
+                <div class="nav-item">
+                    <img class="nav-avatar" src="./img/music-avatar.jpg" alt="视频头像">
+                    <span>视频</span>
+                </div>
+                <div class="nav-item">
+                    <img class="nav-icon" src="./img/icon-nav-radio.png" alt="">
+                    <span>刷歌</span>
+                </div>
+                <div class="nav-item">
+                    <img class="nav-icon" src="./img/icon-nav-star.png" alt="">
+                    <span>星光</span>
+                </div>
+                <div class="nav-item">
+                    <img class="nav-icon" src="./img/icon-nav-user.png" alt="">
+                    <span>我的</span>
+                </div>
+            </nav>
+        </div>
+
+    </div>
+
+</body>
+</html>

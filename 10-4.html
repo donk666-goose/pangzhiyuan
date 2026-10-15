@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Media Query 响应式网格</title>
+	<style>
+		:root {
+			font-size: 16px;
+			color-scheme: light;
+			--ink: #203039;
+			--muted: #617078;
+			--paper: #f2f5f1;
+			--line: #d7dfda;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			min-width: 320px;
+			min-height: 100vh;
+			margin: 0;
+			color: var(--ink);
+			background-color: var(--paper);
+			background-image: radial-gradient(#cfd9d2 0.8px, transparent 0.8px);
+			background-size: 18px 18px;
+			font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+		}
+
+		main {
+			width: min(1180px, calc(100% - 32px));
+			margin: 0 auto;
+			padding: 44px 0 60px;
+		}
+
+		.eyebrow {
+			margin: 0 0 8px;
+			color: #226b58;
+			font-size: 0.85rem;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 2.6rem;
+			line-height: 1.2;
+		}
+
+		.intro {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+			gap: 1rem;
+			margin: 0 0 1.5rem;
+		}
+
+		.author {
+			flex: 0 0 auto;
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.layout-info {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1rem;
+			margin-bottom: 1rem;
+			padding-bottom: 0.75rem;
+			border-bottom: 1px solid var(--line);
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		.columns-count {
+			color: #226b58;
+			font-weight: 700;
+		}
+
+		.columns-count::before {
+			content: "每行 2 个";
+		}
+
+		.box-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 12px;
+		}
+
+		.box {
+			display: flex;
+			min-width: 0;
+			aspect-ratio: 1;
+			flex-direction: column;
+			justify-content: space-between;
+			padding: 1rem;
+			color: #fff;
+			background: #226b58;
+		}
+
+		.box:nth-child(2) { background: #c44e3b; }
+		.box:nth-child(3) { background: #b9841d; }
+		.box:nth-child(4) { background: #326f9c; }
+		.box:nth-child(5) { background: #795d43; }
+		.box:nth-child(6) { background: #427b58; }
+		.box:nth-child(7) { background: #ab5f36; }
+		.box:nth-child(8) { background: #526d7d; }
+
+		.box-number {
+			font-size: 0.85rem;
+			opacity: 0.8;
+		}
+
+		.box strong {
+			font-size: 1rem;
+			font-weight: 600;
+		}
+
+		@media (min-width: 600px) {
+			.box-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+			.columns-count::before { content: "每行 4 个"; }
+		}
+
+		@media (min-width: 900px) {
+			.box-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+			.columns-count::before { content: "每行 6 个"; }
+		}
+
+		@media (min-width: 1200px) {
+			.box-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+			.columns-count::before { content: "每行 8 个"; }
+		}
+
+		@media (max-width: 480px) {
+			main { padding-top: 30px; }
+			.intro { align-items: start; flex-direction: column; gap: 0.5rem; }
+			h1 { font-size: 2.1rem; }
+			.box { padding: 0.7rem; }
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<p class="eyebrow">CSS3 · MEDIA QUERY</p>
+		<div class="intro">
+			<h1>响应式盒子网格</h1>
+			<p class="author">页面作者：庞智元</p>
+		</div>
+		<div class="layout-info">
+			<span>视口宽度变化时，网格列数随媒体查询改变</span>
+			<strong class="columns-count" aria-live="polite"></strong>
+		</div>
+		<section class="box-grid" aria-label="八个响应式盒子">
+			<div class="box"><span class="box-number">01</span><strong>庞智元</strong></div>
+			<div class="box"><span class="box-number">02</span><strong>庞智元</strong></div>
+			<div class="box"><span class="box-number">03</span><strong>庞智元</strong></div>
+			<div class="box"><span class="box-number">04</span><strong>庞智元</strong></div>
+			<div class="box"><span class="box-number">05</span><strong>庞智元</strong></div>
+			<div class="box"><span class="box-number">06</span><strong>庞智元</strong></div>
+			<div class="box"><span class="box-number">07</span><strong>庞智元</strong></div>
+			<div class="box"><span class="box-number">08</span><strong>庞智元</strong></div>
+		</section>
+	</main>
+</body>
+</html>

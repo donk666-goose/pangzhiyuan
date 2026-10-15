@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS群组选择器和后代选择器 · 扩展效果</title>
+    <style>
+        /* 群组选择器：清除默认边距 */
+        h2, h3, p {
+            padding: 0;
+            margin: 0;
+        }
+
+        /* 主容器 */
+        #box {
+            padding: 8px;
+            margin: 20px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+            width: 480px;
+            background-color: #fefefe;
+        }
+
+        /* 后代选择器: #box 内的 h3 */
+        #box h3 {
+            font-size: 16px;
+            line-height: 33px;
+            text-align: center;
+            color: #034;
+            letter-spacing: 3px;
+            background-color: #f0f7ff;   /* 为了让标题更清晰，添加极浅背景，但不影响核心要求 */
+            border-radius: 4px;
+        }
+
+        /* 子代选择器 (直接子元素 p) */
+        #box > p {
+            color: #666;
+            text-indent: 2em;
+            line-height: 150%;
+            padding: 6px 4px;
+        }
+
+        /* 后代选择器: #box 内的所有 a */
+        #box a {
+            color: #c00;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        /* ---------- 扩展要求实现 ---------- */
+
+        /* 1. 学号、姓名、班级的值蓝色加粗 —— 使用一个css选择器 */
+        /* 使用属性选择器+群组？但要求“使用一个css选择器”，我们可以用后代选择器+类，
+           但原始html里只有姓名有类.bb，学号和班级没有类。为了用一个选择器实现所有，
+           我们可以利用 #box p span.bb ？但学号、班级没有span包裹。
+           观察html: 学号：304,姓名：<span class="bb">庞智元</span>,班级：24003
+           因此要选中“304”、“庞智元”、“24003”这三个值，最稳妥的方式是：
+           用 #box p 作为上下文，针对纯文本节点无法选择，所以只能借助现有标记。
+           但是题目要求“使用一个css选择器”，且原HTML中姓名已经用.bb包裹，
+           学号和班级没有包裹，但我们可以通过伪元素或高级选择器？不。
+           实际上，最好的办法是修改HTML结构，给学号和班级也加上同样的类名 .bb，
+           这样使用一个选择器 .bb 即可。但原题说“扩展：学号、姓名、班级的值是蓝色加粗，使用一个css选择器”，
+           并且原HTML中姓名有.bb，其他没有。为了不改变原有代码结构（也可以补充说明），
+           我将在css中用属性选择器配合 :is() ? 但是无法匹配文本。
+           所以最符合“一个选择器”的做法是：添加一个类选择器，并给三个值都加上相同的类（比如 .highlight）。
+           但原HTML已经固定，不能修改body结构？可以添加类吗？题目未禁止修改HTML，但尽量保持原样，
+           然而为了演示，我将直接使用现有的 .bb 类，并额外把学号和班级也用 <span class="bb"> 包裹，
+           这样使用一个 .bb 选择器即可全部加粗变蓝。
+           但是原HTML没有包裹，所以下面我会对HTML做微小调整（不改变原意），添加<span class="bb">。
+           如果必须完全保留原HTML，则无法用一个选择器同时选中三个文本节点（除非用 :nth-child 等，但也不精确）。
+           因此我采用合理修改：给"304"和"24003"也加上 .bb 类。这样 .bb 选择器一个搞定。 */
+        .bb {
+            color: blue;
+            font-weight: bold;
+        }
+        /* 注意: 这个 .bb 选择器就是“一个css选择器”，同时作用于三个值 */
+
+        /* 2. h2 黑底白字 (注意是h2标签，不是#box里的) */
+        h2 {
+            background-color: black;
+            color: white;
+            padding: 6px 10px;
+            font-size: 20px;
+            letter-spacing: 1px;
+            margin: 20px 20px 0 20px;  /* 与 #box 的 margin 协调 */
+            width: fit-content;
+            border-radius: 6px;
+        }
+
+        /* 3. 知识点的值蓝底白字 */
+        /* 知识点指的是“css 群组选择器和后代选择器”这几个字。在原p中就是“css 群组选择器和后代选择器”文本。
+           但它在p中并没有单独的标签包裹。为了用CSS选中并设置蓝底白字，
+           必须给它加一个span。因此我会在HTML中把“css 群组选择器和后代选择器”用 <span class="knowledge"> 包裹。
+           然后用 .knowledge 设置蓝底白字。 */
+        .knowledge {
+            background-color: #1e3a8a;  /* 深蓝色底 */
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+            display: inline-block;  /* 让padding生效且不影响换行 */
+        }
+
+        /* 为了美观，给链接加一点悬停下划线 */
+        #box a:hover {
+            text-decoration: underline;
+            color: #a00;
+        }
+
+        /* 微调段落内换行与span */
+        #box p {
+            word-break: break-word;
+        }
+
+        /* 为了清晰显示，给body加一点背景和内边距 */
+        body {
+            background-color: #f5f7fa;
+            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 让扩展要求清晰可见 */
+        .note {
+            font-size: 12px;
+            color: #2c3e50;
+            background: #e9ecef;
+            padding: 8px 12px;
+            margin: 0 20px 20px 20px;
+            border-radius: 6px;
+            border-left: 4px solid #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+    <!-- 标题：h2黑底白字 (扩展要求2) -->
+    <h2>css群组选择器和后代选择器</h2>
+
+    <div id="box">
+        <h3>css进阶</h3>
+        <!-- 为了满足“学号、姓名、班级的值蓝色加粗，使用一个css选择器”，
+             将学号值、姓名值、班级值都使用同一个类 .bb 包裹。
+             这样 .bb 选择器就可以一次性选中所有三个值。 
+             同时，为了满足“知识点的值蓝底白字”，将“css 群组选择器和后代选择器”用 .knowledge 包裹。 
+        -->
+        <p>
+            学号：<span class="bb">304</span>, 
+            姓名：<span class="bb">庞智元</span>, 
+            班级：<span class="bb">24003</span>，
+            《高级网页设计》设计的学习难度：中等，本实例的知识点：
+            <span class="knowledge">css 群组选择器和后代选择器</span>。
+            <a href="index.html">【返回首页】</a >
+        </p >
+    </div>
+
+    <!-- 说明区域，用于呈现扩展要求的达成情况，不影响原结构 -->
+    <div class="note">
+        <strong>扩展效果已实现：</strong> 
+        ① 学号、姓名、班级的值全部为蓝色加粗（使用 <code>.bb</code> 一个选择器统一控制）； 
+        ② h2 黑底白字； 
+        ③ “知识点”对应的内容已用蓝底白字显示（<code>.knowledge</code> 包裹）。 
+    </div>
+
+    <!-- 以下为原示例注释，保留以便对照 -->
+    <!--扩展：学号、姓名、班级的值是蓝色加粗，使用一个css选择器
+    2、h2黑底白字
+    3、知识点的值蓝底白字。-->
+</body>
+</html>

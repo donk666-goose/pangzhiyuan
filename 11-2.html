@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CSS3 3D 动画</title>
+	<style>
+		:root {
+			font-size: 16px;
+			color-scheme: light;
+			--ink: #203039;
+			--muted: #617078;
+			--paper: #f2f5f1;
+			--line: #d7dfda;
+			--accent: #226b58;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-width: 320px;
+			min-height: 100vh;
+			margin: 0;
+			color: var(--ink);
+			background-color: var(--paper);
+			background-image: radial-gradient(#cfd9d2 0.8px, transparent 0.8px);
+			background-size: 18px 18px;
+			font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+		}
+
+		.pang_main {
+			width: min(1180px, calc(100% - 32px));
+			margin: 0 auto;
+			padding: 44px 0 60px;
+		}
+
+		.pang_eyebrow {
+			margin: 0 0 8px;
+			color: var(--accent);
+			font-size: 0.85rem;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+		}
+
+		.pang_h1 {
+			margin: 0;
+			font-size: 2.6rem;
+			line-height: 1.2;
+		}
+
+		.pang_intro {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+			gap: 1rem;
+			margin: 0 0 1.5rem;
+		}
+
+		.pang_author {
+			flex: 0 0 auto;
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.pang_section-title {
+			margin: 2rem 0 1rem;
+			font-size: 1.3rem;
+		}
+
+		.pang_card-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+			gap: 12px;
+		}
+
+		.pang_card {
+			padding: 1.25rem;
+			background: #fff;
+			border: 1px solid var(--line);
+			border-radius: 8px;
+		}
+
+		.pang_card h2 {
+			margin: 0 0 0.25rem;
+			font-size: 1rem;
+		}
+
+		.pang_card h2 code {
+			color: var(--accent);
+			font-family: Consolas, monospace;
+			font-size: 1.05rem;
+		}
+
+		.pang_card p {
+			margin: 0 0 1rem;
+			color: var(--muted);
+			font-size: 0.85rem;
+			line-height: 1.6;
+		}
+
+		.pang_stage {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 160px;
+			background: var(--paper);
+			border-radius: 6px;
+			perspective: 400px;
+			overflow: hidden;
+		}
+
+		.pang_box {
+			width: 64px;
+			height: 64px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			font-size: 0.7rem;
+			font-weight: 700;
+			border-radius: 8px;
+		}
+
+		.pang_3d { transform-style: preserve-3d; }
+
+		@keyframes pang_spinY {
+			from { transform: rotateY(0deg); }
+			to { transform: rotateY(360deg); }
+		}
+
+		@keyframes pang_spinX {
+			from { transform: rotateX(0deg); }
+			to { transform: rotateX(360deg); }
+		}
+
+		@keyframes pang_spinZ {
+			from { transform: rotateZ(0deg); }
+			to { transform: rotateZ(360deg); }
+		}
+
+		@keyframes pang_cubeRotate {
+			from { transform: rotateX(-20deg) rotateY(0deg); }
+			to { transform: rotateX(-20deg) rotateY(360deg); }
+		}
+
+		@keyframes pang_cardFlip {
+			from { transform: rotateY(0deg); }
+			to { transform: rotateY(360deg); }
+		}
+
+		@keyframes pang_swing {
+			0%, 100% { transform: rotateX(0deg); }
+			25% { transform: rotateX(45deg); }
+			75% { transform: rotateX(-45deg); }
+		}
+
+		@keyframes pang_dive {
+			0% { transform: translateZ(0px); opacity: 1; }
+			50% { transform: translateZ(120px); opacity: 0.6; }
+			100% { transform: translateZ(0px); opacity: 1; }
+		}
+
+		@keyframes pang_orbit {
+			from { transform: rotateY(0deg) translateX(60px) rotateY(0deg); }
+			to { transform: rotateY(360deg) translateX(60px) rotateY(-360deg); }
+		}
+
+		.pang_spin-y { animation: pang_spinY 2.5s linear infinite; background: #c44e3b; }
+		.pang_spin-x { animation: pang_spinX 2.5s linear infinite; background: #b9841d; }
+		.pang_spin-z { animation: pang_spinZ 2.5s linear infinite; background: #326f9c; }
+		.pang_swing { animation: pang_swing 2s ease-in-out infinite; background: #795d43; }
+		.pang_dive { animation: pang_dive 2s ease-in-out infinite; background: #427b58; }
+
+		.pang_orbit-stage { perspective: 500px; }
+		.pang_orbit {
+			animation: pang_orbit 3s linear infinite;
+			background: #ab5f36;
+		}
+
+		.pang_cube-scene {
+			width: 64px;
+			height: 64px;
+			position: relative;
+			transform-style: preserve-3d;
+			animation: pang_cubeRotate 3s linear infinite;
+		}
+
+		.pang_cube-face {
+			position: absolute;
+			width: 64px;
+			height: 64px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			font-size: 0.65rem;
+			border: 1px solid rgba(255,255,255,0.4);
+			backface-visibility: visible;
+		}
+
+		.pang_cube-front  { background: rgba(34,107,88,0.85);  transform: translateZ(32px); }
+		.pang_cube-back   { background: rgba(196,78,59,0.85);  transform: rotateY(180deg) translateZ(32px); }
+		.pang_cube-right  { background: rgba(185,132,29,0.85); transform: rotateY(90deg) translateZ(32px); }
+		.pang_cube-left   { background: rgba(50,111,156,0.85); transform: rotateY(-90deg) translateZ(32px); }
+		.pang_cube-top    { background: rgba(121,93,67,0.85);  transform: rotateX(90deg) translateZ(32px); }
+		.pang_cube-bottom { background: rgba(66,123,88,0.85);  transform: rotateX(-90deg) translateZ(32px); }
+
+		.pang_flip-card {
+			animation: pang_cardFlip 3s ease-in-out infinite;
+			background: #526d7d;
+		}
+
+		.pang_controls {
+			display: flex;
+			gap: 0.5rem;
+			flex-wrap: wrap;
+			margin-bottom: 1rem;
+		}
+
+		.pang_btn {
+			padding: 0.4rem 1rem;
+			color: var(--accent);
+			background: #fff;
+			border: 1px solid var(--accent);
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 0.85rem;
+		}
+
+		.pang_btn:hover {
+			color: #fff;
+			background: var(--accent);
+		}
+
+		.pang_btn_active {
+			color: #fff;
+			background: var(--accent);
+		}
+
+		.pang_info {
+			margin-bottom: 1rem;
+			padding: 0.75rem 1rem;
+			background: #fff;
+			border: 1px solid var(--line);
+			border-radius: 6px;
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		@media (max-width: 480px) {
+			.pang_main { padding-top: 30px; }
+			.pang_intro { align-items: start; flex-direction: column; gap: 0.5rem; }
+			.pang_h1 { font-size: 2.1rem; }
+		}
+	</style>
+</head>
+<body>
+	<main class="pang_main">
+		<p class="pang_eyebrow">CSS3 · 3D TRANSFORMS</p>
+		<div class="pang_intro">
+			<h1 class="pang_h1">CSS3 3D 动画</h1>
+			<p class="pang_author">页面作者：庞智元</p>
+		</div>
+
+		<div class="pang_info">使用 perspective 和 transform-style: preserve-3d 创建三维空间，配合 @keyframes 实现旋转、翻转、立方体动画。</div>
+
+		<div class="pang_controls">
+			<button class="pang_btn pang_btn_active" data-pang-speed="1">正常速度</button>
+			<button class="pang_btn" data-pang-speed="2">2 倍速度</button>
+			<button class="pang_btn" data-pang-speed="0.5">0.5 倍速度</button>
+			<button class="pang_btn" id="pang_pauseBtn">暂停</button>
+		</div>
+
+		<h2 class="pang_section-title">基础旋转</h2>
+		<section class="pang_card-grid">
+			<div class="pang_card">
+				<h2><code>rotateY</code></h2>
+				<p>绕 Y 轴水平旋转</p>
+				<div class="pang_stage"><div class="pang_box pang_spin-y pang_3d">Y轴</div></div>
+			</div>
+			<div class="pang_card">
+				<h2><code>rotateX</code></h2>
+				<p>绕 X 轴垂直旋转</p>
+				<div class="pang_stage"><div class="pang_box pang_spin-x pang_3d">X轴</div></div>
+			</div>
+			<div class="pang_card">
+				<h2><code>rotateZ</code></h2>
+				<p>绕 Z 轴平面旋转</p>
+				<div class="pang_stage"><div class="pang_box pang_spin-z pang_3d">Z轴</div></div>
+			</div>
+		</section>
+
+		<h2 class="pang_section-title">组合动画</h2>
+		<section class="pang_card-grid">
+			<div class="pang_card">
+				<h2><code>rotateX 摆动</code></h2>
+				<p>沿 X 轴来回摆动</p>
+				<div class="pang_stage"><div class="pang_box pang_swing pang_3d">摆动</div></div>
+			</div>
+			<div class="pang_card">
+				<h2><code>translateZ 冲刺</code></h2>
+				<p>沿 Z 轴推进与拉远</p>
+				<div class="pang_stage"><div class="pang_box pang_dive pang_3d">推进</div></div>
+			</div>
+			<div class="pang_card">
+				<h2><code>rotateY 翻转</code></h2>
+				<p>卡片翻转效果</p>
+				<div class="pang_stage"><div class="pang_box pang_flip-card pang_3d">翻转</div></div>
+			</div>
+		</section>
+
+		<h2 class="pang_section-title">3D 场景</h2>
+		<section class="pang_card-grid">
+			<div class="pang_card">
+				<h2><code>3D 立方体</code></h2>
+				<p>六个面组成的立方体旋转</p>
+				<div class="pang_stage pang_3d">
+					<div class="pang_cube-scene">
+						<div class="pang_cube-face pang_cube-front">前</div>
+						<div class="pang_cube-face pang_cube-back">后</div>
+						<div class="pang_cube-face pang_cube-right">右</div>
+						<div class="pang_cube-face pang_cube-left">左</div>
+						<div class="pang_cube-face pang_cube-top">上</div>
+						<div class="pang_cube-face pang_cube-bottom">下</div>
+					</div>
+				</div>
+			</div>
+			<div class="pang_card">
+				<h2><code>轨道运动</code></h2>
+				<p>绕中心点公转</p>
+				<div class="pang_stage pang_orbit-stage pang_3d"><div class="pang_box pang_orbit pang_3d">公转</div></div>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		const pang_pauseBtn = document.getElementById('pang_pauseBtn');
+		const pang_speedBtns = document.querySelectorAll('[data-pang-speed]');
+		let pang_paused = false;
+		let pang_speed = 1;
+
+		pang_speedBtns.forEach(function(btn) {
+			btn.addEventListener('click', function() {
+				pang_speedBtns.forEach(function(b) { b.classList.remove('pang_btn_active'); });
+				btn.classList.add('pang_btn_active');
+				pang_speed = parseFloat(btn.getAttribute('data-pang-speed'));
+				updateAnimationDuration();
+			});
+		});
+
+		pang_pauseBtn.addEventListener('click', function() {
+			pang_paused = !pang_paused;
+			pang_pauseBtn.textContent = pang_paused ? '播放' : '暂停';
+			document.querySelectorAll('.pang_card').forEach(function(card) {
+				card.style.animationPlayState = pang_paused ? 'paused' : 'running';
+			});
+		});
+
+		function updateAnimationDuration() {
+			var pang_allBoxes = document.querySelectorAll('.pang_box, .pang_cube-scene');
+			pang_allBoxes.forEach(function(box) {
+				var animName = getComputedStyle(box).animationName;
+				if (animName && animName !== 'none') {
+					var currentDur = getComputedStyle(box).animationDuration;
+					var baseDur = parseFloat(currentDur) * (1 / pang_speed);
+					box.style.animationDuration = (1 / pang_speed) + 's';
+				}
+			});
+		}
+	</script>
+</body>
+</html>
