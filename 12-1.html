@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CSS 变量</title>
+	<style>
+		:root {
+			font-size: 16px;
+			color-scheme: light;
+			--ink: #1a2332;
+			--muted: #5a6a7a;
+			--paper: #f0f4f8;
+			--line: #d0dae4;
+			--accent: #2563eb;
+			--accent-light: #dbeafe;
+			--radius: 8px;
+			--shadow: 0 2px 8px rgba(0,0,0,0.08);
+			--spacing: 1rem;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-width: 320px;
+			min-height: 100vh;
+			margin: 0;
+			color: var(--ink);
+			background-color: var(--paper);
+			background-image: radial-gradient(#d0dae4 0.8px, transparent 0.8px);
+			background-size: 18px 18px;
+			font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+		}
+
+		.pang_main {
+			width: min(1180px, calc(100% - 32px));
+			margin: 0 auto;
+			padding: 44px 0 60px;
+		}
+
+		.pang_eyebrow {
+			margin: 0 0 8px;
+			color: var(--accent);
+			font-size: 0.85rem;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+		}
+
+		.pang_h1 {
+			margin: 0;
+			font-size: 2.6rem;
+			line-height: 1.2;
+		}
+
+		.pang_intro {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+			gap: 1rem;
+			margin: 0 0 1.5rem;
+		}
+
+		.pang_author {
+			flex: 0 0 auto;
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.pang_demo-bar {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+			padding: 1rem;
+			background: #fff;
+			border: 1px solid var(--line);
+			border-radius: var(--radius);
+			box-shadow: var(--shadow);
+		}
+
+		.pang_demo-bar label {
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		.pang_demo-bar input[type="range"] {
+			flex: 1;
+			min-width: 160px;
+			accent-color: var(--accent);
+		}
+
+		.pang_demo-bar output {
+			min-width: 3.5em;
+			color: var(--accent);
+			font-weight: 700;
+			text-align: right;
+		}
+
+		.pang_card-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+			gap: 12px;
+		}
+
+		.pang_card {
+			padding: 1.25rem;
+			background: #fff;
+			border: 1px solid var(--line);
+			border-radius: var(--radius);
+			box-shadow: var(--shadow);
+		}
+
+		.pang_card h2 {
+			display: flex;
+			align-items: baseline;
+			gap: 0.5rem;
+			margin: 0 0 0.5rem;
+			font-size: 1.1rem;
+		}
+
+		.pang_card h2 code {
+			color: var(--accent);
+			font-family: Consolas, monospace;
+			font-size: 1.15rem;
+		}
+
+		.pang_tag {
+			padding: 0.1em 0.5em;
+			color: var(--muted);
+			background: var(--paper);
+			border: 1px solid var(--line);
+			border-radius: 999px;
+			font-size: 0.7rem;
+		}
+
+		.pang_card p {
+			margin: 0 0 0.75rem;
+			color: var(--muted);
+			font-size: 0.85rem;
+			line-height: 1.6;
+		}
+
+		.pang_preview {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 5rem;
+			padding: 0.75rem;
+			background: var(--paper);
+			border-radius: calc(var(--radius) - 2px);
+			overflow: hidden;
+		}
+
+		.pang_demo-box {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			width: 8rem;
+			height: 5rem;
+			color: #fff;
+			background: var(--accent);
+			border-radius: var(--radius);
+			box-shadow: var(--shadow);
+			font-size: 0.85rem;
+			gap: 0.25rem;
+		}
+
+		.pang_demo-box span {
+			font-size: 0.7rem;
+			opacity: 0.85;
+		}
+
+		.pang_code-block {
+			margin: 0.5rem 0 0;
+			padding: 0.6rem 0.75rem;
+			background: #1e293b;
+			border-radius: calc(var(--radius) - 2px);
+			color: #e2e8f0;
+			font-family: Consolas, "Courier New", monospace;
+			font-size: 0.8rem;
+			line-height: 1.6;
+			overflow-x: auto;
+			white-space: pre;
+		}
+
+		.pang_code-block .pang_comment { color: #64748b; }
+		.pang_code-block .pang_prop { color: #7dd3fc; }
+		.pang_code-block .pang_val { color: #fbbf24; }
+
+		.pang_section-title {
+			margin: 2rem 0 1rem;
+			font-size: 1.3rem;
+		}
+
+		.pang_scope-demo {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1rem;
+		}
+
+		.pang_scope-box {
+			padding: 1rem;
+			border-radius: var(--radius);
+			text-align: center;
+			font-size: 0.9rem;
+			border: 2px dashed var(--line);
+		}
+
+		.pang_scope-box h3 {
+			margin: 0 0 0.5rem;
+			font-size: 0.95rem;
+			color: var(--ink);
+		}
+
+		.pang_scope-box p {
+			margin: 0;
+			color: var(--muted);
+			font-size: 0.8rem;
+		}
+
+		.pang_local-var {
+			--local-color: #dc2626;
+			--local-size: 6rem;
+			background: var(--local-color, var(--accent));
+			width: var(--local-size, 4rem);
+			height: var(--local-size, 4rem);
+			margin: 0 auto 0.5rem;
+			border-radius: var(--radius);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			font-size: 0.75rem;
+			font-weight: 700;
+		}
+
+		.pang_fallback-demo {
+			--undefined-var: initial;
+			padding: 0.75rem;
+			background: var(--undefined-var, var(--accent-light));
+			border-radius: var(--radius);
+			text-align: center;
+			font-size: 0.85rem;
+			color: var(--ink);
+		}
+
+		@media (max-width: 480px) {
+			.pang_main { padding-top: 30px; }
+			.pang_intro { align-items: start; flex-direction: column; gap: 0.5rem; }
+			.pang_h1 { font-size: 2.1rem; }
+			.pang_scope-demo { grid-template-columns: 1fr; }
+		}
+	</style>
+</head>
+<body>
+	<main class="pang_main">
+		<p class="pang_eyebrow">CSS · CUSTOM PROPERTIES</p>
+		<div class="pang_intro">
+			<h1 class="pang_h1">Web 前端 CSS 变量</h1>
+			<p class="pang_author">页面作者：庞智元</p>
+		</div>
+
+		<div class="pang_demo-bar">
+			<label for="pang_accentHue">主题色相</label>
+			<input type="range" id="pang_accentHue" min="0" max="360" value="220" step="1">
+			<output id="pang_accentHueVal">220</output>
+			<label for="pang_cardRadius">圆角大小</label>
+			<input type="range" id="pang_cardRadius" min="0" max="24" value="8" step="1">
+			<output id="pang_cardRadiusVal">8px</output>
+		</div>
+
+		<h2 class="pang_section-title">基础用法</h2>
+		<section class="pang_card-grid" aria-label="基础用法">
+			<div class="pang_card">
+				<h2><code>:root</code><span class="pang_tag">全局变量</span></h2>
+				<p>在 :root 伪类中定义变量，整个文档都可以访问。</p>
+				<div class="pang_preview">
+					<div class="pang_demo-box">全局变量<span>--accent</span></div>
+				</div>
+				<div class="pang_code-block"><span class="pang_comment">/* 定义 */</span>
+<span class="pang_prop">:root</span> {
+  <span class="pang_prop">--accent</span>: <span class="pang-val">#2563eb</span>;
+}
+
+<span class="pang_comment">/* 使用 */</span>
+<span class="pang_prop">.box</span> {
+  <span class="pang-prop">background</span>: <span class="pang-val">var(--accent)</span>;
+}</div>
+			</div>
+
+			<div class="pang_card">
+				<h2><code>var()</code><span class="pang_tag">引用变量</span></h2>
+				<p>通过 var() 函数引用变量的值，可设置 fallback 回退值。</p>
+				<div class="pang_preview">
+					<div class="pang_demo-box" style="background: var(--accent); border-radius: var(--radius);">var() 引用</div>
+				</div>
+				<div class="pang_code-block"><span class="pang_comment">/* 带回退值 */</span>
+<span class="pang-prop">color</span>: <span class="pang-val">var(--undefined, #333)</span>;
+
+<span class="pang_comment">/* 嵌套使用 */</span>
+<span class="pang-prop">border-radius</span>: <span class="pang-val">calc(var(--radius) - 2px)</span>;</div>
+			</div>
+
+			<div class="pang_card">
+				<h2><code>局部作用域</code><span class="pang_tag">覆盖</span></h2>
+				<p>变量遵循层叠规则，局部定义会覆盖全局同名变量。</p>
+				<div class="pang_preview">
+					<div class="pang_scope-box" style="border-style: solid;">
+						<div class="pang_local-var">局部</div>
+						<h3>局部变量 --local-color</h3>
+						<p>覆盖为 #dc2626</p>
+					</div>
+				</div>
+				<div class="pang_code-block"><span class="pang_comment">/* 全局定义 */</span>
+<span class="pang_prop">:root</span> { <span class="pang-prop">--accent</span>: <span class="pang-val">#2563eb</span>; }
+
+<span class="pang-comment">/* 局部覆盖 */</span>
+<span class="pang-prop">.local</span> {
+  <span class="pang-prop">--local-color</span>: <span class="pang-val">#dc2626</span>;
+  <span class="pang-prop">background</span>: <span class="pang-val">var(--local-color)</span>;
+}</div>
+			</div>
+		</section>
+
+		<h2 class="pang_section-title">实战案例</h2>
+		<section class="pang_card-grid" aria-label="实战案例">
+			<div class="pang_card">
+				<h2><code>主题切换</code><span class="pang-tag">常用</span></h2>
+				<p>通过改变量实现深色/浅色主题切换，无需改 CSS。</p>
+				<div class="pang_preview">
+					<div style="display:flex;gap:0.5rem;">
+						<div class="pang_demo-box" style="width:5rem;height:4rem;font-size:0.7rem;--accent:#2563eb;">Light</div>
+						<div class="pang_demo-box" style="width:5rem;height:4rem;font-size:0.7rem;background:#1e293b;">Dark</div>
+					</div>
+				</div>
+				<div class="pang_code-block"><span class="pang-comment">/* 切换主题只需改变量 */</span>
+<span class="pang-prop">[data-theme="dark"]</span> {
+  <span class="pang-prop">--paper</span>: <span class="pang-val">#0f172a</span>;
+  <span class="pang-prop">--ink</span>: <span class="pang-val">#f1f5f9</span>;
+  <span class="pang-prop">--accent</span>: <span class="pang-val">#60a5fa</span>;
+}</div>
+			</div>
+
+			<div class="pang_card">
+				<h2><code>间距系统</code><span class="pang-tag">设计 token</span></h2>
+				<p>用变量管理间距、字号等设计 token，保持一致性。</p>
+				<div class="pang_preview" style="flex-direction:column;gap:0.5rem;">
+					<div style="display:flex;gap:0.5rem;align-items:center;">
+						<div style="width:var(--spacing);height:var(--spacing);background:var(--accent);border-radius:2px;"></div>
+						<span style="font-size:0.8rem;color:var(--muted);">--spacing = 1rem</span>
+					</div>
+					<div style="display:flex;gap:calc(var(--spacing) * 0.5);align-items:center;">
+						<div style="width:calc(var(--spacing) * 0.5);height:calc(var(--spacing) * 0.5);background:var(--accent);border-radius:2px;opacity:0.7;"></div>
+						<span style="font-size:0.8rem;color:var(--muted);">calc(var(--spacing) * 0.5)</span>
+					</div>
+				</div>
+				<div class="pang_code-block"><span class="pang-prop">:root</span> {
+  <span class="pang-prop">--spacing</span>: <span class="pang-val">1rem</span>;
+  <span class="pang-prop">--radius</span>: <span class="pang-val">8px</span>;
+}
+
+<span class="pang-comment">/* 使用 */</span>
+<span class="pang-prop">.card</span> {
+  <span class="pang-prop">padding</span>: <span class="pang-val">var(--spacing)</span>;
+  <span class="pang-prop">border-radius</span>: <span class="pang-val">var(--radius)</span>;
+}</div>
+			</div>
+
+			<div class="pang_card">
+				<h2><code>JS 动态修改</code><span class="pang-tag">交互</span></h2>
+				<p>JavaScript 可以读取和修改变量，实现动态主题。</p>
+				<div class="pang_preview">
+					<div class="pang_demo-box" id="pang_jsBox">JS 控制<span id="pang_jsVal">hue: 220</span></div>
+				</div>
+				<div class="pang_code-block"><span class="pang-comment">/* JS 修改变量 */</span>
+<span class="pang-prop">document</span>.documentElement
+  .style.<span class="pang-prop">setProperty</span>(
+    <span class="pang-val">'--accent'</span>, <span class="pang-val">'#e11d48'</span>
+  );
+
+<span class="pang-comment">/* JS 读取变量 */</span>
+<span class="pang-prop">getComputedStyle</span>(root)
+  .<span class="pang-prop">getPropertyValue</span>(<span class="pang-val">'--accent'</span>);</div>
+			</div>
+		</section>
+
+		<h2 class="pang_section-title">作用域对比</h2>
+		<section class="pang_scope-demo" aria-label="作用域对比">
+			<div class="pang_scope-box">
+				<h3>:root 全局变量</h3>
+				<p>所有元素都可访问</p>
+				<div style="margin-top:0.5rem;padding:0.5rem;background:var(--accent-light);border-radius:var(--radius);font-size:0.8rem;color:var(--accent);">var(--accent-light)</div>
+			</div>
+			<div class="pang_scope-box" style="--accent: #dc2626;">
+				<h3>局部覆盖</h3>
+				<p>仅当前元素及子元素</p>
+				<div style="margin-top:0.5rem;padding:0.5rem;background:#fee2e2;border-radius:var(--radius);font-size:0.8rem;color:#dc2626;">--accent 覆盖为 #dc2626</div>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		const pang_root = document.documentElement;
+		const pang_hueSlider = document.getElementById('pang_accentHue');
+		const pang_hueOutput = document.getElementById('pang_accentHueVal');
+		const pang_radiusSlider = document.getElementById('pang_cardRadius');
+		const pang_radiusOutput = document.getElementById('pang_cardRadiusVal');
+		const pang_jsBox = document.getElementById('pang_jsBox');
+		const pang_jsVal = document.getElementById('pang_jsVal');
+
+		function pang_updateHue() {
+			const pang_hue = pang_hueSlider.value;
+			pang_root.style.setProperty('--accent', 'hsl(' + pang_hue + ', 70%, 50%)');
+			pang_hueOutput.textContent = pang_hue;
+			pang_jsVal.textContent = 'hue: ' + pang_hue;
+		}
+
+		function pang_updateRadius() {
+			const pang_radius = pang_radiusSlider.value;
+			pang_root.style.setProperty('--radius', pang_radius + 'px');
+			pang_radiusOutput.textContent = pang_radius + 'px';
+		}
+
+		pang_hueSlider.addEventListener('input', pang_updateHue);
+		pang_radiusSlider.addEventListener('input', pang_updateRadius);
+		pang_updateHue();
+		pang_updateRadius();
+	</script>
+</body>
+</html>
