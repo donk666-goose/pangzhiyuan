@@ -2,6 +2,14 @@
 
 ---
 
+时间：2026-10-22-16-33
+模型：Copilot SDK（具体模型未提供）
+提示词：新建14-2.html，定义javascript的六种基础数据类型并演示，然后提交项目。
+
+时间：2026-10-22-16-28
+模型：Copilot SDK（具体模型未提供）
+提示词：在agents.md中设置项目规则，所有变量名称、css类、id名称都以pzy_开始，所有html页面中都包括下列注释，注释内容：姓名：庞智元，日期：功能名称。项目使用原生的html、css和javascript实现，图标使用font目录下的iconfont图标，不使用第三方库和cdn，使用fetch获取服务器端数据
+
 时间：2026-10-12-00-00
 模型：longcat-2.5-preview-free
 提示词：在agents.md中设置项目规则 — 所有css类名，id名、js变量都以pang_开始，所有的提示词都在执行之前写入文件pang_prompt.md，以附加的方式写入，不覆盖之前的内容，写入的内容包括时间yyyy-mm-dd-hh-mm、使用的模型、提示词内容。

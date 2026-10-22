@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!-- 姓名：庞智元，日期：功能名称。 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JavaScript 六种传统数据类型介绍与交互演示">
+    <title>JavaScript 六种数据类型 · 庞智元</title>
+    <style>
+        :root {
+            --pzy_ink: #18232b;
+            --pzy_muted: #63717b;
+            --pzy_paper: #f4f3ee;
+            --pzy_card: #fffefa;
+            --pzy_line: #dce0db;
+            --pzy_accent: #087e79;
+            --pzy_accent-light: #e2f2ef;
+            --pzy_shadow: 0 18px 50px rgba(24, 35, 43, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: var(--pzy_ink);
+            background:
+                radial-gradient(circle at 8% 8%, rgba(8, 126, 121, 0.09), transparent 25rem),
+                var(--pzy_paper);
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.65;
+        }
+
+        .pzy_shell {
+            width: min(1080px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .pzy_topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--pzy_line);
+        }
+
+        .pzy_brand {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+        .pzy_home {
+            color: var(--pzy_muted);
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .pzy_home:hover {
+            color: var(--pzy_accent);
+        }
+
+        .pzy_hero {
+            padding: 64px 0 38px;
+        }
+
+        .pzy_eyebrow {
+            margin: 0 0 12px;
+            color: var(--pzy_accent);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            max-width: 720px;
+            margin: 0;
+            font-size: clamp(36px, 7vw, 66px);
+            letter-spacing: -0.06em;
+            line-height: 1.12;
+        }
+
+        .pzy_intro {
+            max-width: 690px;
+            margin: 20px 0 0;
+            color: var(--pzy_muted);
+            font-size: 16px;
+        }
+
+        .pzy_type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            padding: 12px 0 24px;
+        }
+
+        .pzy_type-card {
+            display: flex;
+            min-height: 198px;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 22px;
+            border: 1px solid var(--pzy_line);
+            border-radius: 16px;
+            background: var(--pzy_card);
+            box-shadow: var(--pzy_shadow);
+        }
+
+        .pzy_type-card h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .pzy_example {
+            margin: 14px 0 8px;
+            padding: 6px 10px;
+            border-radius: 7px;
+            color: var(--pzy_accent);
+            background: var(--pzy_accent-light);
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+        }
+
+        .pzy_type-card p {
+            margin: 0;
+            color: var(--pzy_muted);
+            font-size: 13px;
+        }
+
+        .pzy_demo-button {
+            margin-top: auto;
+            padding: 9px 0 0;
+            border: 0;
+            color: var(--pzy_accent);
+            background: transparent;
+            cursor: pointer;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .pzy_demo-button:hover,
+        .pzy_demo-button.pzy_is-active {
+            color: var(--pzy_ink);
+        }
+
+        .pzy_result {
+            margin: 0 0 22px;
+            padding: 24px;
+            border-radius: 18px;
+            color: #effbf9;
+            background: #173d3c;
+            box-shadow: var(--pzy_shadow);
+        }
+
+        .pzy_result-label {
+            margin: 0 0 8px;
+            color: #9ed9d0;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+        }
+
+        .pzy_result h2 {
+            margin: 0 0 14px;
+            font-size: 22px;
+        }
+
+        .pzy_result pre {
+            overflow-x: auto;
+            margin: 0;
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.18);
+            font: 14px/1.7 Consolas, "Courier New", monospace;
+            white-space: pre-wrap;
+        }
+
+        .pzy_note {
+            margin: 0 0 58px;
+            padding: 18px 20px;
+            border-left: 4px solid var(--pzy_accent);
+            color: var(--pzy_muted);
+            background: rgba(255, 254, 250, 0.8);
+            font-size: 14px;
+        }
+
+        .pzy_note strong {
+            color: var(--pzy_ink);
+        }
+
+        @media (max-width: 760px) {
+            .pzy_shell {
+                width: min(100% - 28px, 560px);
+            }
+
+            .pzy_hero {
+                padding-top: 48px;
+            }
+
+            .pzy_type-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pzy_type-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pzy_type-card {
+                min-height: 174px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_shell">
+        <header class="pzy_topbar">
+            <span class="pzy_brand">PZY · JAVASCRIPT</span>
+            <a class="pzy_home" href="index.html">返回作品集 ↗</a>
+        </header>
+
+        <main>
+            <section class="pzy_hero">
+                <p class="pzy_eyebrow">JavaScript 基础</p>
+                <h1>六种数据类型，<br>从值开始认识。</h1>
+                <p class="pzy_intro">传统入门分类包含字符串、数字、布尔值、未定义、空值和对象。点击卡片，查看值、类型判断结果与对应代码。</p>
+            </section>
+
+            <section class="pzy_type-grid" aria-label="六种数据类型">
+                <article class="pzy_type-card">
+                    <h2>字符串 String</h2>
+                    <code class="pzy_example">"你好，JavaScript"</code>
+                    <p>用引号包裹的文本，可以使用单引号、双引号或反引号。</p>
+                    <button class="pzy_demo-button" type="button" data-type="string">查看演示 →</button>
+                </article>
+                <article class="pzy_type-card">
+                    <h2>数字 Number</h2>
+                    <code class="pzy_example">2026</code>
+                    <p>表示整数或小数；传统 Number 类型也包含 NaN 和 Infinity。</p>
+                    <button class="pzy_demo-button" type="button" data-type="number">查看演示 →</button>
+                </article>
+                <article class="pzy_type-card">
+                    <h2>布尔值 Boolean</h2>
+                    <code class="pzy_example">true / false</code>
+                    <p>只有 true 和 false 两个值，常用于条件判断。</p>
+                    <button class="pzy_demo-button" type="button" data-type="boolean">查看演示 →</button>
+                </article>
+                <article class="pzy_type-card">
+                    <h2>未定义 Undefined</h2>
+                    <code class="pzy_example">undefined</code>
+                    <p>变量已声明但尚未赋值时，其值为 undefined。</p>
+                    <button class="pzy_demo-button" type="button" data-type="undefined">查看演示 →</button>
+                </article>
+                <article class="pzy_type-card">
+                    <h2>空值 Null</h2>
+                    <code class="pzy_example">null</code>
+                    <p>表示有意设置的“空”值，常用于清除或预留数据。</p>
+                    <button class="pzy_demo-button" type="button" data-type="null">查看演示 →</button>
+                </article>
+                <article class="pzy_type-card">
+                    <h2>对象 Object</h2>
+                    <code class="pzy_example">{ name: "庞智元" }</code>
+                    <p>以属性组织数据；数组和函数也属于对象相关类型。</p>
+                    <button class="pzy_demo-button" type="button" data-type="object">查看演示 →</button>
+                </article>
+            </section>
+
+            <section class="pzy_result" aria-live="polite">
+                <p class="pzy_result-label">LIVE DEMO</p>
+                <h2 class="pzy_result-title">选择一种类型开始演示</h2>
+                <pre class="pzy_result-output">点击上方任意卡片，查看 JavaScript 控制台输出示例。</pre>
+            </section>
+
+            <aside class="pzy_note">
+                <strong>补充：</strong>以上是常见的传统六种类型分类。现代 JavaScript 还增加了 Symbol 和 BigInt 两种原始类型。另一个容易遇到的细节是：<code>typeof null</code> 的结果是 <code>"object"</code>，这是 JavaScript 保留下来的历史行为。
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        const pzy_demos = {
+            string: {
+                title: "字符串 String",
+                value: "你好，JavaScript",
+                code: 'const pzy_text = "你好，JavaScript";\nconsole.log(typeof pzy_text); // "string"'
+            },
+            number: {
+                title: "数字 Number",
+                value: 2026,
+                code: "const pzy_year = 2026;\nconsole.log(typeof pzy_year); // \"number\""
+            },
+            boolean: {
+                title: "布尔值 Boolean",
+                value: true,
+                code: "const pzy_isReady = true;\nconsole.log(typeof pzy_isReady); // \"boolean\""
+            },
+            undefined: {
+                title: "未定义 Undefined",
+                value: undefined,
+                code: "let pzy_unassigned;\nconsole.log(pzy_unassigned); // undefined\nconsole.log(typeof pzy_unassigned); // \"undefined\""
+            },
+            null: {
+                title: "空值 Null",
+                value: null,
+                code: "const pzy_empty = null;\nconsole.log(pzy_empty); // null\nconsole.log(typeof pzy_empty); // \"object\"（历史行为）"
+            },
+            object: {
+                title: "对象 Object",
+                value: { name: "庞智元", course: "JavaScript" },
+                code: 'const pzy_student = { name: "庞智元", course: "JavaScript" };\nconsole.log(pzy_student.name); // "庞智元"\nconsole.log(typeof pzy_student); // "object"'
+            }
+        };
+        const pzy_buttons = document.querySelectorAll(".pzy_demo-button");
+        const pzy_title = document.querySelector(".pzy_result-title");
+        const pzy_output = document.querySelector(".pzy_result-output");
+
+        function pzy_showDemo(pzy_type) {
+            const pzy_demo = pzy_demos[pzy_type];
+            if (!pzy_demo) {
+                return;
+            }
+            pzy_title.textContent = pzy_demo.title;
+            pzy_output.textContent = pzy_demo.code
+                + "\n\n当前示例值：" + JSON.stringify(pzy_demo.value)
+                + "\ntypeof 结果：" + typeof pzy_demo.value;
+            pzy_buttons.forEach(function (pzy_button) {
+                pzy_button.classList.toggle("pzy_is-active", pzy_button.dataset.type === pzy_type);
+            });
+        }
+
+        pzy_buttons.forEach(function (pzy_button) {
+            pzy_button.addEventListener("click", function () {
+                pzy_showDemo(pzy_button.dataset.type);
+            });
+        });
+    </script>
+</body>
+</html>
