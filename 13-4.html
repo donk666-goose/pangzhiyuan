@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>13-4 · iconfont SVG 图标下导航</title>
+    <script src="cdn/iconfont/iconfont.js"></script>
+    <style>
+        :root {
+            --pang_ink: #17202a;
+            --pang_muted: #9aa3ad;
+            --pang_card: #ffffff;
+            --pang_line: #e8e6e0;
+            --pang_orange: #d85f36;
+            --pang_blue: #1f6686;
+            --pang_red: #f5222d;
+            --pang_nav-h: 56px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--pang_ink);
+            background: #f2f0eb;
+            font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        .pang_svg-sprite {
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .pang_phone {
+            width: min(480px, 100%);
+            min-height: 100vh;
+            margin: 0 auto;
+            background: #f7f5f1;
+            box-shadow: 0 0 40px rgba(33, 43, 52, 0.12);
+            position: relative;
+        }
+
+        .pang_header {
+            padding: 22px 20px 14px;
+            background: var(--pang_card);
+        }
+
+        .pang_header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .pang_header p {
+            margin: 6px 0 0;
+            color: var(--pang_muted);
+            font-size: 13px;
+        }
+
+        .pang_content {
+            padding: 16px 20px calc(var(--pang-nav-h) + env(safe-area-inset-bottom, 0px) + 40px);
+        }
+
+        .pang_tip-card {
+            padding: 16px 18px;
+            border: 1px solid var(--pang_line);
+            border-radius: 12px;
+            background: var(--pang_card);
+            margin-bottom: 14px;
+        }
+
+        .pang_tip-card h2 {
+            margin: 0 0 6px;
+            font-size: 15px;
+            color: var(--pang_blue);
+        }
+
+        .pang_tip-card p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--pang_muted);
+        }
+
+        .pang_placeholder {
+            height: 110px;
+            border: 1px dashed var(--pang_line);
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: var(--pang_muted);
+            font-size: 13px;
+            margin-bottom: 14px;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .pang_nav {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            display: flex;
+            width: 100%;
+            background: var(--pang_card);
+            border-top: 1px solid var(--pang_line);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            box-shadow: 0 -4px 20px rgba(33, 43, 52, 0.06);
+        }
+
+        .pang_nav-item {
+            position: relative;
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: var(--pang-nav-h);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            color: var(--pang_muted);
+            text-decoration: none;
+            font-size: 11px;
+            transition: color 180ms ease;
+        }
+
+        .pang_nav-item .pang_nav-icon {
+            width: 24px;
+            height: 24px;
+            display: block;
+        }
+
+        .pang_nav-item.pang_active {
+            color: var(--pang_orange);
+        }
+
+        .pang_badge {
+            position: absolute;
+            top: -6px;
+            right: -14px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 9px;
+            background: var(--pang_red);
+            color: #fff;
+            font-size: 10px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 17px;
+            text-align: center;
+            box-shadow: 0 0 0 2px var(--pang_card);
+        }
+
+        .pang_badge.pang_badge-over {
+            padding: 0 5px;
+            font-size: 9px;
+        }
+
+        .pang_dot {
+            position: absolute;
+            top: -3px;
+            right: -5px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--pang_red);
+            box-shadow: 0 0 0 2px var(--pang_card);
+        }
+
+        .pang_nav-item:active {
+            background: rgba(216, 95, 54, 0.06);
+        }
+    </style>
+</head>
+<body>
+    <div class="pang_svg-sprite" id="pang_svg-sprite" aria-hidden="true"></div>
+
+    <div class="pang_phone">
+        <header class="pang_header">
+            <h1>SVG 图标下导航</h1>
+            <p>iconfont SVG symbol 方案 · 全屏宽度 · 移动端自适应</p>
+        </header>
+
+        <main class="pang_content">
+            <div class="pang_tip-card">
+                <h2>实现要点</h2>
+                <p>加载 iconfont.js 获得 SVG symbol 集合，注入页面后通过 &lt;svg&gt;&lt;use href="#icon-xxx"&gt;&lt;/use&gt;&lt;/svg&gt; 引用图标。</p>
+            </div>
+            <div class="pang_tip-card">
+                <h2>数字徽章</h2>
+                <p>视频项右上角显示数字徽章 8，音乐项显示 99+ 溢出样式，均为纯 CSS 绝对定位实现。</p>
+            </div>
+            <div class="pang_tip-card">
+                <h2>红点提醒</h2>
+                <p>我的项右上角显示小红点，表示有新消息或待处理事项。</p>
+            </div>
+            <div class="pang_placeholder">页面内容区域</div>
+            <div class="pang_placeholder">向下滚动时导航保持固定</div>
+            <div class="pang_placeholder">内容区域</div>
+        </main>
+
+        <nav class="pang_nav" aria-label="底部导航">
+            <a class="pang_nav-item pang_active" href="13-4.html">
+                <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-shouye-shouye"></use></svg>
+                <span>首页</span>
+            </a>
+            <a class="pang_nav-item" href="13-4.html">
+                <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-shipin"></use><em class="pang_badge">8</em></svg>
+                <span>视频</span>
+            </a>
+            <a class="pang_nav-item" href="13-4.html">
+                <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-yinle"></use><em class="pang_badge pang_badge-over">99+</em></svg>
+                <span>音乐</span>
+            </a>
+            <a class="pang_nav-item" href="13-4.html">
+                <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-denglu"></use><i class="pang_dot"></i></svg>
+                <span>我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        document.getElementById('pang_svg-sprite').innerHTML = window._iconfont_svg_string_5244830;
+    </script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13-2 · Lucide SVG 图标</title>
+    <script src="cdn/lucide/lucide.js"></script>
+    <style>
+        :root {
+            --pang_ink: #17202a;
+            --pang_muted: #68737d;
+            --pang_paper: #f6f3ed;
+            --pang_card: #fffdf8;
+            --pang_line: #ddd8cc;
+            --pang_orange: #d85f36;
+            --pang_blue: #1f6686;
+            --pang_green: #2f7d5b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--pang_ink);
+            background: var(--pang_paper);
+            font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        .pang_shell {
+            width: min(1100px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 60px 0 80px;
+        }
+
+        .pang_head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--pang_ink);
+        }
+
+        .pang_head h1 {
+            margin: 0;
+            font-size: 34px;
+        }
+
+        .pang_head a {
+            color: var(--pang_muted);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .pang_head a:hover {
+            color: var(--pang_orange);
+        }
+
+        .pang_intro {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 34px 0 44px;
+        }
+
+        .pang_intro_card {
+            padding: 20px 22px;
+            border: 1px solid var(--pang_line);
+            background: var(--pang_card);
+        }
+
+        .pang_intro_card h2 {
+            margin: 0 0 8px;
+            font-size: 15px;
+            color: var(--pang_blue);
+        }
+
+        .pang_intro_card p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--pang_muted);
+        }
+
+        .pang_section-title {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin: 0 0 18px;
+        }
+
+        .pang_section-title h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .pang_section-title span {
+            color: var(--pang_muted);
+            font-size: 13px;
+        }
+
+        .pang_grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
+            margin-bottom: 46px;
+        }
+
+        .pang_icon-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 10px 16px;
+            border: 1px solid var(--pang_line);
+            background: var(--pang_card);
+            text-align: center;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
+
+        .pang_icon-card:hover {
+            border-color: var(--pang_ink);
+            box-shadow: 0 12px 28px rgba(33, 43, 52, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .pang_icon-card svg {
+            width: 34px;
+            height: 34px;
+            color: var(--pang_blue);
+            transition: color 180ms ease;
+        }
+
+        .pang_icon-card:hover svg {
+            color: var(--pang_orange);
+        }
+
+        .pang_icon-card .pang_icon-name {
+            font-size: 12px;
+            color: var(--pang_muted);
+            word-break: break-all;
+        }
+
+        .pang_demo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 34px;
+            padding: 38px 20px;
+            border: 1px dashed var(--pang_line);
+            background: var(--pang_card);
+            margin-bottom: 46px;
+        }
+
+        .pang_demo-item {
+            text-align: center;
+        }
+
+        .pang_demo-item svg {
+            width: 44px;
+            height: 44px;
+            color: var(--pang_orange);
+        }
+
+        .pang_demo-item span {
+            display: block;
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--pang_muted);
+        }
+
+        .pang_sizes {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            padding: 34px 20px;
+            border: 1px solid var(--pang_line);
+            background: var(--pang_card);
+            margin-bottom: 46px;
+        }
+
+        .pang_size-row {
+            display: flex;
+            align-items: center;
+            gap: 26px;
+        }
+
+        .pang_size-row svg {
+            color: var(--pang_blue);
+        }
+
+        .pang_size-label {
+            color: var(--pang_muted);
+            font-size: 13px;
+        }
+
+        .pang_color-row {
+            display: flex;
+            align-items: center;
+            gap: 26px;
+        }
+
+        .pang_color-row svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .pang_compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .pang_compare-card {
+            padding: 26px;
+            border: 1px solid var(--pang_line);
+            background: var(--pang_card);
+        }
+
+        .pang_compare-card h3 {
+            margin: 0 0 10px;
+            font-size: 17px;
+            color: var(--pang_green);
+        }
+
+        .pang_compare-card p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--pang_muted);
+        }
+
+        .pang_footer {
+            margin-top: 44px;
+            padding-top: 18px;
+            border-top: 1px solid var(--pang_line);
+            color: var(--pang_muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 780px) {
+            .pang_grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .pang_intro,
+            .pang_compare {
+                grid-template-columns: 1fr;
+            }
+
+            .pang_demo {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pang_shell">
+        <header class="pang_head">
+            <h1>Lucide SVG 图标</h1>
+            <a href="index.html">← 返回作品集</a>
+        </header>
+
+        <section class="pang_intro">
+            <div class="pang_intro_card">
+                <h2>SVG 图标原理</h2>
+                <p>通过 JS 将 data-lucide 属性替换为内联 SVG 代码，图标直接嵌入 DOM。</p>
+            </div>
+            <div class="pang_intro_card">
+                <h2>本地方案</h2>
+                <p>lucide.js 已下载至本地 cdn 目录，离线可用，渲染后无任何外部请求。</p>
+            </div>
+            <div class="pang_intro_card">
+                <h2>使用方式</h2>
+                <p>为元素添加 data-lucide 属性，如 &lt;i data-lucide="star"&gt;，JS 自动转为 SVG。</p>
+            </div>
+        </section>
+
+        <div class="pang_section-title">
+            <h2>常用图标</h2>
+            <span>Lucide 图标集 · 悬停查看效果</span>
+        </div>
+        <div class="pang_grid">
+            <div class="pang_icon-card"><i data-lucide="home"></i><span class="pang_icon-name">home</span></div>
+            <div class="pang_icon-card"><i data-lucide="search"></i><span class="pang_icon-name">search</span></div>
+            <div class="pang_icon-card"><i data-lucide="heart"></i><span class="pang_icon-name">heart</span></div>
+            <div class="pang_icon-card"><i data-lucide="star"></i><span class="pang_icon-name">star</span></div>
+            <div class="pang_icon-card"><i data-lucide="user"></i><span class="pang_icon-name">user</span></div>
+            <div class="pang_icon-card"><i data-lucide="settings"></i><span class="pang_icon-name">settings</span></div>
+            <div class="pang_icon-card"><i data-lucide="mail"></i><span class="pang_icon-name">mail</span></div>
+            <div class="pang_icon-card"><i data-lucide="bell"></i><span class="pang_icon-name">bell</span></div>
+            <div class="pang_icon-card"><i data-lucide="camera"></i><span class="pang_icon-name">camera</span></div>
+            <div class="pang_icon-card"><i data-lucide="music"></i><span class="pang_icon-name">music</span></div>
+            <div class="pang_icon-card"><i data-lucide="shopping-cart"></i><span class="pang_icon-name">shopping-cart</span></div>
+            <div class="pang_icon-card"><i data-lucide="phone"></i><span class="pang_icon-name">phone</span></div>
+            <div class="pang_icon-card"><i data-lucide="map-pin"></i><span class="pang_icon-name">map-pin</span></div>
+            <div class="pang_icon-card"><i data-lucide="calendar"></i><span class="pang_icon-name">calendar</span></div>
+            <div class="pang_icon-card"><i data-lucide="cloud"></i><span class="pang_icon-name">cloud</span></div>
+            <div class="pang_icon-card"><i data-lucide="lock"></i><span class="pang_icon-name">lock</span></div>
+            <div class="pang_icon-card"><i data-lucide="book"></i><span class="pang_icon-name">book</span></div>
+            <div class="pang_icon-card"><i data-lucide="pen"></i><span class="pang_icon-name">pen</span></div>
+            <div class="pang_icon-card"><i data-lucide="image"></i><span class="pang_icon-name">image</span></div>
+            <div class="pang_icon-card"><i data-lucide="car"></i><span class="pang_icon-name">car</span></div>
+            <div class="pang_icon-card"><i data-lucide="plane"></i><span class="pang_icon-name">plane</span></div>
+            <div class="pang_icon-card"><i data-lucide="utensils"></i><span class="pang_icon-name">utensils</span></div>
+            <div class="pang_icon-card"><i data-lucide="zap"></i><span class="pang_icon-name">zap</span></div>
+            <div class="pang_icon-card"><i data-lucide="flame"></i><span class="pang_icon-name">flame</span></div>
+            <div class="pang_icon-card"><i data-lucide="thumbs-up"></i><span class="pang_icon-name">thumbs-up</span></div>
+        </div>
+
+        <div class="pang_section-title">
+            <h2>描边样式</h2>
+            <span>stroke-width · 颜色 · 尺寸完全可控</span>
+        </div>
+        <div class="pang_demo">
+            <div class="pang_demo-item"><i data-lucide="star"></i><span>默认描边</span></div>
+            <div class="pang_demo-item"><i data-lucide="star" data-stroke-width="1"></i><span>细描边 1</span></div>
+            <div class="pang_demo-item"><i data-lucide="star" data-stroke-width="3"></i><span>粗描边 3</span></div>
+            <div class="pang_demo-item"><i data-lucide="star" data-color="#d85f36"></i><span>自定义颜色</span></div>
+            <div class="pang_demo-item"><i data-lucide="heart" data-fill="#d85f36"></i><span>填充色</span></div>
+        </div>
+
+        <div class="pang_sizes">
+            <div class="pang_size-row">
+                <i data-lucide="star" data-size="16"></i>
+                <i data-lucide="star" data-size="24"></i>
+                <i data-lucide="star" data-size="32"></i>
+                <i data-lucide="star" data-size="48"></i>
+                <i data-lucide="star" data-size="64"></i>
+                <span class="pang_size-label">16 · 24 · 32 · 48 · 64 px</span>
+            </div>
+            <div class="pang_color-row">
+                <i data-lucide="heart" data-color="#d85f36"></i>
+                <i data-lucide="heart" data-color="#1f6686"></i>
+                <i data-lucide="heart" data-color="#2f7d5b"></i>
+                <i data-lucide="heart" data-color="#edc95b"></i>
+                <span class="pang_size-label">CSS 颜色随意指定</span>
+            </div>
+        </div>
+
+        <div class="pang_section-title">
+            <h2>两种方案对比</h2>
+        </div>
+        <div class="pang_compare">
+            <div class="pang_compare-card">
+                <h3>Font Awesome（字体图标）</h3>
+                <p>依赖字体文件与伪元素，类名即图标；缩放不失真，但颜色只能整体控制，无法描边。</p>
+            </div>
+            <div class="pang_compare-card">
+                <h3>Lucide（SVG 图标）</h3>
+                <p>内联 SVG 直接嵌入 DOM，可用 CSS 精确控制颜色、描边、尺寸，支持动画与组合。</p>
+            </div>
+        </div>
+
+        <footer class="pang_footer">Lucide · 本地 JS 文件 · 13-2 SVG 图标练习</footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

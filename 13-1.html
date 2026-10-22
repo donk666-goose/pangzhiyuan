@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13-1 · Font Awesome 字体图标</title>
+    <link rel="stylesheet" href="cdn/fontawesome/css/all.min.css">
+    <style>
+        :root {
+            --pang_ink: #17202a;
+            --pang_muted: #68737d;
+            --pang_paper: #f6f3ed;
+            --pang_card: #fffdf8;
+            --pang_line: #ddd8cc;
+            --pang_orange: #d85f36;
+            --pang_blue: #1f6686;
+            --pang_yellow: #edc95b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--pang_ink);
+            background: var(--pang_paper);
+            font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        .pang_shell {
+            width: min(1100px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 60px 0 80px;
+        }
+
+        .pang_head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--pang_ink);
+        }
+
+        .pang_head h1 {
+            margin: 0;
+            font-size: 34px;
+        }
+
+        .pang_head a {
+            color: var(--pang_muted);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .pang_head a:hover {
+            color: var(--pang_orange);
+        }
+
+        .pang_intro {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 34px 0 44px;
+        }
+
+        .pang_intro_card {
+            padding: 20px 22px;
+            border: 1px solid var(--pang_line);
+            background: var(--pang_card);
+        }
+
+        .pang_intro_card h2 {
+            margin: 0 0 8px;
+            font-size: 15px;
+            color: var(--pang_blue);
+        }
+
+        .pang_intro_card p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--pang_muted);
+        }
+
+        .pang_section-title {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin: 0 0 18px;
+        }
+
+        .pang_section-title h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .pang_section-title span {
+            color: var(--pang_muted);
+            font-size: 13px;
+        }
+
+        .pang_grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
+            margin-bottom: 46px;
+        }
+
+        .pang_icon-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 10px 16px;
+            border: 1px solid var(--pang_line);
+            background: var(--pang_card);
+            text-align: center;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
+
+        .pang_icon-card:hover {
+            border-color: var(--pang_ink);
+            box-shadow: 0 12px 28px rgba(33, 43, 52, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .pang_icon-card i {
+            font-size: 34px;
+            color: var(--pang_blue);
+        }
+
+        .pang_icon-card:hover i {
+            color: var(--pang_orange);
+        }
+
+        .pang_icon-card .pang_icon-name {
+            font-size: 12px;
+            color: var(--pang_muted);
+            word-break: break-all;
+        }
+
+        .pang_demo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 26px;
+            padding: 38px 20px;
+            border: 1px dashed var(--pang_line);
+            background: var(--pang_card);
+            margin-bottom: 46px;
+        }
+
+        .pang_demo-item {
+            text-align: center;
+        }
+
+        .pang_demo-item i {
+            display: block;
+            font-size: 46px;
+            color: var(--pang_orange);
+        }
+
+        .pang_demo-item span {
+            display: block;
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--pang_muted);
+        }
+
+        .pang_sizes {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 34px;
+            padding: 34px 20px;
+            border: 1px solid var(--pang_line);
+            background: var(--pang_card);
+        }
+
+        .pang_sizes .pang_size-row {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+        }
+
+        .pang_sizes i {
+            color: var(--pang_blue);
+        }
+
+        .pang_sizes .pang_size-label {
+            color: var(--pang_muted);
+            font-size: 13px;
+        }
+
+        .pang_footer {
+            margin-top: 44px;
+            padding-top: 18px;
+            border-top: 1px solid var(--pang_line);
+            color: var(--pang_muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 780px) {
+            .pang_grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .pang_intro {
+                grid-template-columns: 1fr;
+            }
+
+            .pang_demo {
+                flex-wrap: wrap;
+            }
+
+            .pang_sizes {
+                flex-direction: column;
+                gap: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pang_shell">
+        <header class="pang_head">
+            <h1>Font Awesome 字体图标</h1>
+            <a href="index.html">← 返回作品集</a>
+        </header>
+
+        <section class="pang_intro">
+            <div class="pang_intro_card">
+                <h2>字体图标原理</h2>
+                <p>通过 @font-face 加载字体文件，用 CSS 伪元素 ::before 将字符映射为图标字形。</p>
+            </div>
+            <div class="pang_intro_card">
+                <h2>本地方案</h2>
+                <p>CSS 与字体文件均下载至本地 cdn 目录，离线可用，不依赖外部网络。</p>
+            </div>
+            <div class="pang_intro_card">
+                <h2>使用方式</h2>
+                <p>为元素添加类名，如 &lt;i class="fa-solid fa-star"&gt;，图标即自动渲染。</p>
+            </div>
+        </section>
+
+        <div class="pang_section-title">
+            <h2>常用图标</h2>
+            <span>fa-solid 系列 · 悬停查看效果</span>
+        </div>
+        <div class="pang_grid">
+            <div class="pang_icon-card"><i class="fa-solid fa-house"></i><span class="pang_icon-name">house</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-magnifying-glass"></i><span class="pang_icon-name">magnifying-glass</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-heart"></i><span class="pang_icon-name">heart</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-star"></i><span class="pang_icon-name">star</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-user"></i><span class="pang_icon-name">user</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-gear"></i><span class="pang_icon-name">gear</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-envelope"></i><span class="pang_icon-name">envelope</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-bell"></i><span class="pang_icon-name">bell</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-camera"></i><span class="pang_icon-name">camera</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-music"></i><span class="pang_icon-name">music</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-cart-shopping"></i><span class="pang_icon-name">cart-shopping</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-phone"></i><span class="pang_icon-name">phone</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-location-dot"></i><span class="pang_icon-name">location-dot</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-calendar-days"></i><span class="pang_icon-name">calendar-days</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-cloud"></i><span class="pang_icon-name">cloud</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-lock"></i><span class="pang_icon-name">lock</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-book"></i><span class="pang_icon-name">book</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-pen"></i><span class="pang_icon-name">pen</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-image"></i><span class="pang_icon-name">image</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-car"></i><span class="pang_icon-name">car</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-plane"></i><span class="pang_icon-name">plane</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-utensils"></i><span class="pang_icon-name">utensils</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-bolt"></i><span class="pang_icon-name">bolt</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-fire"></i><span class="pang_icon-name">fire</span></div>
+            <div class="pang_icon-card"><i class="fa-solid fa-thumbs-up"></i><span class="pang_icon-name">thumbs-up</span></div>
+        </div>
+
+        <div class="pang_section-title">
+            <h2>动画效果</h2>
+            <span>fa-spin · fa-beat · fa-bounce</span>
+        </div>
+        <div class="pang_demo">
+            <div class="pang_demo-item"><i class="fa-solid fa-circle-notch fa-spin"></i><span>fa-spin 旋转加载</span></div>
+            <div class="pang_demo-item"><i class="fa-solid fa-heart fa-beat"></i><span>fa-beat 心跳</span></div>
+            <div class="pang_demo-item"><i class="fa-solid fa-bell fa-shake"></i><span>fa-shake 摇晃</span></div>
+            <div class="pang_demo-item"><i class="fa-solid fa-star fa-bounce"></i><span>fa-bounce 弹跳</span></div>
+            <div class="pang_demo-item"><i class="fa-solid fa-gear fa-spin fa-spin-reverse"></i><span>fa-spin-reverse 反转</span></div>
+        </div>
+
+        <div class="pang_section-title">
+            <h2>尺寸缩放</h2>
+            <span>fa-xs → fa-2x</span>
+        </div>
+        <div class="pang_sizes">
+            <div class="pang_size-row">
+                <i class="fa-solid fa-star fa-xs"></i>
+                <i class="fa-solid fa-star fa-sm"></i>
+                <i class="fa-solid fa-star fa-lg"></i>
+                <i class="fa-solid fa-star fa-xl"></i>
+                <i class="fa-solid fa-star fa-2x"></i>
+                <span class="pang_size-label">XS · SM · LG · XL · 2X</span>
+            </div>
+        </div>
+
+        <footer class="pang_footer">Font Awesome 6.5.2 Free · 本地字体文件 · 13-1 字体图标练习</footer>
+    </div>
+</body>
+</html>

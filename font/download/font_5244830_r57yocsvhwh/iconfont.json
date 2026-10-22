@@ -1,0 +1,58 @@
+{
+  "id": "5244830",
+  "name": "pzy2026",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1029",
+      "name": "音乐",
+      "font_class": "yinle",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "658035",
+      "name": "钱",
+      "font_class": "qian",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "4942661",
+      "name": "视频",
+      "font_class": "shipin",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "11227018",
+      "name": "3-数据-匹配",
+      "font_class": "-shuju-pipei",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "12047521",
+      "name": "星光",
+      "font_class": "xingguang",
+      "unicode": "e686",
+      "unicode_decimal": 59014
+    },
+    {
+      "icon_id": "27993652",
+      "name": "首页",
+      "font_class": "shouye-shouye",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "1312041",
+      "name": "我的",
+      "font_class": "denglu",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    }
+  ]
+}

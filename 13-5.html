@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>13-5 · iconfont SVG 下导航（庞智元 23001010304）</title>
+    <script src="cdn/iconfont/iconfont.js"></script>
+    <style>
+        /* ===== 全局设计变量 ===== */
+        :root {
+            --pang_ink: #17202a;
+            --pang_muted: #9aa3ad;
+            --pang_card: #ffffff;
+            --pang_line: #e8e6e0;
+            --pang_paper: #f2f0eb;
+            --pang_app-bg: #f7f5f1;
+            --pang_orange: #d85f36;
+            --pang_blue: #1f6686;
+            --pang_red: #f5222d;
+            --pang_nav-h: 58px;
+            --pang_radius: 12px;
+            --pang_font: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+        }
+
+        /* ===== 全局重置 ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: var(--pang_font);
+            color: var(--pang_ink);
+            background: var(--pang_paper);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        svg {
+            display: block;
+        }
+
+        /* ===== 全局布局 ===== */
+        .pang_svg-sprite {
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .pang_phone {
+            position: relative;
+            width: min(480px, 100%);
+            min-height: 100vh;
+            margin: 0 auto;
+            background: var(--pang_app-bg);
+            box-shadow: 0 0 40px rgba(33, 43, 52, 0.12);
+        }
+
+        /* ===== 全局头部 ===== */
+        .pang_header {
+            padding: 24px 20px 16px;
+            background: var(--pang_card);
+        }
+
+        .pang_header h1 {
+            font-size: 20px;
+        }
+
+        .pang_header .pang_sub {
+            margin-top: 4px;
+            color: var(--pang_muted);
+            font-size: 13px;
+        }
+
+        /* ===== 全局内容区 ===== */
+        .pang_content {
+            padding: 16px 20px calc(var(--pang-nav-h) + env(safe-area-inset-bottom, 0px) + 40px);
+        }
+
+        .pang_card {
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            border: 1px solid var(--pang_line);
+            border-radius: var(--pang_radius);
+            background: var(--pang_card);
+        }
+
+        .pang_card h2 {
+            margin-bottom: 6px;
+            font-size: 15px;
+            color: var(--pang_blue);
+        }
+
+        .pang_card p {
+            font-size: 13px;
+            color: var(--pang_muted);
+        }
+
+        .pang_placeholder {
+            display: grid;
+            place-items: center;
+            height: 100px;
+            margin-bottom: 14px;
+            border: 1px dashed var(--pang_line);
+            border-radius: var(--pang_radius);
+            color: var(--pang_muted);
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ===== 全局底部导航 ===== */
+        .pang_nav {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            width: 100%;
+            background: var(--pang_card);
+            border-top: 1px solid var(--pang_line);
+            box-shadow: 0 -4px 20px rgba(33, 43, 52, 0.06);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        .pang_nav-item {
+            position: relative;
+            display: flex;
+            flex: 1 1 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            min-width: 0;
+            height: var(--pang-nav-h);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            color: var(--pang_muted);
+            font-size: 11px;
+            transition: color 180ms ease, background 180ms ease;
+        }
+
+        .pang_nav-item .pang_nav-icon {
+            width: 24px;
+            height: 24px;
+            transition: transform 180ms ease;
+        }
+
+        .pang_nav-icon path,
+        .pang_nav-icon circle,
+        .pang_nav-icon rect {
+            fill: currentColor;
+        }
+
+        .pang_nav-item.pang_active {
+            color: var(--pang_orange);
+        }
+
+        .pang_nav-item:active {
+            background: rgba(216, 95, 54, 0.06);
+        }
+
+        .pang_nav-item:active .pang_nav-icon {
+            transform: scale(0.88);
+        }
+
+        /* ===== 全局徽章与红点 ===== */
+        .pang_nav-icon-box {
+            position: relative;
+            display: block;
+            line-height: 1;
+        }
+
+        .pang_badge {
+            position: absolute;
+            top: -7px;
+            right: -16px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 5px;
+            border-radius: 9px;
+            background: var(--pang_red);
+            color: #fff;
+            font-size: 10px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 17px;
+            text-align: center;
+            box-shadow: 0 0 0 2px var(--pang_card);
+        }
+
+        .pang_badge.pang_badge-over {
+            font-size: 9px;
+            letter-spacing: -0.5px;
+        }
+
+        .pang_dot {
+            position: absolute;
+            top: -4px;
+            right: -5px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--pang_red);
+            box-shadow: 0 0 0 2px var(--pang_card);
+        }
+
+        /* ===== 全局页脚 ===== */
+        .pang_footer {
+            padding: 18px 20px calc(var(--pang-nav-h) + env(safe-area-inset-bottom, 0px) + 24px);
+            color: var(--pang_muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .pang_footer .pang_author {
+            color: var(--pang_ink);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- 作者：庞智元 · 学号：23001010304 · 《高级网页设计》课堂练习 13-5 -->
+    <div class="pang_svg-sprite" aria-hidden="true"></div>
+
+    <div class="pang_phone">
+        <header class="pang_header">
+            <h1>iconfont SVG 下导航</h1>
+            <p class="pang_sub">庞智元（23001010304）· SVG symbol 引用 · 全屏固定 · 移动端自适应</p>
+        </header>
+
+        <main class="pang_content">
+            <section class="pang_card">
+                <h2>实现方式</h2>
+                <p>加载 iconfont.js 得到 SVG symbol 集合注入页面，通过 &lt;svg&gt;&lt;use href="#icon-xxx"&gt;&lt;/use&gt;&lt;/svg&gt; 引用图标，CSS 设 fill: currentColor 实现随文字变色。</p>
+            </section>
+            <section class="pang_card">
+                <h2>全局 CSS 设计</h2>
+                <p>以 CSS 自定义属性统一管理设计变量，重置全局盒模型与基础样式，导航、卡片、按钮等全部使用 class 选择器，未使用任何 id 选择器。</p>
+            </section>
+            <section class="pang_card">
+                <h2>五个导航项</h2>
+                <p>首页、视频、刷歌、星光、我的，分别对应 icon-shouye-shouye、icon-shipin、icon-yinle、icon-xingguang、icon-denglu。</p>
+            </section>
+            <section class="pang_card">
+                <h2>数字徽章与红点</h2>
+                <p>视频项右上角显示数字徽章 8，刷歌项显示 99+ 溢出样式；星光与我的项右上角显示红色小圆点，提示新消息。</p>
+            </section>
+            <div class="pang_placeholder">页面内容区域</div>
+            <div class="pang_placeholder">滚动时导航保持固定</div>
+            <div class="pang_placeholder">内容区域</div>
+
+            <footer class="pang_footer">
+                <span class="pang_author">庞智元</span> · 学号 23001010304 · 《高级网页设计》课堂实践 13-5
+            </footer>
+        </main>
+
+        <nav class="pang_nav" aria-label="底部导航">
+            <a class="pang_nav-item pang_active" href="13-5.html">
+                <span class="pang_nav-icon-box">
+                    <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-shouye-shouye"></use></svg>
+                </span>
+                <span>首页</span>
+            </a>
+            <a class="pang_nav-item" href="13-5.html">
+                <span class="pang_nav-icon-box">
+                    <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-shipin"></use></svg>
+                    <em class="pang_badge">8</em>
+                </span>
+                <span>视频</span>
+            </a>
+            <a class="pang_nav-item" href="13-5.html">
+                <span class="pang_nav-icon-box">
+                    <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-yinle"></use></svg>
+                    <em class="pang_badge pang_badge-over">99+</em>
+                </span>
+                <span>刷歌</span>
+            </a>
+            <a class="pang_nav-item" href="13-5.html">
+                <span class="pang_nav-icon-box">
+                    <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-xingguang"></use></svg>
+                    <i class="pang_dot"></i>
+                </span>
+                <span>星光</span>
+            </a>
+            <a class="pang_nav-item" href="13-5.html">
+                <span class="pang_nav-icon-box">
+                    <svg class="pang_nav-icon" aria-hidden="true"><use href="#icon-denglu"></use></svg>
+                    <i class="pang_dot"></i>
+                </span>
+                <span>我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        document.querySelector('.pang_svg-sprite').innerHTML = window._iconfont_svg_string_5244830;
+    </script>
+</body>
+</html>
