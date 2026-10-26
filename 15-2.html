@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 程序结构 · 条件与循环</title>
+    <!-- 姓名：庞智元，日期：JavaScript程序结构演示。 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #ecfeff 100%);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .pzy_page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px 30px;
+        }
+
+        .pzy_header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .pzy_header h1 {
+            font-size: 28px;
+            color: #4338ca;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .pzy_header p {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        .pzy_section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(51, 65, 85, 0.06);
+            padding: 24px;
+            margin-bottom: 22px;
+        }
+
+        .pzy_section h2 {
+            font-size: 20px;
+            color: #4338ca;
+            border-left: 4px solid #818cf8;
+            padding-left: 10px;
+            margin-bottom: 18px;
+        }
+
+        .pzy_demo {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .pzy_demo:last-child {
+            margin-bottom: 0;
+        }
+
+        .pzy_demo h3 {
+            font-size: 15px;
+            color: #334155;
+            margin-bottom: 12px;
+        }
+
+        .pzy_row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pzy_row input,
+        .pzy_row select {
+            padding: 8px 12px;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            width: 180px;
+        }
+
+        .pzy_row input:focus,
+        .pzy_row select:focus {
+            border-color: #4338ca;
+        }
+
+        .pzy_btn {
+            padding: 8px 18px;
+            background: #4338ca;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .pzy_btn:hover {
+            background: #3730a3;
+        }
+
+        .pzy_result {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #0f766e;
+            background: #ecfeff;
+            border: 1px dashed #67e8f9;
+            border-radius: 8px;
+            padding: 10px 12px;
+            min-height: 40px;
+            line-height: 1.7;
+            word-break: break-all;
+        }
+
+        .pzy_table {
+            margin-top: 14px;
+        }
+
+        .pzy_table_row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .pzy_table_cell {
+            background: #e0e7ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 12px;
+            color: #3730a3;
+            white-space: nowrap;
+        }
+
+        .pzy_footer {
+            text-align: center;
+            margin-top: 26px;
+            padding: 16px 0 6px;
+            font-size: 15px;
+            color: #64748b;
+            letter-spacing: 1px;
+        }
+
+        .pzy_footer strong {
+            color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_page">
+        <header class="pzy_header">
+            <h1>JavaScript 程序结构 · 条件与循环</h1>
+            <p>条件分支：<strong>if / else if / else</strong>、<strong>switch</strong>；循环：<strong>for</strong>、<strong>while</strong>、<strong>do-while</strong> 与 <strong>break / continue</strong>。</p>
+        </header>
+
+        <section class="pzy_section">
+            <h2>一、条件结构</h2>
+
+            <div class="pzy_demo">
+                <h3>1. if / else if / else —— 成绩等级判断</h3>
+                <div class="pzy_row">
+                    <input id="pzy_scoreInput" type="number" min="0" max="100" placeholder="输入成绩 0~100">
+                    <button class="pzy_btn" onclick="pzy_checkScore()">判断等级</button>
+                </div>
+                <p class="pzy_result" id="pzy_scoreResult">等待输入…</p>
+            </div>
+
+            <div class="pzy_demo">
+                <h3>2. switch —— 星期查询</h3>
+                <div class="pzy_row">
+                    <select id="pzy_daySelect">
+                        <option value="1">数字 1</option>
+                        <option value="2">数字 2</option>
+                        <option value="3">数字 3</option>
+                        <option value="4">数字 4</option>
+                        <option value="5">数字 5</option>
+                        <option value="6">数字 6</option>
+                        <option value="7">数字 7</option>
+                        <option value="8">数字 8（无效）</option>
+                    </select>
+                    <button class="pzy_btn" onclick="pzy_checkDay()">switch 查询</button>
+                </div>
+                <p class="pzy_result" id="pzy_dayResult">等待选择…</p>
+            </div>
+        </section>
+
+        <section class="pzy_section">
+            <h2>二、循环结构</h2>
+
+            <div class="pzy_demo">
+                <h3>1. for —— 1~100 累加求和</h3>
+                <div class="pzy_row">
+                    <button class="pzy_btn" onclick="pzy_runFor()">运行 for 循环</button>
+                </div>
+                <p class="pzy_result" id="pzy_forResult">未运行</p>
+            </div>
+
+            <div class="pzy_demo">
+                <h3>2. while —— 输出 1~20 中的偶数</h3>
+                <div class="pzy_row">
+                    <button class="pzy_btn" onclick="pzy_runWhile()">运行 while 循环</button>
+                </div>
+                <p class="pzy_result" id="pzy_whileResult">未运行</p>
+            </div>
+
+            <div class="pzy_demo">
+                <h3>3. do-while + break / continue —— 从 1 数到 10（continue 跳过 5，break 在 8 停止）</h3>
+                <div class="pzy_row">
+                    <button class="pzy_btn" onclick="pzy_runDoWhile()">运行 do-while 循环</button>
+                </div>
+                <p class="pzy_result" id="pzy_doWhileResult">未运行</p>
+            </div>
+
+            <div class="pzy_demo">
+                <h3>4. 嵌套 for —— 九九乘法表</h3>
+                <div class="pzy_row">
+                    <button class="pzy_btn" onclick="pzy_runTable()">生成乘法表</button>
+                </div>
+                <div class="pzy_table" id="pzy_tableBox"></div>
+            </div>
+        </section>
+
+        <footer class="pzy_footer">制作：<strong>庞智元</strong></footer>
+    </div>
+
+    <script>
+        // 条件结构：if / else if / else
+        function pzy_checkScore() {
+            var pzy_score = Number(document.getElementById('pzy_scoreInput').value);
+            var pzy_msg = '';
+            if (isNaN(pzy_score) || pzy_score < 0 || pzy_score > 100) {
+                pzy_msg = '请输入 0~100 之间的有效成绩！';
+            } else if (pzy_score >= 90) {
+                pzy_msg = pzy_score + ' 分：优秀';
+            } else if (pzy_score >= 80) {
+                pzy_msg = pzy_score + ' 分：良好';
+            } else if (pzy_score >= 60) {
+                pzy_msg = pzy_score + ' 分：及格';
+            } else {
+                pzy_msg = pzy_score + ' 分：不及格';
+            }
+            document.getElementById('pzy_scoreResult').textContent = pzy_msg;
+        }
+
+        // 条件结构：switch
+        function pzy_checkDay() {
+            var pzy_day = Number(document.getElementById('pzy_daySelect').value);
+            var pzy_name = '';
+            switch (pzy_day) {
+                case 1: pzy_name = '星期一'; break;
+                case 2: pzy_name = '星期二'; break;
+                case 3: pzy_name = '星期三'; break;
+                case 4: pzy_name = '星期四'; break;
+                case 5: pzy_name = '星期五'; break;
+                case 6: pzy_name = '星期六'; break;
+                case 7: pzy_name = '星期日'; break;
+                default: pzy_name = '无效日期（default 分支）';
+            }
+            document.getElementById('pzy_dayResult').textContent = 'switch 匹配结果：' + pzy_name;
+        }
+
+        // 循环结构：for 求和
+        function pzy_runFor() {
+            var pzy_sum = 0;
+            for (var pzy_i = 1; pzy_i <= 100; pzy_i++) {
+                pzy_sum += pzy_i;
+            }
+            document.getElementById('pzy_forResult').textContent = 'for 循环：1+2+3+…+100 = ' + pzy_sum;
+        }
+
+        // 循环结构：while
+        function pzy_runWhile() {
+            var pzy_i = 2;
+            var pzy_out = [];
+            while (pzy_i <= 20) {
+                pzy_out.push(pzy_i);
+                pzy_i += 2;
+            }
+            document.getElementById('pzy_whileResult').textContent = 'while 循环：1~20 的偶数有 ' + pzy_out.join('、');
+        }
+
+        // 循环结构：do-while 与 break / continue
+        function pzy_runDoWhile() {
+            var pzy_i = 0;
+            var pzy_out = [];
+            do {
+                pzy_i++;
+                if (pzy_i === 5) {
+                    continue; // 跳过 5
+                }
+                if (pzy_i === 8) {
+                    break;    // 提前结束循环
+                }
+                pzy_out.push(pzy_i);
+            } while (pzy_i < 10);
+            document.getElementById('pzy_doWhileResult').textContent = 'do-while 输出：' + pzy_out.join('、');
+        }
+
+        // 循环结构：嵌套 for 生成九九乘法表
+        function pzy_runTable() {
+            var pzy_html = '';
+            for (var pzy_i = 1; pzy_i <= 9; pzy_i++) {
+                pzy_html += '<div class="pzy_table_row">';
+                for (var pzy_j = 1; pzy_j <= pzy_i; pzy_j++) {
+                    pzy_html += '<span class="pzy_table_cell">' + pzy_j + '×' + pzy_i + '=' + (pzy_i * pzy_j) + '</span>';
+                }
+                pzy_html += '</div>';
+            }
+            document.getElementById('pzy_tableBox').innerHTML = pzy_html;
+        }
+    </script>
+</body>
+</html>
