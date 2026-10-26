@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数7游戏 · 100个盒子</title>
+    <!-- 姓名：庞智元，日期：数7游戏。 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #ecfeff 100%);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .pzy_page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px 30px;
+        }
+
+        .pzy_header {
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        .pzy_header h1 {
+            font-size: 30px;
+            color: #4338ca;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        .pzy_header p {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        .pzy_header strong {
+            color: #4338ca;
+        }
+
+        .pzy_legend {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .pzy_legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pzy_dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .pzy_dot_num {
+            background: #ffffff;
+            border: 1px solid #c7d2fe;
+        }
+
+        .pzy_dot_skip {
+            background: #e0e7ff;
+            border: 2px dashed #818cf8;
+        }
+
+        .pzy_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+            gap: 12px;
+        }
+
+        .pzy_box {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #334155;
+            box-shadow: 0 2px 6px rgba(51, 65, 85, 0.08);
+        }
+
+        .pzy_box_skip {
+            background: #e0e7ff;
+            border: 2px dashed #818cf8;
+            box-shadow: none;
+        }
+
+        .pzy_footer {
+            text-align: center;
+            margin-top: 34px;
+            padding: 18px 0 6px;
+            font-size: 15px;
+            color: #64748b;
+            letter-spacing: 1px;
+        }
+
+        .pzy_footer strong {
+            color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_page">
+        <header class="pzy_header">
+            <h1>数7游戏 · 100个盒子</h1>
+            <p>规则：<strong>7 的倍数</strong>或<strong>含有数字 7</strong>（如 7、17、70～79）的数要“过”，输出<strong>空盒子</strong>；不满足规则的盒子内部显示数字。</p>
+        </header>
+
+        <div class="pzy_legend">
+            <span><i class="pzy_dot pzy_dot_num"></i>不满足规则 — 显示数字</span>
+            <span><i class="pzy_dot pzy_dot_skip"></i>满足规则 — 空盒子</span>
+        </div>
+
+        <main id="pzy_boxContainer" class="pzy_grid" aria-label="1到100的盒子"></main>
+
+        <footer class="pzy_footer">制作：<strong>庞智元</strong></footer>
+    </div>
+
+    <script>
+        var pzy_container = document.getElementById('pzy_boxContainer');
+
+        for (var pzy_i = 1; pzy_i <= 100; pzy_i++) {
+            var pzy_box = document.createElement('div');
+            // 数7规则：7的倍数，或数字中含7（末尾是7、70～79等）
+            var pzy_isSkip = (pzy_i % 7 === 0) || (String(pzy_i).indexOf('7') !== -1);
+
+            if (pzy_isSkip) {
+                pzy_box.className = 'pzy_box pzy_box_skip';
+                pzy_box.textContent = '';
+            } else {
+                pzy_box.className = 'pzy_box';
+                pzy_box.textContent = pzy_i;
+            }
+            pzy_container.appendChild(pzy_box);
+        }
+    </script>
+</body>
+</html>
