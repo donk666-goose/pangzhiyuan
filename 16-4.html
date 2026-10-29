@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文学社科</title>
+    <!-- 姓名：庞智元，日期：文学社科图书频道页面。 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            color: #333333;
+            font-family: "宋体", SimSun, "Microsoft YaHei", Arial, sans-serif;
+        }
+
+        ul, ol {
+            list-style: none;
+        }
+
+        img {
+            display: block;
+            border: none;
+        }
+
+        .pzy_channel {
+            width: 980px;
+            margin: 0 auto;
+        }
+
+        .pzy_channel_title {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            font-size: 18px;
+            color: #333333;
+            padding: 16px 0 12px 2px;
+            border-bottom: 2px solid #9dc73f;
+        }
+
+        .pzy_main {
+            display: flex;
+            align-items: stretch;
+        }
+
+        /* ==================== 左栏：主编推荐 ==================== */
+        .pzy_recommend {
+            width: 190px;
+            flex-shrink: 0;
+            border-right: 1px solid #e8e8e8;
+            padding: 0 18px;
+        }
+
+        .pzy_recommend h2,
+        .pzy_rank h2 {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            font-size: 14px;
+            color: #333333;
+            text-align: center;
+            padding: 14px 0 12px;
+        }
+
+        .pzy_recommend h2 {
+            border-bottom: 1px solid #e8e8e8;
+            margin-bottom: 18px;
+        }
+
+        .pzy_rec_cover {
+            position: relative;
+            width: 125px;
+            margin: 0 auto;
+        }
+
+        .pzy_rec_cover img {
+            width: 125px;
+            height: 172px;
+            object-fit: cover;
+        }
+
+        .pzy_badge {
+            position: absolute;
+            left: -6px;
+            top: 8px;
+            background: #e2231a;
+            color: #ffffff;
+            font-size: 12px;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1;
+            padding: 4px 7px;
+            border-radius: 3px 3px 3px 0;
+        }
+
+        .pzy_rec_title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333333;
+            text-align: center;
+            margin: 14px 0 10px;
+        }
+
+        .pzy_rec_desc {
+            font-size: 12px;
+            color: #999999;
+            line-height: 1.9;
+            text-align: justify;
+            margin-bottom: 12px;
+        }
+
+        .pzy_rec_list {
+            border-top: 1px dashed #dddddd;
+            padding-top: 12px;
+        }
+
+        .pzy_rec_list li {
+            font-size: 12px;
+            color: #666666;
+            line-height: 2.1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pzy_rec_list li::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #bbbbbb;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* ==================== 中栏：图书网格 ==================== */
+        .pzy_books {
+            flex: 1;
+            padding: 0 24px;
+        }
+
+        .pzy_tabs {
+            display: flex;
+            gap: 34px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .pzy_tabs span {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            font-size: 15px;
+            color: #666666;
+            padding: 14px 2px 12px;
+            cursor: pointer;
+        }
+
+        .pzy_tabs span:hover {
+            color: #7ba835;
+        }
+
+        .pzy_tabs span.pzy_active {
+            color: #7ba835;
+            font-weight: bold;
+            border-bottom: 2px solid #9dc73f;
+            margin-bottom: -1px;
+        }
+
+        .pzy_grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px 32px;
+            padding: 24px 0 30px;
+        }
+
+        .pzy_book img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .pzy_book h4 {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            font-size: 14px;
+            color: #333333;
+            margin: 10px 0 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pzy_book p {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            color: #e4393c;
+        }
+
+        /* ==================== 右栏：订阅榜 ==================== */
+        .pzy_rank {
+            width: 212px;
+            flex-shrink: 0;
+            border-left: 1px solid #e8e8e8;
+            padding: 0 16px;
+        }
+
+        .pzy_rank h2 {
+            border-bottom: 1px solid #e8e8e8;
+            margin-bottom: 6px;
+        }
+
+        .pzy_rank li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 0;
+            border-bottom: 1px dotted #dddddd;
+            font-size: 12px;
+            color: #666666;
+        }
+
+        .pzy_rank li:last-child {
+            border-bottom: none;
+        }
+
+        .pzy_num {
+            flex-shrink: 0;
+            width: 17px;
+            height: 17px;
+            line-height: 15px;
+            text-align: center;
+            border: 1px solid #f8b551;
+            color: #f39800;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .pzy_rank li span.pzy_text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_channel">
+        <h1 class="pzy_channel_title">文学社科</h1>
+
+        <div class="pzy_main">
+            <!-- 左栏：主编推荐 -->
+            <div class="pzy_recommend">
+                <h2>主编推荐</h2>
+                <div class="pzy_rec_cover">
+                    <span class="pzy_badge">★力荐</span>
+                    <img src="img/rui.jpg" alt="芮成钢《虚实之间》">
+                </div>
+                <h3 class="pzy_rec_title">芮成钢：《虚实之间》</h3>
+                <p class="pzy_rec_desc">有十年记者生涯的东西方文化的阅历，又有与奥巴马等政要近距离接触...</p>
+                <ul class="pzy_rec_list">
+                    <li>兄弟我在义乌的发财史</li>
+                    <li>读佛即是拜佛：唐僧传</li>
+                    <li>二战苏联陆军单兵装备</li>
+                </ul>
+            </div>
+
+            <!-- 中栏：图书网格（tab 可点击切换） -->
+            <div class="pzy_books">
+                <div class="pzy_tabs" id="pzy_tabs">
+                    <span data-index="0">流行小说</span>
+                    <span data-index="1">社科历史</span>
+                    <span data-index="2" class="pzy_active">文学艺术</span>
+                </div>
+                <div class="pzy_grid" id="pzy_grid"></div>
+            </div>
+
+            <!-- 右栏：订阅榜 -->
+            <div class="pzy_rank">
+                <h2 id="pzy_rankTitle">文学艺术订阅榜</h2>
+                <ol id="pzy_rankList"></ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 三个 tab 的数据：图书（封面 img 文件夹 a1-a8 / b1-b8 / c1-c8）、价格、订阅榜
+        var pzy_data = [
+            {
+                tab: '流行小说',
+                rankTitle: '流行小说订阅榜',
+                books: [
+                    { img: 'img/a1.jpg', name: '省长的女婿', price: '5.98' },
+                    { img: 'img/a2.jpg', name: '辛夷坞：致青春', price: '5.00' },
+                    { img: 'img/a3.jpg', name: '越位', price: '2.99' },
+                    { img: 'img/a4.jpg', name: '扫黑', price: '6.40' },
+                    { img: 'img/a5.jpg', name: '我的帝王生涯', price: '4.00' },
+                    { img: 'img/a6.jpg', name: '南水北调书记', price: '5.98' },
+                    { img: 'img/a7.jpg', name: '1∕14第一季', price: '4.00' },
+                    { img: 'img/a8.jpg', name: '辛夷坞：原来', price: '4.50' }
+                ],
+                rank: [
+                    '山西煤老板（全文）',
+                    '你不可不知的人性（全二',
+                    '到座的距离',
+                    '梅雨的季节（全文）',
+                    '大清相国（全文）',
+                    '情势（全文）',
+                    '省委班子2（全文）',
+                    '静水流深（全文）',
+                    '生死疲劳（全文）',
+                    '金抓传（全文）'
+                ]
+            },
+            {
+                tab: '社科历史',
+                rankTitle: '社科历史订阅榜',
+                books: [
+                    { img: 'img/b1.jpg', name: '奋斗的仕途', price: '3.00' },
+                    { img: 'img/b2.jpg', name: '历史选择邓小平', price: '6.00' },
+                    { img: 'img/b3.jpg', name: '钱穆看中国文化', price: '8.00' },
+                    { img: 'img/b4.jpg', name: '刺杀林肯', price: '3.00' },
+                    { img: 'img/b5.jpg', name: '资本论', price: '3.00' },
+                    { img: 'img/b6.jpg', name: '为什么是朱元璋', price: '4.00' },
+                    { img: 'img/b7.jpg', name: '阎崇年：大故宫', price: '5.00' },
+                    { img: 'img/b8.jpg', name: '皇后的历史', price: '4.00' }
+                ],
+                rank: [
+                    '博弈与社会（全文）',
+                    '激荡三十年:中国企业',
+                    '我承认我不曾经历沧桑',
+                    '吴敬琏传（全文）',
+                    '世界因你不同：李开复自传',
+                    '我们台湾这些年（全文）',
+                    '课本上不说历史',
+                    '重口味心理学（提升日常行',
+                    '微表情心理学（最流行、最',
+                    '法网冠军李娜自传：独自上'
+                ]
+            },
+            {
+                tab: '文学艺术',
+                rankTitle: '文学艺术订阅榜',
+                books: [
+                    { img: 'img/c1.jpg', name: '武昌城', price: '4.50' },
+                    { img: 'img/c2.jpg', name: '贾平凹作品选', price: '3.00' },
+                    { img: 'img/c3.jpg', name: '最后一个匈奴', price: '4.00' },
+                    { img: 'img/c4.jpg', name: '岁月与性情', price: '8.00' },
+                    { img: 'img/c5.jpg', name: '浮生六记', price: '3.00' },
+                    { img: 'img/c6.jpg', name: '周国平：宝贝', price: '8.00' },
+                    { img: 'img/c7.jpg', name: '岳飞传', price: '3.00' },
+                    { img: 'img/c8.jpg', name: '撒哈拉的眼睛', price: '5.96' }
+                ],
+                rank: [
+                    '2012诺贝尔文学奖得主莫言',
+                    '变：2012诺贝尔文学奖得',
+                    '逃离：2013诺贝尔文学奖得',
+                    '青春（韩寒2011最新作品）',
+                    '教你幽默到心田',
+                    '宝贝，宝贝',
+                    '白魔窟——白粉仔的十二年',
+                    '中国式关系（全文）',
+                    '于丹：重温最美古诗词（17',
+                    '妞妞：一个父亲的札记'
+                ]
+            }
+        ];
+
+        var pzy_current = 2; // 默认显示文学艺术（与原图一致）
+
+        function pzy_renderBooks() {
+            var pzy_grid = document.getElementById('pzy_grid');
+            var pzy_html = '';
+            var pzy_list = pzy_data[pzy_current].books;
+            for (var pzy_i = 0; pzy_i < pzy_list.length; pzy_i++) {
+                pzy_html += '<div class="pzy_book">'
+                    + '<img src="' + pzy_list[pzy_i].img + '" alt="' + pzy_list[pzy_i].name + '">'
+                    + '<h4>' + pzy_list[pzy_i].name + '</h4>'
+                    + '<p>¥ ' + pzy_list[pzy_i].price + '</p>'
+                    + '</div>';
+            }
+            pzy_grid.innerHTML = pzy_html;
+        }
+
+        function pzy_renderRank() {
+            var pzy_title = document.getElementById('pzy_rankTitle');
+            var pzy_ol = document.getElementById('pzy_rankList');
+            pzy_title.textContent = pzy_data[pzy_current].rankTitle;
+            var pzy_html = '';
+            var pzy_list = pzy_data[pzy_current].rank;
+            for (var pzy_i = 0; pzy_i < pzy_list.length; pzy_i++) {
+                pzy_html += '<li><span class="pzy_num">' + (pzy_i + 1) + '</span><span class="pzy_text">' + pzy_list[pzy_i] + '</span></li>';
+            }
+            pzy_ol.innerHTML = pzy_html;
+        }
+
+        function pzy_switchTab(pzy_index) {
+            if (pzy_index === pzy_current) {
+                return;
+            }
+            pzy_current = pzy_index;
+            var pzy_tabEls = document.getElementById('pzy_tabs').getElementsByTagName('span');
+            for (var pzy_i = 0; pzy_i < pzy_tabEls.length; pzy_i++) {
+                pzy_tabEls[pzy_i].className = (Number(pzy_tabEls[pzy_i].getAttribute('data-index')) === pzy_index) ? 'pzy_active' : '';
+            }
+            pzy_renderBooks();
+            pzy_renderRank();
+        }
+
+        // 绑定 tab 点击事件
+        var pzy_tabs = document.getElementById('pzy_tabs');
+        pzy_tabs.onclick = function (pzy_event) {
+            var pzy_target = pzy_event.target;
+            if (pzy_target.tagName === 'SPAN') {
+                pzy_switchTab(Number(pzy_target.getAttribute('data-index')));
+            }
+        };
+
+        // 初始渲染
+        pzy_renderBooks();
+        pzy_renderRank();
+    </script>
+</body>
+</html>

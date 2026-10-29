@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 数组方法可视化演示</title>
+    <!-- 姓名：庞智元，日期：JavaScript数组方法演示。 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #ecfeff 100%);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .pzy_page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px 30px;
+        }
+
+        .pzy_header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .pzy_header h1 {
+            font-size: 28px;
+            color: #4338ca;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .pzy_header p {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        .pzy_section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(51, 65, 85, 0.06);
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .pzy_section h2 {
+            font-size: 19px;
+            color: #4338ca;
+            border-left: 4px solid #818cf8;
+            padding-left: 10px;
+            margin-bottom: 16px;
+        }
+
+        .pzy_section h2 small {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: normal;
+            margin-left: 8px;
+        }
+
+        .pzy_arrayBox {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+            justify-content: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 22px 16px 14px;
+            margin-bottom: 12px;
+            min-height: 96px;
+        }
+
+        .pzy_item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pzy_pop 0.3s ease;
+        }
+
+        @keyframes pzy_pop {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .pzy_idx {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .pzy_val {
+            width: 52px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e7ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #3730a3;
+        }
+
+        .pzy_empty {
+            color: #94a3b8;
+            font-size: 15px;
+            padding: 12px;
+        }
+
+        .pzy_code {
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            color: #0f766e;
+            background: #ecfeff;
+            border: 1px dashed #67e8f9;
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+            margin-bottom: 16px;
+            word-break: break-all;
+        }
+
+        .pzy_group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pzy_btn {
+            padding: 8px 14px;
+            background: #4338ca;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: Consolas, monospace;
+        }
+
+        .pzy_btn:hover {
+            background: #3730a3;
+        }
+
+        .pzy_btn_warn {
+            background: #b45309;
+        }
+
+        .pzy_btn_warn:hover {
+            background: #92400e;
+        }
+
+        .pzy_btn_reset {
+            background: #475569;
+        }
+
+        .pzy_btn_reset:hover {
+            background: #334155;
+        }
+
+        .pzy_input {
+            padding: 8px 12px;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            width: 110px;
+        }
+
+        .pzy_input:focus {
+            border-color: #4338ca;
+        }
+
+        .pzy_note {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 10px;
+            line-height: 1.7;
+        }
+
+        .pzy_log {
+            max-height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pzy_log_item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            animation: pzy_pop 0.25s ease;
+        }
+
+        .pzy_log_item code {
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            color: #4338ca;
+            word-break: break-all;
+        }
+
+        .pzy_log_item span {
+            font-size: 13px;
+            color: #0f766e;
+            word-break: break-all;
+        }
+
+        .pzy_footer {
+            text-align: center;
+            margin-top: 24px;
+            padding: 16px 0 6px;
+            font-size: 15px;
+            color: #64748b;
+            letter-spacing: 1px;
+        }
+
+        .pzy_footer strong {
+            color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_page">
+        <header class="pzy_header">
+            <h1>JavaScript 主要数组方法 · 可视化演示</h1>
+            <p>点击按钮真实调用数组方法：<strong>增删改</strong>会修改原数组（橙色按钮），<strong>查找与迭代</strong>不修改原数组，返回值显示在日志区。</p>
+        </header>
+
+        <section class="pzy_section">
+            <h2>当前数组</h2>
+            <div class="pzy_arrayBox" id="pzy_arrayBox"></div>
+            <div class="pzy_code" id="pzy_arrayCode"></div>
+            <div class="pzy_group">
+                <button class="pzy_btn pzy_btn_reset" onclick="pzy_reset()">重置数组 [10, 20, 30, 40, 50]</button>
+                <input class="pzy_input" id="pzy_valInput" type="number" value="99" title="push/unshift 使用的元素值">
+                <span class="pzy_note">输入框的值将用于 push / unshift / indexOf / includes</span>
+            </div>
+        </section>
+
+        <section class="pzy_section">
+            <h2>一、增删方法 <small>会修改原数组，返回长度或被删元素</small></h2>
+            <div class="pzy_group">
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_push()">push 末尾添加</button>
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_pop()">pop 末尾删除</button>
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_unshift()">unshift 开头添加</button>
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_shift()">shift 开头删除</button>
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_splice()">splice(1, 2) 删除指定位置</button>
+            </div>
+        </section>
+
+        <section class="pzy_section">
+            <h2>二、排序反转 <small>会修改原数组</small></h2>
+            <div class="pzy_group">
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_sort()">sort 排序</button>
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_reverse()">reverse 反转</button>
+            </div>
+            <p class="pzy_note">注意：sort 默认按字符串比较，比较数字需传入 <code>function(a, b){ return a - b; }</code>，本页演示为数字排序。</p>
+        </section>
+
+        <section class="pzy_section">
+            <h2>三、查找与判断 <small>不修改原数组</small></h2>
+            <div class="pzy_group">
+                <button class="pzy_btn" onclick="pzy_indexOf()">indexOf 查位置</button>
+                <button class="pzy_btn" onclick="pzy_includes()">includes 是否包含</button>
+                <button class="pzy_btn" onclick="pzy_find()">find 找第一个大于 25 的数</button>
+            </div>
+        </section>
+
+        <section class="pzy_section">
+            <h2>四、迭代与转换 <small>不修改原数组，返回新数组或新值</small></h2>
+            <div class="pzy_group">
+                <button class="pzy_btn" onclick="pzy_map()">map 每个元素 ×2</button>
+                <button class="pzy_btn" onclick="pzy_filter()">filter 筛选偶数</button>
+                <button class="pzy_btn" onclick="pzy_reduce()">reduce 累加求和</button>
+                <button class="pzy_btn" onclick="pzy_forEach()">forEach 逐个遍历</button>
+                <button class="pzy_btn" onclick="pzy_join()">join('-') 转字符串</button>
+                <button class="pzy_btn" onclick="pzy_slice()">slice(1, 3) 截取</button>
+                <button class="pzy_btn" onclick="pzy_concat()">concat 合并 [77, 88]</button>
+            </div>
+        </section>
+
+        <section class="pzy_section">
+            <h2>操作日志</h2>
+            <div class="pzy_log" id="pzy_logList">
+                <div class="pzy_log_item"><code>// 日志区</code><span>每次点击按钮，这里会显示调用的方法、返回值以及是否修改原数组。</span></div>
+            </div>
+        </section>
+
+        <footer class="pzy_footer">制作：<strong>庞智元</strong></footer>
+    </div>
+
+    <script>
+        var pzy_initArr = [10, 20, 30, 40, 50];
+        var pzy_arr = pzy_initArr.slice();
+
+        function pzy_getVal() {
+            var pzy_v = Number(document.getElementById('pzy_valInput').value);
+            return isNaN(pzy_v) ? 99 : pzy_v;
+        }
+
+        function pzy_render() {
+            var pzy_html = '';
+            for (var pzy_i = 0; pzy_i < pzy_arr.length; pzy_i++) {
+                pzy_html += '<div class="pzy_item"><span class="pzy_idx">下标 ' + pzy_i + '</span><span class="pzy_val">' + pzy_arr[pzy_i] + '</span></div>';
+            }
+            if (pzy_arr.length === 0) {
+                pzy_html = '<div class="pzy_empty">空数组 [ ]</div>';
+            }
+            document.getElementById('pzy_arrayBox').innerHTML = pzy_html;
+            document.getElementById('pzy_arrayCode').textContent = 'let arr = [' + pzy_arr.join(', ') + '];';
+        }
+
+        function pzy_log(pzy_code, pzy_ret) {
+            var pzy_list = document.getElementById('pzy_logList');
+            var pzy_item = document.createElement('div');
+            pzy_item.className = 'pzy_log_item';
+            var pzy_codeEl = document.createElement('code');
+            pzy_codeEl.textContent = pzy_code;
+            var pzy_retEl = document.createElement('span');
+            pzy_retEl.textContent = '→ ' + pzy_ret;
+            pzy_item.appendChild(pzy_codeEl);
+            pzy_item.appendChild(pzy_retEl);
+            pzy_list.insertBefore(pzy_item, pzy_list.firstChild);
+            pzy_render();
+        }
+
+        // 一、增删方法（修改原数组）
+        function pzy_push() {
+            var pzy_ret = pzy_arr.push(pzy_getVal());
+            pzy_log('arr.push(' + pzy_getVal() + ')', '返回新长度 ' + pzy_ret + '，原数组已修改');
+        }
+
+        function pzy_pop() {
+            var pzy_ret = pzy_arr.pop();
+            pzy_log('arr.pop()', '返回被删除的末尾元素 ' + pzy_ret + '，原数组已修改');
+        }
+
+        function pzy_unshift() {
+            var pzy_ret = pzy_arr.unshift(pzy_getVal());
+            pzy_log('arr.unshift(' + pzy_getVal() + ')', '返回新长度 ' + pzy_ret + '，原数组已修改');
+        }
+
+        function pzy_shift() {
+            var pzy_ret = pzy_arr.shift();
+            pzy_log('arr.shift()', '返回被删除的开头元素 ' + pzy_ret + '，原数组已修改');
+        }
+
+        function pzy_splice() {
+            var pzy_removed = pzy_arr.splice(1, 2);
+            pzy_log('arr.splice(1, 2)', '从下标 1 删除 ' + pzy_removed.length + ' 个元素 [' + pzy_removed.join(', ') + ']，原数组已修改');
+        }
+
+        // 二、排序反转（修改原数组）
+        function pzy_sort() {
+            pzy_arr.sort(function (pzy_a, pzy_b) { return pzy_a - pzy_b; });
+            pzy_log('arr.sort(function(a, b){ return a - b; })', '数字升序排序完成，原数组已修改');
+        }
+
+        function pzy_reverse() {
+            pzy_arr.reverse();
+            pzy_log('arr.reverse()', '数组反转完成，原数组已修改');
+        }
+
+        // 三、查找与判断（不修改原数组）
+        function pzy_indexOf() {
+            var pzy_ret = pzy_arr.indexOf(pzy_getVal());
+            pzy_log('arr.indexOf(' + pzy_getVal() + ')', pzy_ret === -1 ? '-1（未找到，不修改原数组）' : '找到，下标为 ' + pzy_ret + '（不修改原数组）');
+        }
+
+        function pzy_includes() {
+            var pzy_ret = pzy_arr.includes(pzy_getVal());
+            pzy_log('arr.includes(' + pzy_getVal() + ')', pzy_ret + '（不修改原数组）');
+        }
+
+        function pzy_find() {
+            var pzy_ret = pzy_arr.find(function (pzy_x) { return pzy_x > 25; });
+            pzy_log('arr.find(function(x){ return x > 25; })', pzy_ret === undefined ? 'undefined（没有满足条件的元素）' : '第一个满足条件的元素是 ' + pzy_ret);
+        }
+
+        // 四、迭代与转换（不修改原数组）
+        function pzy_map() {
+            var pzy_ret = pzy_arr.map(function (pzy_x) { return pzy_x * 2; });
+            pzy_log('arr.map(function(x){ return x * 2; })', '返回新数组 [' + pzy_ret.join(', ') + ']');
+        }
+
+        function pzy_filter() {
+            var pzy_ret = pzy_arr.filter(function (pzy_x) { return pzy_x % 2 === 0; });
+            pzy_log('arr.filter(function(x){ return x % 2 === 0; })', '返回新数组 [' + pzy_ret.join(', ') + ']');
+        }
+
+        function pzy_reduce() {
+            var pzy_ret = pzy_arr.reduce(function (pzy_a, pzy_b) { return pzy_a + pzy_b; }, 0);
+            pzy_log('arr.reduce(function(a, b){ return a + b; }, 0)', '累加结果 = ' + pzy_ret);
+        }
+
+        function pzy_forEach() {
+            var pzy_out = [];
+            pzy_arr.forEach(function (pzy_x, pzy_i) { pzy_out.push('[' + pzy_i + ']=' + pzy_x); });
+            pzy_log('arr.forEach(function(x, i){ ... })', '遍历输出：' + pzy_out.join('，'));
+        }
+
+        function pzy_join() {
+            var pzy_ret = pzy_arr.join('-');
+            pzy_log("arr.join('-')", '返回字符串 "' + pzy_ret + '"');
+        }
+
+        function pzy_slice() {
+            var pzy_ret = pzy_arr.slice(1, 3);
+            pzy_log('arr.slice(1, 3)', '截取下标 1~2，返回新数组 [' + pzy_ret.join(', ') + ']，原数组不变');
+        }
+
+        function pzy_concat() {
+            var pzy_ret = pzy_arr.concat([77, 88]);
+            pzy_log('arr.concat([77, 88])', '返回新数组 [' + pzy_ret.join(', ') + ']，原数组不变');
+        }
+
+        // 重置
+        function pzy_reset() {
+            pzy_arr = pzy_initArr.slice();
+            pzy_log('arr = [10, 20, 30, 40, 50]', '数组已重置');
+        }
+
+        pzy_render();
+    </script>
+</body>
+</html>

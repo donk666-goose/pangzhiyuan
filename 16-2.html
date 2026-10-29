@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 对象与字符串可视化演示</title>
+    <!-- 姓名：庞智元，日期：JavaScript对象与字符串演示。 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #ecfeff 100%);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .pzy_page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px 30px;
+        }
+
+        .pzy_header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .pzy_header h1 {
+            font-size: 28px;
+            color: #4338ca;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .pzy_header p {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        .pzy_section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(51, 65, 85, 0.06);
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .pzy_section h2 {
+            font-size: 19px;
+            color: #4338ca;
+            border-left: 4px solid #818cf8;
+            padding-left: 10px;
+            margin-bottom: 16px;
+        }
+
+        .pzy_section h2 small {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: normal;
+            margin-left: 8px;
+        }
+
+        .pzy_objBox {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 18px 16px;
+            margin-bottom: 12px;
+            min-height: 84px;
+        }
+
+        .pzy_pair {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pzy_pop 0.3s ease;
+        }
+
+        @keyframes pzy_pop {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .pzy_key {
+            font-family: Consolas, monospace;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .pzy_value {
+            min-width: 64px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e7ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #3730a3;
+            padding: 0 10px;
+        }
+
+        .pzy_empty {
+            color: #94a3b8;
+            font-size: 15px;
+            padding: 12px;
+        }
+
+        .pzy_code {
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            color: #0f766e;
+            background: #ecfeff;
+            border: 1px dashed #67e8f9;
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+            margin-bottom: 16px;
+            word-break: break-all;
+        }
+
+        .pzy_group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pzy_btn {
+            padding: 8px 14px;
+            background: #4338ca;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: Consolas, monospace;
+        }
+
+        .pzy_btn:hover {
+            background: #3730a3;
+        }
+
+        .pzy_btn_warn {
+            background: #b45309;
+        }
+
+        .pzy_btn_warn:hover {
+            background: #92400e;
+        }
+
+        .pzy_btn_reset {
+            background: #475569;
+        }
+
+        .pzy_btn_reset:hover {
+            background: #334155;
+        }
+
+        .pzy_input {
+            padding: 8px 12px;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            width: 320px;
+            max-width: 100%;
+        }
+
+        .pzy_input:focus {
+            border-color: #4338ca;
+        }
+
+        .pzy_note {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 10px;
+            line-height: 1.7;
+        }
+
+        .pzy_note code {
+            font-family: Consolas, monospace;
+            color: #4338ca;
+            background: #eef2ff;
+            border-radius: 4px;
+            padding: 1px 5px;
+        }
+
+        .pzy_log {
+            max-height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pzy_log_item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            animation: pzy_pop 0.25s ease;
+        }
+
+        .pzy_log_item code {
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            color: #4338ca;
+            word-break: break-all;
+        }
+
+        .pzy_log_item span {
+            font-size: 13px;
+            color: #0f766e;
+            word-break: break-all;
+        }
+
+        .pzy_footer {
+            text-align: center;
+            margin-top: 24px;
+            padding: 16px 0 6px;
+            font-size: 15px;
+            color: #64748b;
+            letter-spacing: 1px;
+        }
+
+        .pzy_footer strong {
+            color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_page">
+        <header class="pzy_header">
+            <h1>JavaScript 对象与字符串 · 可视化演示</h1>
+            <p>对象部分演示<strong>属性访问、增删、遍历</strong>；字符串部分演示<strong>常用字符串方法</strong>。橙色按钮会修改数据，蓝色按钮只读取。</p>
+        </header>
+
+        <section class="pzy_section">
+            <h2>一、对象 Object <small>键值对的集合</small></h2>
+            <div class="pzy_objBox" id="pzy_objBox"></div>
+            <div class="pzy_code" id="pzy_objCode"></div>
+            <div class="pzy_group">
+                <button class="pzy_btn" onclick="pzy_dotAccess()">点语法 obj.name</button>
+                <button class="pzy_btn" onclick="pzy_bracketAccess()">方括号 obj['age']</button>
+                <button class="pzy_btn" onclick="pzy_forIn()">for...in 遍历</button>
+                <button class="pzy_btn" onclick="pzy_keysValues()">Object.keys / values</button>
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_addProp()">添加属性 grade</button>
+                <button class="pzy_btn pzy_btn_warn" onclick="pzy_delProp()">删除属性 hobby</button>
+                <button class="pzy_btn pzy_btn_reset" onclick="pzy_resetObj()">重置对象</button>
+            </div>
+            <p class="pzy_note">点语法写法简洁，方括号可以用变量或含特殊字符的字符串作为键；<code>for...in</code> 依次遍历每个键名。</p>
+        </section>
+
+        <section class="pzy_section">
+            <h2>二、字符串 String <small>每个字符都是一个"盒子"</small></h2>
+            <div class="pzy_group" style="margin-bottom: 14px;">
+                <input class="pzy_input" id="pzy_strInput" type="text" value="  Hello JavaScript 世界  " oninput="pzy_renderStr()">
+                <span class="pzy_note" style="margin-top: 0;">修改文字后盒子实时刷新</span>
+            </div>
+            <div class="pzy_objBox" id="pzy_strBox"></div>
+            <div class="pzy_code" id="pzy_strCode"></div>
+            <div class="pzy_group">
+                <button class="pzy_btn" onclick="pzy_strLength()">length 长度</button>
+                <button class="pzy_btn" onclick="pzy_charAt()">charAt(0) 取字符</button>
+                <button class="pzy_btn" onclick="pzy_indexOf()">indexOf('a') 查位置</button>
+                <button class="pzy_btn" onclick="pzy_includes()">includes('Script')</button>
+                <button class="pzy_btn" onclick="pzy_slice()">slice(2, 7) 截取</button>
+                <button class="pzy_btn" onclick="pzy_replace()">replace('l', '@')</button>
+                <button class="pzy_btn" onclick="pzy_split()">split(' ') 转数组</button>
+                <button class="pzy_btn" onclick="pzy_trim()">trim() 去首尾空格</button>
+                <button class="pzy_btn" onclick="pzy_upper()">toUpperCase</button>
+                <button class="pzy_btn" onclick="pzy_lower()">toLowerCase</button>
+                <button class="pzy_btn" onclick="pzy_concat()">concat('!')</button>
+            </div>
+            <p class="pzy_note">字符串方法都不会修改原字符串（不可变），只会返回新字符串或新数组。</p>
+        </section>
+
+        <section class="pzy_section">
+            <h2>操作日志</h2>
+            <div class="pzy_log" id="pzy_logList">
+                <div class="pzy_log_item"><code>// 日志区</code><span>每次点击按钮，这里会显示调用的方法与返回值。</span></div>
+            </div>
+        </section>
+
+        <footer class="pzy_footer">制作：<strong>庞智元</strong></footer>
+    </div>
+
+    <script>
+        // ==================== 对象部分 ====================
+        var pzy_initObj = { name: '庞智元', age: 20, hobby: '篮球' };
+        var pzy_student = {};
+        pzy_resetObjSilent();
+
+        function pzy_resetObjSilent() {
+            pzy_student = {};
+            for (var pzy_k in pzy_initObj) {
+                pzy_student[pzy_k] = pzy_initObj[pzy_k];
+            }
+        }
+
+        function pzy_renderObj() {
+            var pzy_html = '';
+            for (var pzy_k in pzy_student) {
+                pzy_html += '<div class="pzy_pair"><span class="pzy_key">' + pzy_k + '</span><span class="pzy_value">' + pzy_student[pzy_k] + '</span></div>';
+            }
+            if (pzy_html === '') {
+                pzy_html = '<div class="pzy_empty">空对象 { }</div>';
+            }
+            document.getElementById('pzy_objBox').innerHTML = pzy_html;
+            var pzy_parts = [];
+            for (var pzy_k2 in pzy_student) {
+                pzy_parts.push(pzy_k2 + ': ' + JSON.stringify(pzy_student[pzy_k2]));
+            }
+            document.getElementById('pzy_objCode').textContent = 'let obj = { ' + pzy_parts.join(', ') + ' };';
+        }
+
+        function pzy_log(pzy_code, pzy_ret) {
+            var pzy_list = document.getElementById('pzy_logList');
+            var pzy_item = document.createElement('div');
+            pzy_item.className = 'pzy_log_item';
+            var pzy_codeEl = document.createElement('code');
+            pzy_codeEl.textContent = pzy_code;
+            var pzy_retEl = document.createElement('span');
+            pzy_retEl.textContent = '→ ' + pzy_ret;
+            pzy_item.appendChild(pzy_codeEl);
+            pzy_item.appendChild(pzy_retEl);
+            pzy_list.insertBefore(pzy_item, pzy_list.firstChild);
+            pzy_renderObj();
+            pzy_renderStr();
+        }
+
+        function pzy_dotAccess() {
+            pzy_log('obj.name', '点语法访问：' + JSON.stringify(pzy_student.name));
+        }
+
+        function pzy_bracketAccess() {
+            pzy_log("obj['age']", '方括号访问：' + JSON.stringify(pzy_student['age']));
+        }
+
+        function pzy_forIn() {
+            var pzy_out = [];
+            for (var pzy_k in pzy_student) {
+                pzy_out.push(pzy_k + ' = ' + JSON.stringify(pzy_student[pzy_k]));
+            }
+            pzy_log('for (var k in obj) { ... }', pzy_out.length ? '遍历结果：' + pzy_out.join('；') : '对象为空，没有可遍历的属性');
+        }
+
+        function pzy_keysValues() {
+            var pzy_keys = Object.keys(pzy_student);
+            var pzy_vals = Object.values(pzy_student);
+            pzy_log('Object.keys(obj) / Object.values(obj)', '键数组 [' + pzy_keys.join(', ') + ']，值数组 [' + pzy_vals.join(', ') + ']');
+        }
+
+        function pzy_addProp() {
+            pzy_student.grade = '大三';
+            pzy_log("obj.grade = '大三'", '属性已添加（修改原对象）');
+        }
+
+        function pzy_delProp() {
+            var pzy_ret = delete pzy_student.hobby;
+            pzy_log('delete obj.hobby', pzy_ret ? '删除成功，返回 true（修改原对象）' : 'hobby 属性不存在，无需删除');
+        }
+
+        function pzy_resetObj() {
+            pzy_resetObjSilent();
+            pzy_log('obj = { name: "庞智元", age: 20, hobby: "篮球" }', '对象已重置');
+        }
+
+        // ==================== 字符串部分 ====================
+        function pzy_getStr() {
+            return document.getElementById('pzy_strInput').value;
+        }
+
+        function pzy_renderStr() {
+            var pzy_str = pzy_getStr();
+            var pzy_html = '';
+            for (var pzy_i = 0; pzy_i < pzy_str.length; pzy_i++) {
+                var pzy_ch = pzy_str[pzy_i] === ' ' ? '␣' : pzy_str[pzy_i];
+                pzy_html += '<div class="pzy_pair"><span class="pzy_key">' + pzy_i + '</span><span class="pzy_value">' + pzy_ch + '</span></div>';
+            }
+            if (pzy_str.length === 0) {
+                pzy_html = '<div class="pzy_empty">空字符串 ""</div>';
+            }
+            document.getElementById('pzy_strBox').innerHTML = pzy_html;
+            document.getElementById('pzy_strCode').textContent = 'let str = ' + JSON.stringify(pzy_str) + ';  // 长度 ' + pzy_str.length;
+        }
+
+        function pzy_strLength() {
+            pzy_log('str.length', '字符串长度 = ' + pzy_getStr().length + '（空格也计算在内）');
+        }
+
+        function pzy_charAt() {
+            var pzy_ret = pzy_getStr().charAt(0);
+            pzy_log('str.charAt(0)', '下标 0 的字符是 ' + JSON.stringify(pzy_ret));
+        }
+
+        function pzy_indexOf() {
+            var pzy_ret = pzy_getStr().indexOf('a');
+            pzy_log("str.indexOf('a')", pzy_ret === -1 ? '-1（未找到）' : '第一次出现的下标是 ' + pzy_ret);
+        }
+
+        function pzy_includes() {
+            var pzy_ret = pzy_getStr().includes('Script');
+            pzy_log("str.includes('Script')", pzy_ret + '（是否包含子串）');
+        }
+
+        function pzy_slice() {
+            var pzy_ret = pzy_getStr().slice(2, 7);
+            pzy_log('str.slice(2, 7)', '截取下标 2~6，返回 ' + JSON.stringify(pzy_ret));
+        }
+
+        function pzy_replace() {
+            var pzy_ret = pzy_getStr().replace('l', '@');
+            pzy_log("str.replace('l', '@')", '只替换第一个匹配，返回 ' + JSON.stringify(pzy_ret));
+        }
+
+        function pzy_split() {
+            var pzy_ret = pzy_getStr().split(' ');
+            pzy_log("str.split(' ')", '按空格拆分为数组 [' + pzy_ret.map(JSON.stringify).join(', ') + ']');
+        }
+
+        function pzy_trim() {
+            var pzy_ret = pzy_getStr().trim();
+            pzy_log('str.trim()', '去掉首尾空格，返回 ' + JSON.stringify(pzy_ret));
+        }
+
+        function pzy_upper() {
+            pzy_log('str.toUpperCase()', '返回 ' + JSON.stringify(pzy_getStr().toUpperCase()));
+        }
+
+        function pzy_lower() {
+            pzy_log('str.toLowerCase()', '返回 ' + JSON.stringify(pzy_getStr().toLowerCase()));
+        }
+
+        function pzy_concat() {
+            pzy_log("str.concat('!')", '拼接后返回 ' + JSON.stringify(pzy_getStr().concat('!')));
+        }
+
+        pzy_renderObj();
+        pzy_renderStr();
+    </script>
+</body>
+</html>

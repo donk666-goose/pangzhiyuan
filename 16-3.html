@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品分类</title>
+    <!-- 姓名：庞智元，日期：商品分类侧边面板。 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        .pzy_panel {
+            width: 300px;
+            margin: 35px 0 0 70px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .pzy_panel h2 {
+            font-size: 17px;
+            color: #1a1a1a;
+            font-weight: bold;
+            padding: 20px;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .pzy_list {
+            list-style: none;
+        }
+
+        .pzy_list li {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f2f2f2;
+            font-size: 15px;
+            color: #333333;
+            cursor: pointer;
+        }
+
+        .pzy_list li:last-child {
+            border-bottom: none;
+        }
+
+        .pzy_list li:hover {
+            background: #fafafa;
+        }
+
+        .pzy_list li::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #f56c6c;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_panel">
+        <h2>商品分类</h2>
+        <ul class="pzy_list">
+            <li>手机 / 运营商 / 数码</li>
+            <li>电脑 / 办公 / 文具</li>
+            <li>家电 / 空调 / 电视</li>
+            <li>家居 / 家具 / 家装</li>
+            <li>男装 / 女装 / 内衣</li>
+            <li>美妆 / 个护 / 清洁</li>
+            <li>母婴 / 玩具 / 童装</li>
+            <li>食品 / 生鲜 / 酒水</li>
+            <li>运动 / 户外 / 健身</li>
+            <li>汽车 / 车品 / 出行</li>
+        </ul>
+    </div>
+</body>
+</html>
