@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch 获取网络数据演示</title>
+    <!-- 姓名：庞智元，日期：fetch 获取 JSON 数据展示。 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #333333;
+            font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif;
+        }
+
+        .pzy_container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        .pzy_header {
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        .pzy_header h1 {
+            font-size: 26px;
+            color: #2c3e50;
+        }
+
+        .pzy_header p {
+            font-size: 14px;
+            color: #888888;
+            margin-top: 8px;
+        }
+
+        .pzy_panel {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            padding: 22px 26px;
+            margin-bottom: 24px;
+        }
+
+        .pzy_panel > h2 {
+            font-size: 18px;
+            color: #2c3e50;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 14px;
+        }
+
+        .pzy_url {
+            display: block;
+            background: #2d3436;
+            color: #55efc4;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .pzy_actions {
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pzy_btn {
+            border: none;
+            border-radius: 6px;
+            padding: 9px 18px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            background: #3498db;
+            color: #ffffff;
+            transition: background 0.2s;
+        }
+
+        .pzy_btn:hover {
+            background: #2f81b9;
+        }
+
+        .pzy_btn:disabled {
+            background: #b2c9da;
+            cursor: not-allowed;
+        }
+
+        .pzy_input {
+            padding: 9px 12px;
+            border: 1px solid #dcdfe4;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            width: 220px;
+        }
+
+        .pzy_input:focus {
+            border-color: #3498db;
+        }
+
+        .pzy_select {
+            padding: 8px 10px;
+            border: 1px solid #dcdfe4;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #555555;
+            outline: none;
+        }
+
+        .pzy_msg {
+            font-size: 13px;
+        }
+
+        .pzy_msg.pzy_ok {
+            color: #27ae60;
+        }
+
+        .pzy_msg.pzy_err {
+            color: #e74c3c;
+        }
+
+        .pzy_msg.pzy_load {
+            color: #2980b9;
+        }
+
+        /* 加载动画：三个跳动的小圆点 */
+        .pzy_dots span {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin-right: 4px;
+            border-radius: 50%;
+            background: #3498db;
+            animation: pzy_jump 0.9s infinite;
+        }
+
+        .pzy_dots span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .pzy_dots span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes pzy_jump {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* 数据统计条 */
+        .pzy_stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .pzy_stat {
+            flex: 1;
+            min-width: 140px;
+            background: #ebf5fb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            text-align: center;
+        }
+
+        .pzy_stat b {
+            display: block;
+            font-size: 22px;
+            color: #2980b9;
+            font-family: Consolas, monospace;
+        }
+
+        .pzy_stat span {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        /* 文章卡片列表 */
+        .pzy_grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 720px) {
+            .pzy_grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pzy_card {
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            padding: 14px 16px;
+            transition: box-shadow 0.2s, transform 0.2s;
+            animation: pzy_in 0.35s ease both;
+        }
+
+        .pzy_card:hover {
+            box-shadow: 0 4px 14px rgba(52, 152, 219, 0.15);
+            transform: translateY(-2px);
+        }
+
+        @keyframes pzy_in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pzy_card h3 {
+            font-size: 15px;
+            color: #2c3e50;
+            margin: 8px 0 8px;
+            line-height: 1.5;
+        }
+
+        .pzy_card p {
+            font-size: 13px;
+            color: #7f8c8d;
+            line-height: 1.8;
+        }
+
+        .pzy_badge {
+            display: inline-block;
+            font-size: 12px;
+            padding: 2px 9px;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+        }
+
+        .pzy_badge.pzy_uid {
+            background: #eaf4fd;
+            color: #2980b9;
+        }
+
+        .pzy_badge.pzy_pid {
+            background: #fef9e7;
+            color: #b7950b;
+        }
+
+        .pzy_footer {
+            text-align: center;
+            font-size: 13px;
+            color: #999999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>Fetch 获取网络数据演示</h1>
+            <p>使用原生 fetch 请求 JSONPlaceholder 接口并渲染数据 | 庞智元</p>
+        </div>
+
+        <!-- 一、接口与请求流程 -->
+        <div class="pzy_panel">
+            <h2>一、请求地址与流程</h2>
+            <code class="pzy_url">GET https://jsonplaceholder.typicode.com/posts</code>
+            <p style="font-size:13px;color:#888;margin-top:12px;line-height:1.9;">
+                fetch 是浏览器原生的网络请求方法（Promise 风格）：
+                第一步 fetch(url) 发出请求并等待响应头；
+                第二步 response.json() 读取响应体并解析为 JS 对象；
+                第三步操作 DOM 把数据渲染到页面。
+            </p>
+        </div>
+
+        <!-- 二、数据展示区 -->
+        <div class="pzy_panel">
+            <h2>二、文章数据（共 100 篇）</h2>
+            <div class="pzy_actions">
+                <button class="pzy_btn" id="pzy_loadBtn">重新加载数据</button>
+                <input class="pzy_input" id="pzy_search" type="text" placeholder="按标题关键字搜索...">
+                <select class="pzy_select" id="pzy_userFilter">
+                    <option value="0">全部用户</option>
+                </select>
+                <span class="pzy_msg" id="pzy_statusMsg"></span>
+            </div>
+
+            <div class="pzy_stats" id="pzy_stats" style="display:none;">
+                <div class="pzy_stat"><b id="pzy_statTotal">0</b><span>接口返回总数</span></div>
+                <div class="pzy_stat"><b id="pzy_statUsers">0</b><span>涉及用户数</span></div>
+                <div class="pzy_stat"><b id="pzy_statShow">0</b><span>当前筛选显示</span></div>
+            </div>
+
+            <div class="pzy_grid" id="pzy_list"></div>
+        </div>
+
+        <div class="pzy_footer">17-2 Fetch 网络请求演示 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        var pzy_apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+        var pzy_posts = [];      // 保存接口返回的全部数据
+        var pzy_loading = false;
+
+        var pzy_listEl = document.getElementById('pzy_list');
+        var pzy_msgEl = document.getElementById('pzy_statusMsg');
+        var pzy_btnEl = document.getElementById('pzy_loadBtn');
+
+        function pzy_showMsg(pzy_text, pzy_type) {
+            pzy_msgEl.textContent = pzy_text;
+            pzy_msgEl.className = 'pzy_msg ' + pzy_type;
+        }
+
+        function pzy_setLoading(pzy_on) {
+            pzy_loading = pzy_on;
+            pzy_btnEl.disabled = pzy_on;
+            if (pzy_on) {
+                pzy_listEl.innerHTML = '<div style="grid-column:1/-1;padding:40px 0;text-align:center;">'
+                    + '<span class="pzy_dots"><span></span><span></span><span></span></span>'
+                    + '<span style="margin-left:10px;color:#2980b9;font-size:14px;">正在请求接口，请稍候…</span></div>';
+            }
+        }
+
+        // ============ 核心：fetch 请求 ============
+        function pzy_loadPosts() {
+            pzy_setLoading(true);
+            pzy_showMsg('', '');
+
+            fetch(pzy_apiUrl)
+                .then(function (pzy_response) {
+                    // 检查 HTTP 状态码，404/500 等不会自动抛错，需要手动判断
+                    if (!pzy_response.ok) {
+                        throw new Error('HTTP 状态码：' + pzy_response.status);
+                    }
+                    return pzy_response.json(); // 把响应体解析成 JS 数组
+                })
+                .then(function (pzy_data) {
+                    pzy_posts = pzy_data;
+                    pzy_buildUserFilter();
+                    pzy_updateStats(pzy_data.length);
+                    pzy_showMsg('加载成功！共获取 ' + pzy_data.length + ' 篇文章', 'pzy_ok');
+                    pzy_renderList(pzy_data);
+                })
+                .catch(function (pzy_error) {
+                    // 网络断开、接口异常等都会进入这里
+                    pzy_listEl.innerHTML = '';
+                    pzy_showMsg('请求失败：' + pzy_error.message, 'pzy_err');
+                })
+                .finally(function () {
+                    pzy_setLoading(false);
+                });
+        }
+
+        // ============ 渲染文章卡片 ============
+        function pzy_renderList(pzy_data) {
+            var pzy_html = '';
+            for (var pzy_i = 0; pzy_i < pzy_data.length; pzy_i++) {
+                var pzy_post = pzy_data[pzy_i];
+                pzy_html += '<div class="pzy_card" style="animation-delay:' + (pzy_i % 10) * 0.04 + 's">'
+                    + '<div><span class="pzy_badge pzy_uid">用户 ' + pzy_post.userId + '</span> '
+                    + '<span class="pzy_badge pzy_pid">ID ' + pzy_post.id + '</span></div>'
+                    + '<h3>' + pzy_post.title + '</h3>'
+                    + '<p>' + pzy_post.body.replace(/\n/g, '<br>') + '</p>'
+                    + '</div>';
+            }
+            pzy_listEl.innerHTML = pzy_html || '<div style="grid-column:1/-1;text-align:center;color:#999;padding:30px 0;">没有符合条件的文章</div>';
+        }
+
+        // ============ 统计数字 ============
+        function pzy_updateStats(pzy_total) {
+            var pzy_users = {};
+            for (var pzy_i = 0; pzy_i < pzy_posts.length; pzy_i++) {
+                pzy_users[pzy_posts[pzy_i].userId] = true;
+            }
+            document.getElementById('pzy_stats').style.display = 'flex';
+            document.getElementById('pzy_statTotal').textContent = pzy_total;
+            document.getElementById('pzy_statUsers').textContent = Object.keys(pzy_users).length;
+            document.getElementById('pzy_statShow').textContent = document.querySelectorAll('#pzy_list .pzy_card').length;
+        }
+
+        // ============ 筛选：关键字 + 用户 ============
+        function pzy_applyFilter() {
+            if (pzy_loading) {
+                return;
+            }
+            var pzy_kw = document.getElementById('pzy_search').value.trim().toLowerCase();
+            var pzy_uid = Number(document.getElementById('pzy_userFilter').value);
+            var pzy_result = [];
+
+            for (var pzy_i = 0; pzy_i < pzy_posts.length; pzy_i++) {
+                var pzy_post = pzy_posts[pzy_i];
+                if (pzy_uid > 0 && pzy_post.userId !== pzy_uid) {
+                    continue;
+                }
+                if (pzy_kw && pzy_post.title.toLowerCase().indexOf(pzy_kw) === -1) {
+                    continue;
+                }
+                pzy_result.push(pzy_post);
+            }
+
+            pzy_renderList(pzy_result);
+            document.getElementById('pzy_statShow').textContent = pzy_result.length;
+            pzy_showMsg('筛选结果：' + pzy_result.length + ' / ' + pzy_posts.length + ' 篇', 'pzy_load');
+        }
+
+        // 生成"全部用户"下拉选项（1~10）
+        function pzy_buildUserFilter() {
+            var pzy_sel = document.getElementById('pzy_userFilter');
+            var pzy_html = '<option value="0">全部用户</option>';
+            for (var pzy_i = 1; pzy_i <= 10; pzy_i++) {
+                pzy_html += '<option value="' + pzy_i + '">用户 ' + pzy_i + '</option>';
+            }
+            pzy_sel.innerHTML = pzy_html;
+        }
+
+        // 绑定事件
+        pzy_btnEl.onclick = pzy_loadPosts;
+        document.getElementById('pzy_search').oninput = pzy_applyFilter;
+        document.getElementById('pzy_userFilter').onchange = pzy_applyFilter;
+
+        // 页面打开自动加载
+        pzy_loadPosts();
+    </script>
+</body>
+</html>

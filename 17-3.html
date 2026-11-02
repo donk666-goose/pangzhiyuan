@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品列表 - Fetch 数据渲染</title>
+    <!-- 姓名：庞智元，日期：商品列表页（列表页）。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; color: #333; font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif; }
+        .pzy_container { max-width: 1080px; margin: 0 auto; padding: 30px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 24px; }
+        .pzy_header h1 { font-size: 26px; color: #2c3e50; }
+        .pzy_header p { font-size: 14px; color: #888; margin-top: 8px; }
+        .pzy_panel { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 22px 26px; margin-bottom: 24px; }
+        .pzy_panel > h2 { font-size: 18px; color: #2c3e50; padding-left: 10px; border-left: 4px solid #27ae60; margin-bottom: 14px; }
+        code.pzy_url { display: block; background: #2d3436; color: #55efc4; font-family: Consolas, monospace; font-size: 14px; padding: 12px 16px; border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+        .pzy_actions { margin: 16px 0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .pzy_btn { border: none; border-radius: 6px; padding: 9px 18px; font-size: 14px; font-family: inherit; cursor: pointer; background: #27ae60; color: #fff; }
+        .pzy_btn:hover { background: #219150; }
+        .pzy_btn:disabled { background: #a9d3bb; cursor: not-allowed; }
+        .pzy_msg { font-size: 13px; }
+        .pzy_msg.pzy_ok { color: #27ae60; }
+        .pzy_msg.pzy_err { color: #e74c3c; }
+        .pzy_grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+        @media (max-width: 900px) { .pzy_grid { grid-template-columns: repeat(2, 1fr); } }
+        .pzy_card { background: #fff; border: 1px solid #ecf0f1; border-radius: 10px; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; animation: pzy_in 0.4s ease both; }
+        .pzy_card:hover { box-shadow: 0 6px 18px rgba(39,174,96,0.18); transform: translateY(-3px); }
+        @keyframes pzy_in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .pzy_thumb { width: 100%; height: 150px; object-fit: cover; background: #f5f6fa; }
+        .pzy_info { padding: 12px 14px 14px; }
+        .pzy_info h3 { font-size: 14px; color: #2c3e50; line-height: 1.5; margin-bottom: 8px; height: 42px; overflow: hidden; }
+        .pzy_row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .pzy_price { font-size: 18px; font-weight: bold; color: #e67e22; font-family: Consolas, monospace; }
+        .pzy_old { font-size: 12px; color: #b2bec3; text-decoration: line-through; margin-left: 6px; }
+        .pzy_rate { font-size: 12px; color: #f39c12; }
+        .pzy_meta { font-size: 12px; color: #95a5a6; margin-bottom: 10px; }
+        .pzy_link { display: block; text-align: center; font-size: 13px; color: #27ae60; text-decoration: none; border: 1px solid #27ae60; border-radius: 6px; padding: 6px 0; transition: all 0.2s; }
+        .pzy_link:hover { background: #27ae60; color: #fff; }
+        .pzy_dots span { display: inline-block; width: 7px; height: 7px; margin-right: 4px; border-radius: 50%; background: #27ae60; animation: pzy_jump 0.9s infinite; }
+        .pzy_dots span:nth-child(2) { animation-delay: 0.15s; }
+        .pzy_dots span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes pzy_jump { 0%,60%,100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-6px); opacity: 1; } }
+        .pzy_footer { text-align: center; font-size: 13px; color: #999; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>商品列表</h1>
+            <p>fetch 请求 DummyJSON 接口渲染商品列表，点击卡片查看详情 | 庞智元</p>
+        </div>
+
+        <div class="pzy_panel">
+            <h2>一、接口地址</h2>
+            <code class="pzy_url">GET https://dummyjson.com/products?limit=8</code>
+            <div class="pzy_actions">
+                <button class="pzy_btn" id="pzy_loadBtn">重新加载</button>
+                <span class="pzy_msg" id="pzy_statusMsg"></span>
+            </div>
+        </div>
+
+        <div class="pzy_grid" id="pzy_list"></div>
+
+        <div class="pzy_footer">17-3 商品列表 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        var pzy_apiUrl = 'https://dummyjson.com/products?limit=8';
+        var pzy_listEl = document.getElementById('pzy_list');
+        var pzy_msgEl = document.getElementById('pzy_statusMsg');
+        var pzy_btnEl = document.getElementById('pzy_loadBtn');
+
+        function pzy_showMsg(pzy_text, pzy_type) {
+            pzy_msgEl.textContent = pzy_text;
+            pzy_msgEl.className = 'pzy_msg ' + pzy_type;
+        }
+
+        function pzy_loadProducts() {
+            pzy_btnEl.disabled = true;
+            pzy_listEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:50px 0;">'
+                + '<span class="pzy_dots"><span></span><span></span><span></span></span>'
+                + '<span style="margin-left:10px;color:#27ae60;font-size:14px;">正在加载商品数据…</span></div>';
+
+            fetch(pzy_apiUrl)
+                .then(function (pzy_res) {
+                    if (!pzy_res.ok) { throw new Error('HTTP 状态码：' + pzy_res.status); }
+                    return pzy_res.json();
+                })
+                .then(function (pzy_data) {
+                    pzy_showMsg('加载成功！共 ' + pzy_data.total + ' 件商品，本次显示 ' + pzy_data.products.length + ' 件', 'pzy_ok');
+                    pzy_render(pzy_data.products);
+                })
+                .catch(function (pzy_err) {
+                    pzy_listEl.innerHTML = '';
+                    pzy_showMsg('请求失败：' + pzy_err.message, 'pzy_err');
+                })
+                .finally(function () { pzy_btnEl.disabled = false; });
+        }
+
+        function pzy_render(pzy_products) {
+            var pzy_html = '';
+            for (var pzy_i = 0; pzy_i < pzy_products.length; pzy_i++) {
+                var pzy_p = pzy_products[pzy_i];
+                pzy_html += '<div class="pzy_card" style="animation-delay:' + pzy_i * 0.06 + 's">'
+                    + '<img class="pzy_thumb" src="' + pzy_p.thumbnail + '" alt="' + pzy_p.title + '">'
+                    + '<div class="pzy_info">'
+                    + '<h3>' + pzy_p.title + '</h3>'
+                    + '<div class="pzy_meta">' + pzy_p.brand + ' · ' + pzy_p.category + '</div>'
+                    + '<div class="pzy_row"><span class="pzy_price">$' + pzy_p.price
+                    + '<span class="pzy_old">$' + Math.round(pzy_p.price / (1 - pzy_p.discountPercentage / 100)) + '</span></span>'
+                    + '<span class="pzy_rate">★ ' + pzy_p.rating + '</span></div>'
+                    + '<a class="pzy_link" href="17-3-detail.html?id=' + pzy_p.id + '">查看详情</a>'
+                    + '</div></div>';
+            }
+            pzy_listEl.innerHTML = pzy_html;
+        }
+
+        pzy_btnEl.onclick = pzy_loadProducts;
+        pzy_loadProducts();
+    </script>
+</body>
+</html>

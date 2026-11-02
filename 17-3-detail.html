@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 - Fetch 按 ID 查询</title>
+    <!-- 姓名：庞智元，日期：商品详情页（根据 ID 获取单个商品）。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; color: #333; font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif; }
+        .pzy_container { max-width: 1000px; margin: 0 auto; padding: 30px 20px 60px; }
+        .pzy_top { margin-bottom: 18px; }
+        .pzy_back { font-size: 14px; color: #27ae60; text-decoration: none; }
+        .pzy_back:hover { text-decoration: underline; }
+        .pzy_panel { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 26px 30px; }
+        .pzy_head { font-size: 18px; color: #2c3e50; padding-left: 10px; border-left: 4px solid #27ae60; margin-bottom: 18px; }
+        .pzy_detail { display: flex; gap: 30px; }
+        @media (max-width: 760px) { .pzy_detail { flex-direction: column; } }
+        .pzy_left { width: 360px; flex-shrink: 0; }
+        .pzy_main_img { width: 100%; height: 300px; object-fit: cover; border-radius: 10px; background: #f5f6fa; }
+        .pzy_thumbs { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .pzy_thumbs img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; border: 2px solid transparent; cursor: pointer; }
+        .pzy_thumbs img.pzy_cur { border-color: #27ae60; }
+        .pzy_right { flex: 1; }
+        .pzy_title { font-size: 22px; color: #2c3e50; margin-bottom: 8px; }
+        .pzy_sub { font-size: 13px; color: #95a5a6; margin-bottom: 16px; }
+        .pzy_pricebox { background: #fef9e7; border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; }
+        .pzy_price { font-size: 30px; font-weight: bold; color: #e67e22; font-family: Consolas, monospace; }
+        .pzy_discount { font-size: 13px; color: #e74c3c; margin-left: 10px; }
+        .pzy_old { font-size: 14px; color: #b2bec3; text-decoration: line-through; margin-left: 10px; }
+        .pzy_props { list-style: none; margin-bottom: 18px; }
+        .pzy_props li { font-size: 14px; color: #555; line-height: 2.1; border-bottom: 1px dotted #e5e8ea; }
+        .pzy_props b { color: #2c3e50; display: inline-block; width: 90px; }
+        .pzy_desc { font-size: 14px; color: #666; line-height: 2; }
+        .pzy_rate { color: #f39c12; font-weight: bold; }
+        .pzy_msg { text-align: center; padding: 60px 0; font-size: 15px; color: #999; }
+        .pzy_msg.pzy_err { color: #e74c3c; }
+        .pzy_dots span { display: inline-block; width: 8px; height: 8px; margin-right: 4px; border-radius: 50%; background: #27ae60; animation: pzy_jump 0.9s infinite; }
+        .pzy_dots span:nth-child(2) { animation-delay: 0.15s; }
+        .pzy_dots span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes pzy_jump { 0%,60%,100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-6px); opacity: 1; } }
+        .pzy_footer { text-align: center; font-size: 13px; color: #999; margin-top: 24px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_top">
+            <a class="pzy_back" href="17-3.html">← 返回商品列表</a>
+        </div>
+
+        <div class="pzy_panel">
+            <div class="pzy_head" id="pzy_head">商品详情</div>
+            <div id="pzy_content" class="pzy_msg">正在请求商品数据…<br><span class="pzy_dots"><span></span><span></span><span></span></span></div>
+        </div>
+
+        <div class="pzy_footer">17-3-detail 商品详情 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        // 从 URL 查询参数中取商品 ID，如 17-3-detail.html?id=5
+        var pzy_params = new URLSearchParams(window.location.search);
+        var pzy_id = pzy_params.get('id') || '1';
+        var pzy_apiUrl = 'https://dummyjson.com/products/' + pzy_id;
+
+        document.getElementById('pzy_head').textContent = '商品详情（ID = ' + pzy_id + '）';
+
+        fetch(pzy_apiUrl)
+            .then(function (pzy_res) {
+                if (!pzy_res.ok) { throw new Error('HTTP 状态码：' + pzy_res.status + '（商品不存在？）'); }
+                return pzy_res.json();
+            })
+            .then(function (pzy_p) {
+                document.getElementById('pzy_content').className = '';
+                document.getElementById('pzy_content').innerHTML = pzy_build(pzy_p);
+                pzy_bindThumbs();
+            })
+            .catch(function (pzy_err) {
+                document.getElementById('pzy_content').className = 'pzy_msg pzy_err';
+                document.getElementById('pzy_content').textContent = '获取失败：' + pzy_err.message;
+            });
+
+        function pzy_build(pzy_p) {
+            var pzy_html = '<div class="pzy_detail"><div class="pzy_left">'
+                + '<img class="pzy_main_img" id="pzy_mainImg" src="' + pzy_p.thumbnail + '" alt="' + pzy_p.title + '">'
+                + '<div class="pzy_thumbs">';
+            for (var pzy_i = 0; pzy_i < pzy_p.images.length; pzy_i++) {
+                pzy_html += '<img src="' + pzy_p.images[pzy_i] + '" class="' + (pzy_i === 0 ? 'pzy_cur' : '') + '">';
+            }
+            pzy_html += '</div></div><div class="pzy_right">'
+                + '<div class="pzy_title">' + pzy_p.title + '</div>'
+                + '<div class="pzy_sub">' + pzy_p.brand + ' · ' + pzy_p.category + '</div>'
+                + '<div class="pzy_pricebox"><span class="pzy_price">$' + pzy_p.price + '</span>'
+                + '<span class="pzy_discount">-' + pzy_p.discountPercentage.toFixed(2) + '%</span>'
+                + '<span class="pzy_old">原价 $' + Math.round(pzy_p.price / (1 - pzy_p.discountPercentage / 100)) + '</span></div>'
+                + '<ul class="pzy_props">'
+                + '<li><b>评分</b><span class="pzy_rate">★ ' + pzy_p.rating + '</span> / 5.0</li>'
+                + '<li><b>库存</b>' + pzy_p.stock + ' 件</li>'
+                + '<li><b>商品 ID</b>' + pzy_p.id + '</li>'
+                + '</ul>'
+                + '<div class="pzy_desc"><b style="color:#2c3e50;">商品介绍：</b>' + pzy_p.description + '</div>'
+                + '</div></div>';
+            return pzy_html;
+        }
+
+        // 点击缩略图切换主图
+        function pzy_bindThumbs() {
+            var pzy_main = document.getElementById('pzy_mainImg');
+            var pzy_thumbs = document.querySelectorAll('.pzy_thumbs img');
+            for (var pzy_i = 0; pzy_i < pzy_thumbs.length; pzy_i++) {
+                pzy_thumbs[pzy_i].onclick = function () {
+                    pzy_main.src = this.src;
+                    for (var pzy_j = 0; pzy_j < pzy_thumbs.length; pzy_j++) {
+                        pzy_thumbs[pzy_j].className = '';
+                    }
+                    this.className = 'pzy_cur';
+                };
+            }
+        }
+    </script>
+</body>
+</html>

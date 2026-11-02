@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 定时器演示</title>
+    <!-- 姓名：庞智元，日期：setTimeout 与 setInterval 定时器演示。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; color: #333; font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif; }
+        .pzy_container { max-width: 1000px; margin: 0 auto; padding: 30px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 26px; }
+        .pzy_header h1 { font-size: 26px; color: #2c3e50; }
+        .pzy_header p { font-size: 14px; color: #888; margin-top: 8px; }
+        .pzy_panel { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 22px 26px; margin-bottom: 24px; }
+        .pzy_panel > h2 { font-size: 18px; color: #2c3e50; padding-left: 10px; border-left: 4px solid #9b59b6; margin-bottom: 14px; }
+        .pzy_intro { font-size: 13px; color: #888; line-height: 1.9; margin-bottom: 14px; }
+        pre.pzy_code { background: #2d3436; color: #dfe6e9; font-family: Consolas, monospace; font-size: 13px; line-height: 1.7; padding: 14px 18px; border-radius: 8px; overflow-x: auto; margin-bottom: 16px; }
+        .pzy_actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+        .pzy_btn { border: none; border-radius: 6px; padding: 9px 18px; font-size: 14px; font-family: inherit; cursor: pointer; background: #9b59b6; color: #fff; }
+        .pzy_btn:hover { background: #7f4a97; }
+        .pzy_btn.pzy_warn { background: #e74c3c; }
+        .pzy_btn.pzy_warn:hover { background: #c0392b; }
+        .pzy_btn.pzy_ghost { background: #f0f2f5; color: #555; }
+        .pzy_btn:disabled { background: #c9b3d4; cursor: not-allowed; }
+        .pzy_display { background: #2d3436; color: #55efc4; font-family: Consolas, monospace; font-size: 34px; text-align: center; padding: 22px 0; border-radius: 10px; margin-bottom: 14px; }
+        .pzy_log { background: #f8f9fa; border: 1px solid #ecf0f1; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #666; line-height: 2; max-height: 180px; overflow-y: auto; }
+        .pzy_log div { border-bottom: 1px dotted #e5e8ea; }
+        .pzy_log b { color: #9b59b6; font-family: Consolas, monospace; font-weight: normal; margin-right: 8px; }
+        .pzy_footer { text-align: center; font-size: 13px; color: #999; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>JavaScript 的两种定时器</h1>
+            <p>setTimeout（延时执行一次）与 setInterval（循环执行） | 庞智元</p>
+        </div>
+
+        <!-- 一、setTimeout -->
+        <div class="pzy_panel">
+            <h2>一、setTimeout：延时后执行一次</h2>
+            <div class="pzy_intro">设置一个倒计时（默认 5 秒），到 0 时触发一次回调。可以用 clearTimeout 提前取消。</div>
+            <pre class="pzy_code">var pzy_timerId = setTimeout(函数, 毫秒数);   // 返回定时器编号
+clearTimeout(pzy_timerId);                    // 取消定时器</pre>
+            <div class="pzy_display" id="pzy_timeoutShow">5.0 s</div>
+            <div class="pzy_actions">
+                <button class="pzy_btn" id="pzy_timeoutStart">开始倒计时</button>
+                <button class="pzy_btn pzy_warn" id="pzy_timeoutCancel" disabled>取消 clearTimeout</button>
+                <span style="font-size:13px;color:#888;" id="pzy_timeoutTip">点击按钮开始，倒计时结束自动隐藏提示</span>
+            </div>
+        </div>
+
+        <!-- 二、setInterval -->
+        <div class="pzy_panel">
+            <h2>二、setInterval：每隔一段时间循环执行</h2>
+            <div class="pzy_intro">每 1 秒刷新一次电子时钟，直到点击停止。用 clearInterval 取消循环。</div>
+            <pre class="pzy_code">var pzy_clockId = setInterval(函数, 1000);   // 每 1000 毫秒执行一次
+clearInterval(pzy_clockId);                  // 停止循环</pre>
+            <div class="pzy_display" id="pzy_clockShow">-- : -- : --</div>
+            <div class="pzy_actions">
+                <button class="pzy_btn" id="pzy_clockStart">启动时钟</button>
+                <button class="pzy_btn pzy_warn" id="pzy_clockStop" disabled>停止 clearInterval</button>
+                <span style="font-size:13px;color:#888;" id="pzy_clockTip">时钟未启动</span>
+            </div>
+            <div class="pzy_log" id="pzy_clockLog"><div>时钟日志：</div></div>
+        </div>
+
+        <div class="pzy_footer">17-5 定时器演示 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        // ============ 一、setTimeout 演示 ============
+        var pzy_toId = null;          // 定时器编号
+        var pzy_toLeft = 5;           // 剩余秒数
+        var pzy_toTick = null;        // 界面倒计时刷新（也用 setInterval 实现）
+        var pzy_toShow = document.getElementById('pzy_timeoutShow');
+        var pzy_toStart = document.getElementById('pzy_timeoutStart');
+        var pzy_toCancel = document.getElementById('pzy_timeoutCancel');
+        var pzy_toTip = document.getElementById('pzy_timeoutTip');
+
+        pzy_toStart.onclick = function () {
+            pzy_clearTimeoutAll();
+            pzy_toLeft = 5;
+            pzy_toTip.textContent = '倒计时进行中…';
+            pzy_toCancel.disabled = false;
+            this.disabled = true;
+
+            // 每 0.1 秒刷新界面数字
+            pzy_toTick = setInterval(function () {
+                if (pzy_toLeft > 0) {
+                    pzy_toLeft -= 0.1;
+                    pzy_toShow.textContent = Math.max(pzy_toLeft, 0).toFixed(1) + ' s';
+                }
+            }, 100);
+
+            // 5 秒后触发一次
+            pzy_toId = setTimeout(function () {
+                pzy_toShow.textContent = '⏰ 时间到！';
+                pzy_toTip.textContent = 'setTimeout 回调已执行（只执行一次）';
+                pzy_clearTimeoutAll();
+                pzy_toStart.disabled = false;
+                pzy_toCancel.disabled = true;
+            }, 5000);
+        };
+
+        pzy_toCancel.onclick = function () {
+            clearTimeout(pzy_toId);
+            pzy_clearTimeoutAll();
+            pzy_toShow.textContent = '已取消';
+            pzy_toTip.textContent = '定时器已被 clearTimeout 取消，回调不会执行';
+            this.disabled = true;
+            pzy_toStart.disabled = false;
+        };
+
+        function pzy_clearTimeoutAll() {
+            clearTimeout(pzy_toId);
+            clearInterval(pzy_toTick);
+            pzy_toId = null;
+        }
+
+        // ============ 二、setInterval 演示 ============
+        var pzy_clkId = null;
+        var pzy_clkShow = document.getElementById('pzy_clockShow');
+        var pzy_clkStart = document.getElementById('pzy_clockStart');
+        var pzy_clkStop = document.getElementById('pzy_clockStop');
+        var pzy_clkTip = document.getElementById('pzy_clockTip');
+        var pzy_clkLog = document.getElementById('pzy_clockLog');
+        var pzy_clkCount = 0;
+
+        function pzy_pad(pzy_n) { return pzy_n < 10 ? '0' + pzy_n : '' + pzy_n; }
+
+        pzy_clkStart.onclick = function () {
+            if (pzy_clkId !== null) { return; }
+            function pzy_update() {
+                var pzy_now = new Date();
+                pzy_clkShow.textContent = pzy_pad(pzy_now.getHours()) + ' : '
+                    + pzy_pad(pzy_now.getMinutes()) + ' : ' + pzy_pad(pzy_now.getSeconds());
+                pzy_clkCount++;
+                var pzy_row = document.createElement('div');
+                var pzy_time = pzy_pad(pzy_now.getHours()) + ':' + pzy_pad(pzy_now.getMinutes()) + ':' + pzy_pad(pzy_now.getSeconds());
+                pzy_row.innerHTML = '<b>' + pzy_time + '</b>第 ' + pzy_clkCount + ' 次触发 setInterval 回调';
+                pzy_clkLog.appendChild(pzy_row);
+                pzy_clkLog.scrollTop = pzy_clkLog.scrollHeight;
+            }
+            pzy_update();                    // 先立即显示一次
+            pzy_clkId = setInterval(pzy_update, 1000);
+            pzy_clkTip.textContent = '时钟运行中（每秒触发一次）';
+            this.disabled = true;
+            pzy_clkStop.disabled = false;
+        };
+
+        pzy_clkStop.onclick = function () {
+            clearInterval(pzy_clkId);
+            pzy_clkId = null;
+            pzy_clkTip.textContent = '时钟已停止，共触发 ' + pzy_clkCount + ' 次';
+            this.disabled = true;
+            pzy_clkStart.disabled = false;
+        };
+    </script>
+</body>
+</html>

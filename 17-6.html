@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise 与 async 包饺子流程演示</title>
+    <!-- 姓名：庞智元，日期：Promise/async 异步包饺子流程演示。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; color: #333; font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif; }
+        .pzy_container { max-width: 1000px; margin: 0 auto; padding: 30px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 26px; }
+        .pzy_header h1 { font-size: 26px; color: #2c3e50; }
+        .pzy_header p { font-size: 14px; color: #888; margin-top: 8px; }
+        .pzy_panel { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 22px 26px; margin-bottom: 24px; }
+        .pzy_panel > h2 { font-size: 18px; color: #2c3e50; padding-left: 10px; border-left: 4px solid #e74c3c; margin-bottom: 8px; }
+        .pzy_intro { font-size: 13px; color: #888; line-height: 1.9; margin-bottom: 16px; }
+        pre.pzy_code { background: #2d3436; color: #dfe6e9; font-family: Consolas, monospace; font-size: 13px; line-height: 1.7; padding: 14px 18px; border-radius: 8px; overflow-x: auto; margin-bottom: 16px; }
+        /* 流程步骤 */
+        .pzy_flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+        .pzy_step { flex: 1; min-width: 110px; text-align: center; border: 2px solid #e5e8ea; border-radius: 10px; padding: 14px 8px; transition: all 0.3s; background: #fafbfc; }
+        .pzy_step .pzy_icon { font-size: 30px; display: block; margin-bottom: 6px; filter: grayscale(1); opacity: 0.45; transition: all 0.3s; }
+        .pzy_step .pzy_name { font-size: 14px; color: #555; display: block; }
+        .pzy_step .pzy_state { font-size: 12px; color: #b2bec3; display: block; margin-top: 4px; }
+        .pzy_step.pzy_run { border-color: #f39c12; background: #fef9e7; transform: translateY(-4px); }
+        .pzy_step.pzy_run .pzy_icon { filter: none; opacity: 1; animation: pzy_shake 0.6s infinite; }
+        .pzy_step.pzy_run .pzy_state { color: #e67e22; }
+        .pzy_step.pzy_done { border-color: #27ae60; background: #eafaf1; }
+        .pzy_step.pzy_done .pzy_icon { filter: none; opacity: 1; }
+        .pzy_step.pzy_done .pzy_state { color: #27ae60; }
+        .pzy_arrow { font-size: 20px; color: #b2bec3; }
+        @keyframes pzy_shake { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+        .pzy_actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+        .pzy_btn { border: none; border-radius: 6px; padding: 10px 22px; font-size: 14px; font-family: inherit; cursor: pointer; background: #e74c3c; color: #fff; }
+        .pzy_btn:hover { background: #c0392b; }
+        .pzy_btn:disabled { background: #e8b7b1; cursor: not-allowed; }
+        .pzy_btn.pzy_ghost { background: #f0f2f5; color: #555; }
+        .pzy_progress { height: 10px; background: #ecf0f1; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
+        .pzy_progress i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #e74c3c, #f39c12); border-radius: 5px; transition: width 0.4s; }
+        .pzy_log { background: #f8f9fa; border: 1px solid #ecf0f1; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #666; line-height: 2.1; max-height: 260px; overflow-y: auto; }
+        .pzy_log b { color: #e74c3c; font-family: Consolas, monospace; font-weight: normal; margin-right: 8px; }
+        .pzy_log .pzy_ok { color: #27ae60; }
+        .pzy_log .pzy_par { color: #8e44ad; }
+        .pzy_footer { text-align: center; font-size: 13px; color: #999; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>包饺子的异步流程</h1>
+            <p>async / await + Promise.all 控制流程，setTimeout 模拟每一步耗时 | 庞智元</p>
+        </div>
+
+        <div class="pzy_panel">
+            <h2>一、流程设计</h2>
+            <div class="pzy_intro">买原料（6s）→ 取原料（2s）→【和面（4s）∥ 和馅（5s）并行执行，用 Promise.all 等待两者完成】→ 包饺子（3s）→ 吃饺子（2s）。每一步都用 setTimeout 模拟真实耗时。</div>
+            <pre class="pzy_code">await 买原料(6000);            // 串行：先买
+await 取原料(2000);            // 串行：再取
+await Promise.all([和面(4000), 和馅(5000)]);  // 并行：两件事同时做
+await 包饺子(3000);            // 等上面都完成才能包
+await 吃饺子(2000);            // 最后开吃</pre>
+            <div class="pzy_flow" id="pzy_flow"></div>
+            <div class="pzy_actions">
+                <button class="pzy_btn" id="pzy_goBtn">🥟 开始包饺子</button>
+                <button class="pzy_btn pzy_ghost" id="pzy_resetBtn">重置</button>
+                <span style="font-size:13px;color:#888;" id="pzy_tip">点击开始，整个流程约 18 秒（并行节省了时间）</span>
+            </div>
+            <div class="pzy_progress"><i id="pzy_bar"></i></div>
+            <div class="pzy_log" id="pzy_log"><div>流程日志：</div></div>
+        </div>
+
+        <div class="pzy_footer">17-6 Promise/async 包饺子演示 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        // ============ 流程步骤定义 ============
+        var pzy_steps = [
+            { key: 'buy',   icon: '🛒', name: '买原料', time: 6000 },
+            { key: 'take',  icon: '🧺', name: '取原料', time: 2000 },
+            { key: 'dough', icon: '🥣', name: '和面',   time: 4000 },
+            { key: 'fill',  icon: '🥬', name: '和馅',   time: 5000 },
+            { key: 'make',  icon: '🥟', name: '包饺子', time: 3000 },
+            { key: 'eat',   icon: '😋', name: '吃饺子', time: 2000 }
+        ];
+
+        var pzy_flowEl = document.getElementById('pzy_flow');
+        var pzy_logEl = document.getElementById('pzy_log');
+        var pzy_barEl = document.getElementById('pzy_bar');
+        var pzy_tipEl = document.getElementById('pzy_tip');
+        var pzy_goEl = document.getElementById('pzy_goBtn');
+        var pzy_startTime = 0;
+
+        // 渲染步骤卡片
+        function pzy_renderFlow() {
+            var pzy_html = '';
+            for (var pzy_i = 0; pzy_i < pzy_steps.length; pzy_i++) {
+                var pzy_s = pzy_steps[pzy_i];
+                pzy_html += '<div class="pzy_step" id="pzy_step_' + pzy_s.key + '">'
+                    + '<span class="pzy_icon">' + pzy_s.icon + '</span>'
+                    + '<span class="pzy_name">' + pzy_s.name + '</span>'
+                    + '<span class="pzy_state">' + (pzy_s.time / 1000) + 's · 等待中</span>'
+                    + '</div>';
+                if (pzy_i === 1) {
+                    // 取原料之后，和面/和馅是并行分支
+                    pzy_html += '<span class="pzy_arrow">→</span>';
+                } else if (pzy_i < pzy_steps.length - 1) {
+                    pzy_html += (pzy_i === 3 ? '<span class="pzy_arrow">⇉</span>' : '<span class="pzy_arrow">→</span>');
+                }
+            }
+            pzy_flowEl.innerHTML = pzy_html;
+        }
+
+        function pzy_log(pzy_text, pzy_cls) {
+            var pzy_elapsed = ((Date.now() - pzy_startTime) / 1000).toFixed(1);
+            var pzy_row = document.createElement('div');
+            pzy_row.innerHTML = '<b>' + pzy_elapsed + 's</b><span class="' + (pzy_cls || '') + '">' + pzy_text + '</span>';
+            pzy_logEl.appendChild(pzy_row);
+            pzy_logEl.scrollTop = pzy_logEl.scrollHeight;
+        }
+
+        function pzy_setState(pzy_key, pzy_state) {
+            var pzy_el = document.getElementById('pzy_step_' + pzy_key);
+            pzy_el.classList.remove('pzy_run', 'pzy_done');
+            var pzy_text = '';
+            if (pzy_state === 'run') {
+                pzy_el.classList.add('pzy_run');
+                pzy_text = '进行中…';
+            } else if (pzy_state === 'done') {
+                pzy_el.classList.add('pzy_done');
+                pzy_text = '✔ 完成';
+            }
+            pzy_el.querySelector('.pzy_state').textContent = pzy_text || (pzy_key ? (pzy_steps.filter(function (pzy_s) { return pzy_s.key === pzy_key; })[0].time / 1000) + 's · 等待中' : '');
+        }
+
+        function pzy_setBar(pzy_percent) {
+            pzy_barEl.style.width = pzy_percent + '%';
+        }
+
+        // ============ 核心：用 Promise 封装 setTimeout ============
+        function pzy_sleep(pzy_ms) {
+            return new Promise(function (pzy_resolve) {
+                setTimeout(pzy_resolve, pzy_ms);
+            });
+        }
+
+        // 执行一个步骤：卡片变运行态 → 等待耗时 → 变完成态
+        async function pzy_doStep(pzy_step) {
+            pzy_setState(pzy_step.key, 'run');
+            pzy_log('开始【' + pzy_step.name + '】（约 ' + pzy_step.time / 1000 + ' 秒）…');
+            await pzy_sleep(pzy_step.time);
+            pzy_setState(pzy_step.key, 'done');
+            pzy_log('【' + pzy_step.name + '】完成！', 'pzy_ok');
+        }
+
+        // async 函数：用 await 把异步代码写成同步的样子
+        async function pzy_makeDumplings() {
+            pzy_startTime = Date.now();
+            pzy_goEl.disabled = true;
+            pzy_log('🎬 开始包饺子流程！');
+
+            // 1. 买原料（6s）
+            await pzy_doStep(pzy_steps[0]);
+            pzy_setBar(17);
+
+            // 2. 取原料（2s）
+            await pzy_doStep(pzy_steps[1]);
+            pzy_setBar(34);
+
+            // 3. 和面 + 和馅 并行执行：Promise.all 等两个都完成
+            pzy_log('并行开始【和面】和【和馅】（Promise.all 同时等待两件事）', 'pzy_par');
+            pzy_setState('dough', 'run');
+            pzy_setState('fill', 'run');
+            await Promise.all([pzy_doStep(pzy_steps[2]), pzy_doStep(pzy_steps[3])]);
+            pzy_log('和面、和馅都完成了！（并行只花了 5s 而不是 9s）', 'pzy_par');
+            pzy_setBar(68);
+
+            // 4. 包饺子（3s）
+            await pzy_doStep(pzy_steps[4]);
+            pzy_setBar(85);
+
+            // 5. 吃饺子（2s）
+            await pzy_doStep(pzy_steps[5]);
+            pzy_setBar(100);
+
+            var pzy_total = ((Date.now() - pzy_startTime) / 1000).toFixed(1);
+            pzy_log('🎉 全部完成！串行需要 22s，并行后总耗时约 ' + pzy_total + 's', 'pzy_ok');
+            pzy_tipEl.textContent = '流程结束，点击「开始包饺子」可再来一次';
+            pzy_goEl.disabled = false;
+        }
+
+        function pzy_reset() {
+            pzy_renderFlow();
+            pzy_setBar(0);
+            pzy_logEl.innerHTML = '<div>流程日志：</div>';
+            pzy_tipEl.textContent = '点击开始，整个流程约 18 秒（并行节省了时间）';
+        }
+
+        pzy_goEl.onclick = function () { pzy_reset(); pzy_makeDumplings(); };
+        document.getElementById('pzy_resetBtn').onclick = pzy_reset;
+        pzy_renderFlow();
+    </script>
+</body>
+</html>

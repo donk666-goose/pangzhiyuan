@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>接口测试工具 - Fetch 请求</title>
+    <!-- 姓名：庞智元，日期：远程数据接口测试工具。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; color: #333; font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif; }
+        .pzy_container { max-width: 1080px; margin: 0 auto; padding: 30px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 24px; }
+        .pzy_header h1 { font-size: 26px; color: #2c3e50; }
+        .pzy_header p { font-size: 14px; color: #888; margin-top: 8px; }
+        .pzy_panel { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 22px 26px; margin-bottom: 24px; }
+        .pzy_panel > h2 { font-size: 18px; color: #2c3e50; padding-left: 10px; border-left: 4px solid #e67e22; margin-bottom: 14px; }
+        .pzy_reqbar { display: flex; gap: 10px; flex-wrap: wrap; }
+        .pzy_method { padding: 9px 10px; border: 1px solid #dcdfe4; border-radius: 6px; font-size: 14px; font-weight: bold; color: #e67e22; outline: none; background: #fff; }
+        .pzy_url { flex: 1; min-width: 260px; padding: 9px 12px; border: 1px solid #dcdfe4; border-radius: 6px; font-size: 14px; font-family: Consolas, monospace; outline: none; }
+        .pzy_url:focus { border-color: #e67e22; }
+        .pzy_send { border: none; border-radius: 6px; padding: 9px 24px; font-size: 14px; font-family: inherit; cursor: pointer; background: #e67e22; color: #fff; }
+        .pzy_send:hover { background: #cf6d15; }
+        .pzy_send:disabled { background: #e3c4a3; cursor: not-allowed; }
+        textarea.pzy_body { width: 100%; height: 110px; margin-top: 12px; border: 1px solid #dcdfe4; border-radius: 8px; padding: 12px 14px; font-family: Consolas, monospace; font-size: 13px; resize: vertical; outline: none; }
+        textarea.pzy_body:focus { border-color: #e67e22; }
+        .pzy_examples { margin-top: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .pzy_examples span { font-size: 13px; color: #999; }
+        .pzy_chip { font-size: 12px; padding: 4px 10px; border-radius: 12px; border: 1px solid #dcdfe4; background: #f8f9fa; color: #555; cursor: pointer; }
+        .pzy_chip:hover { border-color: #e67e22; color: #e67e22; }
+        .pzy_result_head { display: flex; gap: 18px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+        .pzy_badge { font-size: 13px; font-family: Consolas, monospace; padding: 3px 12px; border-radius: 12px; background: #f0f2f5; color: #555; }
+        .pzy_badge.pzy_b2 { background: #e9f7ef; color: #27ae60; }
+        .pzy_badge.pzy_b4 { background: #fdf2e9; color: #e67e22; }
+        .pzy_badge.pzy_b5 { background: #fdedec; color: #e74c3c; }
+        pre.pzy_out { background: #2d3436; color: #dfe6e9; font-family: Consolas, monospace; font-size: 13px; line-height: 1.7; padding: 16px 20px; border-radius: 8px; overflow-x: auto; max-height: 460px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+        pre.pzy_out.pzy_errout { background: #4a2020; color: #f9c9c4; }
+        .pzy_footer { text-align: center; font-size: 13px; color: #999; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>远程接口测试工具</h1>
+            <p>使用 fetch 发送 GET / POST / PUT / DELETE 请求，查看返回数据与错误信息 | 庞智元</p>
+        </div>
+
+        <div class="pzy_panel">
+            <h2>一、构造请求</h2>
+            <div class="pzy_reqbar">
+                <select class="pzy_method" id="pzy_method">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+                <input class="pzy_url" id="pzy_url" value="https://jsonplaceholder.typicode.com/posts" spellcheck="false">
+                <button class="pzy_send" id="pzy_sendBtn">发送请求</button>
+            </div>
+            <textarea class="pzy_body" id="pzy_body" spellcheck="false">{
+  "title": "庞智元的测试文章",
+  "body": "这是使用 fetch 发送的 POST 请求体",
+  "userId": 1
+}</textarea>
+            <div class="pzy_examples">
+                <span>示例：</span>
+                <button class="pzy_chip" data-m="GET" data-u="https://jsonplaceholder.typicode.com/posts">GET 文章列表</button>
+                <button class="pzy_chip" data-m="GET" data-u="https://jsonplaceholder.typicode.com/posts/1">GET 单篇文章</button>
+                <button class="pzy_chip" data-m="POST" data-u="https://jsonplaceholder.typicode.com/posts">POST 新建文章</button>
+                <button class="pzy_chip" data-m="PUT" data-u="https://jsonplaceholder.typicode.com/posts/1">PUT 更新文章</button>
+                <button class="pzy_chip" data-m="DELETE" data-u="https://jsonplaceholder.typicode.com/posts/1">DELETE 删除</button>
+                <button class="pzy_chip" data-m="GET" data-u="https://api.abc-not-exist-123.com/data">GET 错误地址</button>
+            </div>
+        </div>
+
+        <div class="pzy_panel">
+            <h2>二、响应结果</h2>
+            <div class="pzy_result_head">
+                <span class="pzy_badge" id="pzy_statusBadge">状态：等待请求</span>
+                <span class="pzy_badge" id="pzy_timeBadge">耗时：-</span>
+                <span class="pzy_badge" id="pzy_typeBadge">类型：-</span>
+            </div>
+            <pre class="pzy_out" id="pzy_output">// 点击「发送请求」或上方示例按钮查看结果</pre>
+        </div>
+
+        <div class="pzy_footer">17-4 接口测试工具 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        var pzy_methodEl = document.getElementById('pzy_method');
+        var pzy_urlEl = document.getElementById('pzy_url');
+        var pzy_bodyEl = document.getElementById('pzy_body');
+        var pzy_sendEl = document.getElementById('pzy_sendBtn');
+        var pzy_outEl = document.getElementById('pzy_output');
+        var pzy_statusEl = document.getElementById('pzy_statusBadge');
+        var pzy_timeEl = document.getElementById('pzy_timeBadge');
+        var pzy_typeEl = document.getElementById('pzy_typeBadge');
+
+        function pzy_setBadge(pzy_el, pzy_text, pzy_cls) {
+            pzy_el.textContent = pzy_text;
+            pzy_el.className = 'pzy_badge' + (pzy_cls ? ' ' + pzy_cls : '');
+        }
+
+        function pzy_formatOut(pzy_text) {
+            // 尝试把响应格式化为缩进 JSON，失败则原样输出
+            try {
+                return JSON.stringify(JSON.parse(pzy_text), null, 2);
+            } catch (pzy_e) {
+                return pzy_text;
+            }
+        }
+
+        async function pzy_send() {
+            var pzy_method = pzy_methodEl.value;
+            var pzy_url = pzy_urlEl.value.trim();
+            var pzy_hasBody = (pzy_method === 'POST' || pzy_method === 'PUT' || pzy_method === 'PATCH');
+
+            if (!pzy_url) {
+                pzy_setBadge(pzy_statusEl, '状态：请填写接口地址', 'pzy_b4');
+                return;
+            }
+
+            // 构造 fetch 的 options：方法、请求头、请求体
+            var pzy_options = { method: pzy_method, headers: {} };
+            if (pzy_hasBody) {
+                pzy_options.headers['Content-Type'] = 'application/json';
+                pzy_options.body = pzy_bodyEl.value;
+            }
+
+            pzy_sendEl.disabled = true;
+            pzy_setBadge(pzy_statusEl, '状态：请求中…', '');
+            pzy_timeEl.textContent = '耗时：-';
+            pzy_typeEl.textContent = '类型：-';
+            var pzy_start = Date.now();
+
+            try {
+                var pzy_res = await fetch(pzy_url, pzy_options);
+                var pzy_cost = Date.now() - pzy_start;
+                var pzy_text = await pzy_res.text();
+
+                // HTTP 状态码分类：2xx 成功，4xx 客户端错误，5xx 服务器错误
+                var pzy_cls = pzy_res.ok ? 'pzy_b2' : (pzy_res.status < 500 ? 'pzy_b4' : 'pzy_b5');
+                pzy_setBadge(pzy_statusEl, '状态：HTTP ' + pzy_res.status + ' ' + pzy_res.statusText, pzy_cls);
+                pzy_timeEl.textContent = '耗时：' + pzy_cost + ' ms';
+                pzy_typeEl.textContent = '类型：' + (pzy_res.headers.get('content-type') || '未知');
+
+                pzy_outEl.className = 'pzy_out';
+                if (!pzy_res.ok) {
+                    pzy_outEl.textContent = '接口返回了错误状态码！\n\n' + pzy_formatOut(pzy_text);
+                } else {
+                    pzy_outEl.textContent = pzy_formatOut(pzy_text);
+                }
+            } catch (pzy_err) {
+                // 只有网络层失败（断网、域名不存在、被拦截）才会进入 catch
+                var pzy_cost2 = Date.now() - pzy_start;
+                pzy_setBadge(pzy_statusEl, '状态：请求失败', 'pzy_b5');
+                pzy_timeEl.textContent = '耗时：' + pzy_cost2 + ' ms';
+                pzy_outEl.className = 'pzy_out pzy_errout';
+                pzy_outEl.textContent = '【网络错误】' + pzy_err.message
+                    + '\n\n常见原因：\n1. 域名不存在或拼写错误\n2. 网络断开\n3. 跨域被浏览器拦截\n4. HTTPS 证书问题';
+            } finally {
+                pzy_sendEl.disabled = false;
+            }
+        }
+
+        pzy_sendEl.onclick = pzy_send;
+        pzy_urlEl.addEventListener('keydown', function (pzy_e) {
+            if (pzy_e.key === 'Enter') { pzy_send(); }
+        });
+
+        // 示例按钮：一键填入
+        var pzy_chips = document.querySelectorAll('.pzy_chip');
+        for (var pzy_i = 0; pzy_i < pzy_chips.length; pzy_i++) {
+            pzy_chips[pzy_i].onclick = function () {
+                pzy_methodEl.value = this.getAttribute('data-m');
+                pzy_urlEl.value = this.getAttribute('data-u');
+                pzy_send();
+            };
+        }
+    </script>
+</body>
+</html>

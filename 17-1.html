@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON - JavaScript 对象表示法</title>
+    <!-- 姓名：庞智元，日期：JSON 语法解析演示。 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #333333;
+            font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif;
+        }
+
+        .pzy_container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        .pzy_header {
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        .pzy_header h1 {
+            font-size: 26px;
+            color: #2c3e50;
+        }
+
+        .pzy_header p {
+            font-size: 14px;
+            color: #888888;
+            margin-top: 8px;
+        }
+
+        .pzy_panel {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            padding: 22px 26px;
+            margin-bottom: 24px;
+        }
+
+        .pzy_panel > h2 {
+            font-size: 18px;
+            color: #2c3e50;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 14px;
+        }
+
+        /* ==================== 语法图例 ==================== */
+        .pzy_legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 18px;
+            margin-bottom: 16px;
+        }
+
+        .pzy_legend span {
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: #f5f6fa;
+            color: #555555;
+        }
+
+        .pzy_legend b {
+            font-family: Consolas, monospace;
+            font-size: 13px;
+        }
+
+        .pzy_key {
+            color: #c0392b;
+        }
+
+        .pzy_str {
+            color: #27ae60;
+        }
+
+        .pzy_num {
+            color: #2980b9;
+        }
+
+        .pzy_bool {
+            color: #8e44ad;
+        }
+
+        .pzy_punct {
+            color: #7f8c8d;
+        }
+
+        /* ==================== 代码展示 ==================== */
+        pre.pzy_code {
+            background: #2d3436;
+            color: #dfe6e9;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            padding: 18px 22px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        /* ==================== 可视化树 ==================== */
+        .pzy_tree {
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .pzy_node {
+            margin: 6px 0 6px 18px;
+            padding-left: 14px;
+            border-left: 2px dashed #dfe6e9;
+        }
+
+        .pzy_node_root {
+            margin-left: 0;
+            border-left: none;
+        }
+
+        .pzy_pair {
+            padding: 2px 0;
+        }
+
+        .pzy_pair .pzy_k {
+            color: #c0392b;
+            font-family: Consolas, monospace;
+        }
+
+        .pzy_pair .pzy_v {
+            display: inline-block;
+            padding: 1px 8px;
+            margin-left: 6px;
+            border-radius: 4px;
+            background: #eaf4fd;
+            color: #2471a3;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+        }
+
+        .pzy_pair .pzy_v.pzy_vstr {
+            background: #e9f7ef;
+            color: #1e8449;
+        }
+
+        .pzy_pair .pzy_v.pzy_vbool {
+            background: #f4ecf7;
+            color: #7d3c98;
+        }
+
+        .pzy_pair .pzy_v.pzy_vnull {
+            background: #f2f3f4;
+            color: #909497;
+        }
+
+        .pzy_arritem {
+            display: inline-block;
+            padding: 2px 10px;
+            margin: 3px 6px 3px 0;
+            border: 1px solid #aed6f1;
+            border-radius: 4px;
+            background: #ebf5fb;
+            color: #21618c;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+        }
+
+        .pzy_arritem em {
+            font-style: normal;
+            color: #85c1e9;
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .pzy_label {
+            font-size: 12px;
+            color: #999999;
+            padding: 1px 7px;
+            border-radius: 10px;
+            background: #f5f6fa;
+            margin-right: 6px;
+        }
+
+        /* ==================== 交互区 ==================== */
+        textarea.pzy_input {
+            width: 100%;
+            height: 150px;
+            border: 1px solid #dcdfe4;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea.pzy_input:focus {
+            border-color: #3498db;
+        }
+
+        .pzy_actions {
+            margin: 14px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pzy_btn {
+            border: none;
+            border-radius: 6px;
+            padding: 9px 18px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            background: #3498db;
+            color: #ffffff;
+            transition: background 0.2s;
+        }
+
+        .pzy_btn:hover {
+            background: #2f81b9;
+        }
+
+        .pzy_btn.pzy_ghost {
+            background: #f0f2f5;
+            color: #555555;
+        }
+
+        .pzy_btn.pzy_ghost:hover {
+            background: #e0e3e8;
+        }
+
+        .pzy_select {
+            padding: 8px 10px;
+            border: 1px solid #dcdfe4;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #555555;
+            outline: none;
+        }
+
+        .pzy_msg {
+            font-size: 13px;
+            padding: 4px 0;
+        }
+
+        .pzy_msg.pzy_ok {
+            color: #27ae60;
+        }
+
+        .pzy_msg.pzy_err {
+            color: #e74c3c;
+        }
+
+        .pzy_footer {
+            text-align: center;
+            font-size: 13px;
+            color: #999999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>JSON 数据格式演示</h1>
+            <p>JavaScript Object Notation — 轻量级的数据交换格式 | 庞智元</p>
+        </div>
+
+        <!-- 一、JSON 语法结构 -->
+        <div class="pzy_panel">
+            <h2>一、JSON 的语法结构</h2>
+            <div class="pzy_legend">
+                <span><b class="pzy_punct">{ }</b> 表示对象</span>
+                <span><b class="pzy_punct">[ ]</b> 表示数组</span>
+                <span><b class="pzy_key">"键"</b> 键必须加双引号</span>
+                <span><b class="pzy_str">"字符串"</b></span>
+                <span><b class="pzy_num">123 / 3.14</b> 数字</span>
+                <span><b class="pzy_bool">true / false / null</b></span>
+            </div>
+            <pre class="pzy_code" id="pzy_codeShow"></pre>
+        </div>
+
+        <!-- 二、JSON 可视化 -->
+        <div class="pzy_panel">
+            <h2>二、同一个数据的可视化展示</h2>
+            <p style="font-size:13px;color:#888;margin-bottom:12px;">上面的 JSON 描述的是同一位学生的信息，展开后就是下面这棵「数据树」：</p>
+            <div class="pzy_tree" id="pzy_tree"></div>
+        </div>
+
+        <!-- 三、JSON.parse -->
+        <div class="pzy_panel">
+            <h2>三、JSON.parse()：把 JSON 字符串解析成 JS 对象</h2>
+            <textarea class="pzy_input" id="pzy_parseInput">{"课程": "Web前端开发", "学期": 3, "及格": true, "学生": ["庞智元", "王小明"], "补考": null}</textarea>
+            <div class="pzy_actions">
+                <button class="pzy_btn" id="pzy_parseBtn">解析 JSON.parse</button>
+                <button class="pzy_btn pzy_ghost" id="pzy_parseReset">恢复示例</button>
+                <span class="pzy_msg" id="pzy_parseMsg"></span>
+            </div>
+            <div class="pzy_tree" id="pzy_parseResult"></div>
+        </div>
+
+        <!-- 四、JSON.stringify -->
+        <div class="pzy_panel">
+            <h2>四、JSON.stringify()：把 JS 对象转换成 JSON 字符串</h2>
+            <div class="pzy_actions">
+                <span class="pzy_label">缩进空格数</span>
+                <select class="pzy_select" id="pzy_indent">
+                    <option value="0">0（单行紧凑）</option>
+                    <option value="2" selected>2</option>
+                    <option value="4">4</option>
+                </select>
+                <button class="pzy_btn" id="pzy_stringifyBtn">转换 JSON.stringify</button>
+            </div>
+            <pre class="pzy_code" id="pzy_stringifyResult"></pre>
+            <p style="font-size:13px;color:#888;margin-top:10px;">注意：转换后属性顺序、undefined 的函数成员会被丢弃，这就是 JSON 的「白名单」效果。</p>
+        </div>
+
+        <div class="pzy_footer">17-1 JSON 数据格式演示 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        // ============ 示例数据：一个描述学生信息的 JSON ============
+        var pzy_sample = {
+            name: '庞智元',
+            age: 20,
+            isStudent: true,
+            hobbies: ['篮球', '编程', '摄影'],
+            address: {
+                province: '河南省',
+                city: '郑州市'
+            },
+            scores: [92, 85, 78],
+            monitor: null
+        };
+
+        // ============ 一、语法高亮展示 JSON 文本 ============
+        function pzy_highlight(pzy_json) {
+            var pzy_s = pzy_json
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            // 注意顺序：先处理"键"，再处理普通字符串、数字、布尔
+            pzy_s = pzy_s.replace(/"([^"]+)"(\s*:)/g, '<span class="pzy_key">"$1"</span>$2');
+            pzy_s = pzy_s.replace(/:\s*"([^"]*)"/g, ': <span class="pzy_str">"$1"</span>');
+            pzy_s = pzy_s.replace(/:\s*(-?\d+\.?\d*)/g, ': <span class="pzy_num">$1</span>');
+            pzy_s = pzy_s.replace(/:\s*(true|false|null)/g, ': <span class="pzy_bool">$1</span>');
+            return pzy_s;
+        }
+
+        document.getElementById('pzy_codeShow').innerHTML =
+            pzy_highlight(JSON.stringify(pzy_sample, null, 2));
+
+        // ============ 二、把 JS 对象递归渲染成可视化树 ============
+        function pzy_renderNode(pzy_key, pzy_value, pzy_isRoot) {
+            var pzy_html = '';
+            var pzy_label = pzy_isRoot ? '<span class="pzy_label">根对象</span>'
+                : (pzy_key !== '' ? '<span class="pzy_k">"' + pzy_key + '"</span> : ' : '');
+
+            if (pzy_value === null) {
+                return '<div class="pzy_pair">' + pzy_label + '<span class="pzy_v pzy_vnull">null</span></div>';
+            }
+            if (typeof pzy_value === 'string') {
+                return '<div class="pzy_pair">' + pzy_label + '<span class="pzy_v pzy_vstr">"' + pzy_value + '"</span></div>';
+            }
+            if (typeof pzy_value === 'number' || typeof pzy_value === 'boolean') {
+                return '<div class="pzy_pair">' + pzy_label + '<span class="pzy_v">' + pzy_value + '</span></div>';
+            }
+
+            var pzy_isArray = Array.isArray(pzy_value);
+            pzy_html += '<div class="pzy_node' + (pzy_isRoot ? ' pzy_node_root' : '') + '">';
+            pzy_html += pzy_label + '<span class="pzy_label">' + (pzy_isArray ? '数组 [ ]' : '对象 { }') + '</span>';
+
+            if (pzy_isArray) {
+                // 数组：渲染成一个个小标签
+                for (var pzy_i = 0; pzy_i < pzy_value.length; pzy_i++) {
+                    pzy_html += '<span class="pzy_arritem"><em>' + pzy_i + '</em>'
+                        + pzy_value[pzy_i] + '</span>';
+                }
+            } else {
+                // 对象：逐个键值对递归展开
+                for (var pzy_k in pzy_value) {
+                    if (pzy_value.hasOwnProperty(pzy_k)) {
+                        pzy_html += pzy_renderNode(pzy_k, pzy_value[pzy_k], false);
+                    }
+                }
+            }
+            pzy_html += '</div>';
+            return pzy_html;
+        }
+
+        document.getElementById('pzy_tree').innerHTML = pzy_renderNode('', pzy_sample, true);
+
+        // ============ 三、JSON.parse 交互 ============
+        var pzy_parseMsg = document.getElementById('pzy_parseMsg');
+        var pzy_parseResult = document.getElementById('pzy_parseResult');
+
+        function pzy_doParse() {
+            var pzy_text = document.getElementById('pzy_parseInput').value;
+            try {
+                // JSON.parse：字符串 → JS 对象，解析失败会抛出 SyntaxError
+                var pzy_obj = JSON.parse(pzy_text);
+                pzy_parseMsg.textContent = '解析成功！类型：' + (Array.isArray(pzy_obj) ? '数组' : typeof pzy_obj);
+                pzy_parseMsg.className = 'pzy_msg pzy_ok';
+                pzy_parseResult.innerHTML = pzy_renderNode('', pzy_obj, true);
+            } catch (pzy_e) {
+                // 常见错误：键没加双引号、使用了单引号、结尾多逗号
+                pzy_parseMsg.textContent = '解析失败：' + pzy_e.message;
+                pzy_parseMsg.className = 'pzy_msg pzy_err';
+                pzy_parseResult.innerHTML = '';
+            }
+        }
+
+        document.getElementById('pzy_parseBtn').onclick = pzy_doParse;
+        document.getElementById('pzy_parseReset').onclick = function () {
+            document.getElementById('pzy_parseInput').value =
+                '{"课程": "Web前端开发", "学期": 3, "及格": true, "学生": ["庞智元", "王小明"], "补考": null}';
+            pzy_doParse();
+        };
+        pzy_doParse();
+
+        // ============ 四、JSON.stringify 交互 ============
+        function pzy_doStringify() {
+            var pzy_n = Number(document.getElementById('pzy_indent').value);
+            // JSON.stringify：JS 对象 → JSON 字符串，第二个参数为过滤，第三个为缩进
+            var pzy_text = JSON.stringify(pzy_sample, null, pzy_n);
+            document.getElementById('pzy_stringifyResult').innerHTML = pzy_highlight(pzy_text);
+        }
+
+        document.getElementById('pzy_stringifyBtn').onclick = pzy_doStringify;
+        document.getElementById('pzy_indent').onchange = pzy_doStringify;
+        pzy_doStringify();
+    </script>
+</body>
+</html>
