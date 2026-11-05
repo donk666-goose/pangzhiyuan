@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid 智能客服流程图与 ER 图</title>
+    <!-- 姓名：庞智元，日期：Mermaid 流程图与 ER 图。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #070d14;
+            color: #dfe9f5;
+            font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif;
+        }
+        .pzy_container { max-width: 1180px; margin: 0 auto; padding: 34px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 26px; }
+        .pzy_header h1 { font-size: 26px; letter-spacing: 2px; color: #e8f2ff; }
+        .pzy_header p { font-size: 13px; color: #6b8099; margin-top: 8px; letter-spacing: 1px; }
+        .pzy_card {
+            background: linear-gradient(180deg, rgba(18, 32, 48, 0.92), rgba(10, 18, 28, 0.92));
+            border: 1px solid rgba(99, 179, 255, 0.18);
+            border-radius: 14px;
+            padding: 18px 20px 26px;
+            margin-bottom: 24px;
+            box-shadow: 0 16px 44px rgba(0, 0, 0, 0.42);
+        }
+        .pzy_card_head { margin-bottom: 16px; }
+        .pzy_card_head h2 { font-size: 16px; color: #e8f2ff; font-weight: normal; }
+        .pzy_card_head h2 b { color: #35d6b0; }
+        .pzy_card_head p { font-size: 12px; color: #7d94ac; margin-top: 6px; line-height: 1.8; }
+        .pzy_diagram {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            padding: 6px 0 2px;
+        }
+        .pzy_diagram .mermaid { background: transparent; }
+        .pzy_diagram svg { background: transparent !important; max-width: 100%; height: auto; }
+        .pzy_tip {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #5f7488;
+            text-align: center;
+        }
+        .pzy_tip code { color: #7ef0d0; font-family: Consolas, monospace; }
+        .pzy_footer { text-align: center; font-size: 13px; color: #4d6076; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>Mermaid 智能客服流程图与 ER 图</h1>
+            <p>代码即图表：流程图 + 实体关系图 | 庞智元</p>
+        </div>
+
+        <div class="pzy_card">
+            <div class="pzy_card_head">
+                <h2>智能客服对话流程（<b>流程图</b>）</h2>
+                <p>从用户提问、意图识别、知识检索，到 RAG 生成回答、置信度判定、转人工与反馈闭环的完整链路。</p>
+            </div>
+            <div class="pzy_diagram">
+                <div class="mermaid">
+flowchart TD
+    A["用户发起咨询"] --> B["接入网关<br/>鉴权 · 限流 · 会话管理"]
+    B --> C{"咨询渠道"}
+    C -->|文本消息| D["意图识别"]
+    C -->|电话语音| E["ASR 语音转文本"]
+    E --> D
+    D --> F["实体抽取 NER<br/>订单号 · 商品 · 时间"]
+    F --> G["知识库检索<br/>FAQ · 向量 · 图谱"]
+    G --> H{"RAG 召回结果"}
+    H -->|命中相关知识| I["LLM 生成回答<br/>附引用溯源"]
+    H -->|未命中| J["澄清追问"]
+    J --> D
+    I --> K{"答案置信度"}
+    K -->|高于阈值| L["返回答案给用户"]
+    K -->|低于阈值| M["转人工客服"]
+    L --> N["用户反馈采集<br/>点赞 · 点踩 · 满意度"]
+    M --> N
+    N --> O["badcase 归因与标注"]
+    O --> P["知识库更新与模型迭代"]
+    P --> G
+                </div>
+            </div>
+            <div class="pzy_tip">流程图的每一步都对应 18-3 架构图中的具体模块；红色虚线回路即反馈闭环。</div>
+        </div>
+
+        <div class="pzy_card">
+            <div class="pzy_card_head">
+                <h2>知识库智能客服数据结构（<b>ER 图</b>）</h2>
+                <p>用户、会话、消息、意图、知识、切片、向量、工单、坐席、反馈共 10 个实体的关系与关键字段。</p>
+            </div>
+            <div class="pzy_diagram">
+                <div class="mermaid">
+erDiagram
+    USER ||--o{ CONVERSATION : creates
+    AGENT ||--o{ CONVERSATION : handles
+    CONVERSATION ||--o{ MESSAGE : contains
+    MESSAGE }o--|| INTENT : matches
+    MESSAGE ||--o{ FEEDBACK : receives
+    KNOWLEDGE ||--o{ CHUNK : split_into
+    CHUNK ||--o{ EMBEDDING : vectorized
+    KNOWLEDGE ||--o{ TICKET : related
+    USER ||--o{ TICKET : submits
+    TICKET ||--o| FEEDBACK : follow_up
+
+    USER {
+        bigint user_id PK
+        varchar nickname
+        varchar phone
+        varchar channel
+        datetime created_at
+    }
+    AGENT {
+        bigint agent_id PK
+        varchar name
+        varchar skill_group
+        varchar status
+    }
+    CONVERSATION {
+        bigint conv_id PK
+        bigint user_id FK
+        bigint agent_id FK
+        varchar channel
+        varchar state
+        datetime started_at
+    }
+    MESSAGE {
+        bigint msg_id PK
+        bigint conv_id FK
+        varchar role
+        text content
+        decimal confidence
+        datetime created_at
+    }
+    INTENT {
+        bigint intent_id PK
+        varchar intent_name
+        varchar slot_schema
+        decimal threshold
+    }
+    KNOWLEDGE {
+        bigint kb_id PK
+        varchar title
+        varchar category
+        varchar source_type
+        datetime updated_at
+    }
+    CHUNK {
+        bigint chunk_id PK
+        bigint kb_id FK
+        text content
+        int seq_no
+    }
+    EMBEDDING {
+        bigint vector_id PK
+        bigint chunk_id FK
+        varchar model
+        int dim
+    }
+    TICKET {
+        bigint ticket_id PK
+        bigint user_id FK
+        bigint kb_id FK
+        varchar status
+        varchar handler
+    }
+    FEEDBACK {
+        bigint feedback_id PK
+        bigint msg_id FK
+        bigint ticket_id FK
+        varchar rating
+        text comment
+        datetime created_at
+    }
+                </div>
+            </div>
+            <div class="pzy_tip">实体之间的连线标注了基数关系（一对多 o|、一对零或一 o|o），FK 为外键、PK 为主键；关系标签用英文单词表示（creates / contains / matches 等）。</div>
+        </div>
+
+        <div class="pzy_tip">
+            两张图均由 Mermaid 10.9.1 在浏览器端解析渲染，库文件已下载至 <code>cdn/mermaid.min.js</code>，页面不发起任何外部请求。
+        </div>
+
+        <div class="pzy_footer">18-6 Mermaid 流程图与 ER 图 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script src="cdn/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            securityLevel: 'loose',
+            themeVariables: {
+                darkMode: true,
+                background: 'transparent',
+                fontFamily: '"Microsoft YaHei", "PingFang SC", sans-serif',
+                fontSize: '14px',
+                primaryColor: '#16304a',
+                primaryTextColor: '#dfe9f5',
+                primaryBorderColor: '#4f9cf9',
+                lineColor: '#6f87a5',
+                secondaryColor: '#123a38',
+                tertiaryColor: '#1d2140',
+                clusterBkg: 'transparent',
+                edgeLabelBackground: '#0d1a2b',
+                nodeBorder: '#4f9cf9',
+                mainBkg: '#16304a',
+                textColor: '#dfe9f5'
+            },
+            flowchart: {
+                curve: 'basis',
+                nodeSpacing: 42,
+                rankSpacing: 52,
+                padding: 12,
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            er: {
+                useMaxWidth: true,
+                minEntityWidth: 110,
+                minEntityHeight: 60,
+                entityPadding: 14,
+                stroke: '#4f9cf9',
+                fill: '#132a42',
+                fontSize: 13
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于知识库的智能客服系统架构图 - SVG 绘制</title>
+    <!-- 姓名：庞智元，日期：SVG 智能客服系统架构图（科研方向）。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #070d14;
+            color: #dfe9f5;
+            font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif;
+        }
+        .pzy_container { max-width: 1120px; margin: 0 auto; padding: 34px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 22px; }
+        .pzy_header h1 { font-size: 26px; letter-spacing: 2px; color: #e8f2ff; }
+        .pzy_header p { font-size: 13px; color: #6b8099; margin-top: 8px; letter-spacing: 1px; }
+        .pzy_stage {
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 123, 114, 0.2);
+            background: #0a1420;
+        }
+        #pzy_svg { display: block; width: 100%; height: auto; }
+        .pzy_section_title {
+            font-size: 18px;
+            color: #2c3e50;
+            padding-left: 10px;
+            border-left: 4px solid #ff7b72;
+            margin: 34px 0 16px;
+            color: #e8f2ff;
+        }
+        .pzy_research {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        @media (max-width: 860px) { .pzy_research { grid-template-columns: 1fr; } }
+        .pzy_research_card {
+            background: rgba(20, 38, 58, 0.55);
+            border: 1px solid rgba(99, 179, 255, 0.16);
+            border-radius: 12px;
+            padding: 18px 20px;
+            transition: all 0.25s;
+        }
+        .pzy_research_card:hover {
+            border-color: rgba(255, 123, 114, 0.55);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+        }
+        .pzy_research_card h3 {
+            font-size: 15px;
+            color: #ffd9d5;
+            margin-bottom: 8px;
+        }
+        .pzy_research_card h3 em {
+            font-style: normal;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            color: #ff7b72;
+            margin-right: 8px;
+        }
+        .pzy_research_card p { font-size: 12px; color: #8299b1; line-height: 1.8; }
+        .pzy_research_card span {
+            display: inline-block;
+            font-size: 11px;
+            color: #7ef0d0;
+            background: rgba(126, 240, 208, 0.08);
+            border: 1px solid rgba(126, 240, 208, 0.25);
+            border-radius: 10px;
+            padding: 2px 10px;
+            margin-top: 10px;
+            margin-right: 6px;
+        }
+        .pzy_footer { text-align: center; font-size: 13px; color: #4d6076; margin-top: 26px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>基于知识库的智能客服系统架构图</h1>
+            <p>SVG 矢量绘制 · 悬停节点查看功能说明 · 附科研方向 | 庞智元</p>
+        </div>
+
+        <div class="pzy_stage">
+            <svg id="pzy_svg" viewBox="0 0 1120 660" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, PingFang SC, sans-serif">
+                <defs>
+                    <linearGradient id="pzy_bg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#0d1a2b"/>
+                        <stop offset="1" stop-color="#060b12"/>
+                    </linearGradient>
+                    <marker id="pzy_arrowMain" markerWidth="8" markerHeight="8" refX="4" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+                        <path d="M0,0 L8,0 L4,8 Z" fill="#6f87a5"/>
+                    </marker>
+                    <marker id="pzy_arrowRed" markerWidth="8" markerHeight="8" refX="4" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+                        <path d="M0,0 L8,0 L4,8 Z" fill="#ff7b72"/>
+                    </marker>
+                    <marker id="pzy_arrowRedL" markerWidth="8" markerHeight="8" refX="4" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+                        <path d="M8,0 L0,0 L4,8 Z" fill="#ff7b72"/>
+                    </marker>
+                </defs>
+
+                <rect width="1120" height="660" fill="url(#pzy_bg)"/>
+                <g stroke="rgba(99,179,255,0.045)" stroke-width="1">
+                    <path d="M0,40H1120M0,80H1120M0,120H1120M0,160H1120M0,200H1120M0,240H1120M0,280H1120M0,320H1120M0,360H1120M0,400H1120M0,440H1120M0,480H1120M0,520H1120M0,560H1120M0,600H1120M0,640H1120"/>
+                    <path d="M40,0V660M80,0V660M120,0V660M160,0V660M200,0V660M240,0V660M280,0V660M320,0V660M360,0V660M400,0V660M440,0V660M480,0V660M520,0V660M560,0V660M600,0V660M640,0V660M680,0V660M720,0V660M760,0V660M800,0V660M840,0V660M880,0V660M920,0V660M960,0V660M1000,0V660M1040,0V660M1080,0V660"/>
+                </g>
+
+                <text x="560" y="30" text-anchor="middle" fill="#e8f2ff" font-size="19" font-weight="bold">基于知识库的智能客服系统架构图</text>
+                <text x="560" y="50" text-anchor="middle" fill="rgba(140,168,195,0.75)" font-size="11">用户渠道 → 接入服务 → 智能对话引擎 → 知识库体系 → 数据支撑 ｜ 右侧为人工兜底与反馈闭环</text>
+
+                <!-- ===== 主流程箭头 ===== -->
+                <g stroke="#6f87a5" stroke-width="1.2" marker-end="url(#pzy_arrowMain)" opacity="0.75">
+                    <path d="M231,132V148"/><path d="M447,132V148"/><path d="M663,132V148"/><path d="M879,132V148"/>
+                    <path d="M231,216V232"/><path d="M447,216V232"/><path d="M663,216V232"/><path d="M879,216V232"/>
+                    <path d="M231,358V374"/><path d="M447,358V374"/><path d="M663,358V374"/><path d="M879,358V374"/>
+                    <path d="M231,512V528"/><path d="M447,512V528"/><path d="M663,512V528"/><path d="M879,512V528"/>
+                </g>
+
+                <!-- ===== 分层标签 ===== -->
+                <g>
+                    <rect x="16" y="72" width="96" height="60" rx="8" fill="rgba(79,156,249,0.13)" stroke="rgba(79,156,249,0.5)"/>
+                    <rect x="16" y="80" width="4" height="44" fill="#4f9cf9"/>
+                    <text x="66" y="96" text-anchor="middle" fill="#4f9cf9" font-size="14" font-weight="bold">用户渠道层</text>
+                    <text x="66" y="116" text-anchor="middle" fill="rgba(150,176,200,0.7)" font-size="9" font-family="Consolas">CLIENT</text>
+
+                    <rect x="16" y="156" width="96" height="60" rx="8" fill="rgba(47,196,178,0.13)" stroke="rgba(47,196,178,0.5)"/>
+                    <rect x="16" y="164" width="4" height="44" fill="#2fc4b2"/>
+                    <text x="66" y="180" text-anchor="middle" fill="#2fc4b2" font-size="14" font-weight="bold">接入服务层</text>
+                    <text x="66" y="200" text-anchor="middle" fill="rgba(150,176,200,0.7)" font-size="9" font-family="Consolas">GATEWAY</text>
+
+                    <rect x="16" y="240" width="96" height="118" rx="8" fill="rgba(167,139,250,0.13)" stroke="rgba(167,139,250,0.5)"/>
+                    <rect x="16" y="248" width="4" height="102" fill="#a78bfa"/>
+                    <text x="66" y="288" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="bold">智能对话</text>
+                    <text x="66" y="308" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="bold">引擎</text>
+                    <text x="66" y="328" text-anchor="middle" fill="rgba(150,176,200,0.7)" font-size="9" font-family="Consolas">DIALOG</text>
+
+                    <rect x="16" y="382" width="96" height="130" rx="8" fill="rgba(245,166,35,0.13)" stroke="rgba(245,166,35,0.5)"/>
+                    <rect x="16" y="390" width="4" height="114" fill="#f5a623"/>
+                    <text x="66" y="436" text-anchor="middle" fill="#f5a623" font-size="14" font-weight="bold">知识库体系</text>
+                    <text x="66" y="456" text-anchor="middle" fill="rgba(150,176,200,0.7)" font-size="9" font-family="Consolas">KNOWLEDGE</text>
+
+                    <rect x="16" y="536" width="96" height="60" rx="8" fill="rgba(74,222,128,0.13)" stroke="rgba(74,222,128,0.5)"/>
+                    <rect x="16" y="544" width="4" height="44" fill="#4ade80"/>
+                    <text x="66" y="560" text-anchor="middle" fill="#4ade80" font-size="14" font-weight="bold">数据支撑层</text>
+                    <text x="66" y="580" text-anchor="middle" fill="rgba(150,176,200,0.7)" font-size="9" font-family="Consolas">DATA</text>
+                </g>
+
+                <!-- ===== 反馈闭环（右侧） ===== -->
+                <g stroke="#ff7b72" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#pzy_arrowRed)" opacity="0.85" fill="none">
+                    <path d="M1060,292V316"/>
+                    <path d="M1060,362V386"/>
+                    <path d="M1060,432V464"/>
+                </g>
+                <path d="M980,272H1000" stroke="#ff7b72" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#pzy_arrowRed)" opacity="0.85" fill="none"/>
+                <path d="M1004,490H988" stroke="#ff7b72" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#pzy_arrowRedL)" opacity="0.85" fill="none"/>
+
+                <!-- ===== 用户渠道层 ===== -->
+                <g>
+                    <g><title>网页端：在线咨询窗口，文本对话为主</title>
+                        <rect x="130" y="82" width="202" height="40" rx="7" fill="rgba(79,156,249,0.14)" stroke="rgba(79,156,249,0.5)"/>
+                        <text x="231" y="106" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">网页端</text></g>
+                    <g><title>移动 APP：iOS / Android 原生客服入口</title>
+                        <rect x="346" y="82" width="202" height="40" rx="7" fill="rgba(79,156,249,0.14)" stroke="rgba(79,156,249,0.5)"/>
+                        <text x="447" y="106" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">移动 APP</text></g>
+                    <g><title>微信公众号 / 小程序：社交渠道客服入口</title>
+                        <rect x="562" y="82" width="202" height="40" rx="7" fill="rgba(79,156,249,0.14)" stroke="rgba(79,156,249,0.5)"/>
+                        <text x="663" y="106" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">微信公众号 / 小程序</text></g>
+                    <g><title>电话语音：IVR 语音导航与转接</title>
+                        <rect x="778" y="82" width="202" height="40" rx="7" fill="rgba(79,156,249,0.14)" stroke="rgba(79,156,249,0.5)"/>
+                        <text x="879" y="106" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">电话语音</text></g>
+                </g>
+
+                <!-- ===== 接入服务层 ===== -->
+                <g>
+                    <g><title>API 网关：统一接入、协议转换与路由分发</title>
+                        <rect x="130" y="166" width="202" height="40" rx="7" fill="rgba(47,196,178,0.14)" stroke="rgba(47,196,178,0.5)"/>
+                        <text x="231" y="190" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">API 网关</text></g>
+                    <g><title>会话管理：session 维护与多轮上下文存储</title>
+                        <rect x="346" y="166" width="202" height="40" rx="7" fill="rgba(47,196,178,0.14)" stroke="rgba(47,196,178,0.5)"/>
+                        <text x="447" y="190" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">会话管理</text></g>
+                    <g><title>身份鉴权：用户识别、登录态与数据隔离</title>
+                        <rect x="562" y="166" width="202" height="40" rx="7" fill="rgba(47,196,178,0.14)" stroke="rgba(47,196,178,0.5)"/>
+                        <text x="663" y="190" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">身份鉴权</text></g>
+                    <g><title>限流熔断：高峰流量保护与服务降级</title>
+                        <rect x="778" y="166" width="202" height="40" rx="7" fill="rgba(47,196,178,0.14)" stroke="rgba(47,196,178,0.5)"/>
+                        <text x="879" y="190" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">限流熔断</text></g>
+                </g>
+
+                <!-- ===== 智能对话引擎 ===== -->
+                <g>
+                    <g><title>语音识别 ASR：电话与语音消息转写为文本</title>
+                        <rect x="130" y="252" width="274" height="42" rx="7" fill="rgba(167,139,250,0.14)" stroke="rgba(167,139,250,0.5)"/>
+                        <text x="267" y="277" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">语音识别 ASR</text></g>
+                    <g><title>意图识别：对用户诉求进行分类（退货/查单/咨询…）</title>
+                        <rect x="418" y="252" width="274" height="42" rx="7" fill="rgba(167,139,250,0.14)" stroke="rgba(167,139,250,0.5)"/>
+                        <text x="555" y="277" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">意图识别</text></g>
+                    <g><title>实体抽取 NER：提取订单号、商品名、时间等槽位</title>
+                        <rect x="706" y="252" width="274" height="42" rx="7" fill="rgba(167,139,250,0.14)" stroke="rgba(167,139,250,0.5)"/>
+                        <text x="843" y="277" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">实体抽取 NER</text></g>
+                    <g><title>对话管理 DM：多轮状态跟踪、槽位继承与澄清策略</title>
+                        <rect x="130" y="304" width="274" height="42" rx="7" fill="rgba(167,139,250,0.14)" stroke="rgba(167,139,250,0.5)"/>
+                        <text x="267" y="329" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">对话管理 DM</text></g>
+                    <g><title>RAG 检索增强：从知识库召回相关片段并重排序，注入大模型上下文</title>
+                        <rect x="418" y="304" width="274" height="42" rx="7" fill="rgba(167,139,250,0.24)" stroke="rgba(167,139,250,0.8)"/>
+                        <text x="555" y="329" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="bold" dominant-baseline="central">RAG 检索增强</text></g>
+                    <g><title>LLM 答案生成：基于检索结果生成自然语言回答，附引用溯源</title>
+                        <rect x="706" y="304" width="274" height="42" rx="7" fill="rgba(167,139,250,0.24)" stroke="rgba(167,139,250,0.8)"/>
+                        <text x="843" y="329" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="bold" dominant-baseline="central">LLM 答案生成</text></g>
+                </g>
+
+                <!-- ===== 知识库体系 ===== -->
+                <g>
+                    <g><title>FAQ 知识库：高频问答对，精确匹配优先命中</title>
+                        <rect x="130" y="394" width="202" height="40" rx="7" fill="rgba(245,166,35,0.14)" stroke="rgba(245,166,35,0.5)"/>
+                        <text x="231" y="418" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">FAQ 知识库</text></g>
+                    <g><title>向量数据库：文档切片向量化后的语义相似检索</title>
+                        <rect x="346" y="394" width="202" height="40" rx="7" fill="rgba(245,166,35,0.14)" stroke="rgba(245,166,35,0.5)"/>
+                        <text x="447" y="418" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">向量数据库</text></g>
+                    <g><title>知识图谱：商品-订单-售后等实体关系，支持多跳推理</title>
+                        <rect x="562" y="394" width="202" height="40" rx="7" fill="rgba(245,166,35,0.14)" stroke="rgba(245,166,35,0.5)"/>
+                        <text x="663" y="418" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">知识图谱</text></g>
+                    <g><title>业务数据库：订单、物流、会员等实时数据查询</title>
+                        <rect x="778" y="394" width="202" height="40" rx="7" fill="rgba(245,166,35,0.14)" stroke="rgba(245,166,35,0.5)"/>
+                        <text x="879" y="418" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">业务数据库</text></g>
+                </g>
+                <g font-size="11" fill="#dce9f7">
+                    <g><title>文档解析：产品手册、政策文档、历史工单结构化解析</title>
+                        <rect x="130" y="458" width="202" height="32" rx="6" fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.35)"/>
+                        <text x="231" y="478" text-anchor="middle" dominant-baseline="central">文档解析</text></g>
+                    <g><title>切片分块：按语义段落切分，保留上下文窗口</title>
+                        <rect x="346" y="458" width="202" height="32" rx="6" fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.35)"/>
+                        <text x="447" y="478" text-anchor="middle" dominant-baseline="central">切片分块</text></g>
+                    <g><title>向量化 Embedding：文本编码为语义向量</title>
+                        <rect x="562" y="458" width="202" height="32" rx="6" fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.35)"/>
+                        <text x="663" y="478" text-anchor="middle" dominant-baseline="central">向量化 Embedding</text></g>
+                    <g><title>质量校验入库：去重、冲突检测后写入知识库</title>
+                        <rect x="778" y="458" width="202" height="32" rx="6" fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.35)"/>
+                        <text x="879" y="478" text-anchor="middle" dominant-baseline="central">质量校验入库</text></g>
+                    <g stroke="#f5a623" stroke-width="1" opacity="0.7" fill="none">
+                        <path d="M332,474H342"/><path d="M548,474H558"/><path d="M764,474H774"/>
+                        <path d="M338,470L342,474L338,478"/><path d="M554,470L558,474L554,478"/><path d="M770,470L774,474L770,478"/>
+                    </g>
+                </g>
+
+                <!-- ===== 数据支撑层 ===== -->
+                <g>
+                    <g><title>MySQL：用户、订单等业务主数据存储</title>
+                        <rect x="130" y="546" width="202" height="40" rx="7" fill="rgba(74,222,128,0.14)" stroke="rgba(74,222,128,0.5)"/>
+                        <text x="231" y="570" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">MySQL</text></g>
+                    <g><title>Redis 缓存：热点问答与会话状态缓存</title>
+                        <rect x="346" y="546" width="202" height="40" rx="7" fill="rgba(74,222,128,0.14)" stroke="rgba(74,222,128,0.5)"/>
+                        <text x="447" y="570" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">Redis 缓存</text></g>
+                    <g><title>Elasticsearch：工单与知识全文检索</title>
+                        <rect x="562" y="546" width="202" height="40" rx="7" fill="rgba(74,222,128,0.14)" stroke="rgba(74,222,128,0.5)"/>
+                        <text x="663" y="570" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">Elasticsearch</text></g>
+                    <g><title>日志与监控：调用链追踪与回答质量看板</title>
+                        <rect x="778" y="546" width="202" height="40" rx="7" fill="rgba(74,222,128,0.14)" stroke="rgba(74,222,128,0.5)"/>
+                        <text x="879" y="570" text-anchor="middle" fill="#dce9f7" font-size="13" dominant-baseline="central">日志与监控</text></g>
+                </g>
+
+                <!-- ===== 右侧反馈闭环 ===== -->
+                <g>
+                    <g><title>人工客服兜底：低置信度或用户主动要求时转人工</title>
+                        <rect x="1004" y="252" width="112" height="40" rx="7" fill="rgba(255,123,114,0.14)" stroke="rgba(255,123,114,0.55)"/>
+                        <text x="1060" y="276" text-anchor="middle" fill="#dce9f7" font-size="12" dominant-baseline="central">人工客服兜底</text></g>
+                    <g><title>用户反馈采集：点赞 / 点踩 / 满意度评价</title>
+                        <rect x="1004" y="322" width="112" height="40" rx="7" fill="rgba(255,123,114,0.14)" stroke="rgba(255,123,114,0.55)"/>
+                        <text x="1060" y="346" text-anchor="middle" fill="#dce9f7" font-size="12" dominant-baseline="central">用户反馈采集</text></g>
+                    <g><title>反馈数据标注：badcase 归因与样本标注</title>
+                        <rect x="1004" y="392" width="112" height="40" rx="7" fill="rgba(255,123,114,0.14)" stroke="rgba(255,123,114,0.55)"/>
+                        <text x="1060" y="416" text-anchor="middle" fill="#dce9f7" font-size="12" dominant-baseline="central">反馈数据标注</text></g>
+                    <g><title>知识库更新：知识增补、纠错与模型迭代</title>
+                        <rect x="1004" y="470" width="112" height="40" rx="7" fill="rgba(255,123,114,0.14)" stroke="rgba(255,123,114,0.55)"/>
+                        <text x="1060" y="494" text-anchor="middle" fill="#dce9f7" font-size="12" dominant-baseline="central">知识库更新</text></g>
+                </g>
+
+                <text x="560" y="640" text-anchor="middle" fill="rgba(120,145,170,0.65)" font-size="12">庞智元 · 基于知识库的智能客服系统架构 · SVG 矢量绘制</text>
+            </svg>
+        </div>
+
+        <h2 class="pzy_section_title">相关科研方向</h2>
+        <div class="pzy_research">
+            <div class="pzy_research_card">
+                <h3><em>R1</em>检索增强生成（RAG）</h3>
+                <p>研究面向客服领域的知识召回与重排序策略，融合 FAQ 精确匹配与向量语义检索，抑制大模型幻觉，实现答案可溯源。</p>
+                <span>幻觉抑制</span><span>召回重排</span>
+            </div>
+            <div class="pzy_research_card">
+                <h3><em>R2</em>领域知识图谱构建</h3>
+                <p>研究电商场景下实体抽取、关系融合与图谱补全方法，支持订单-商品-售后链路的多跳推理与精准反问。</p>
+                <span>多跳推理</span><span>图谱补全</span>
+            </div>
+            <div class="pzy_research_card">
+                <h3><em>R3</em>多轮对话状态跟踪</h3>
+                <p>研究对话状态（DST）建模、槽位继承与主动澄清策略，提升复杂业务流程（退换货）下的任务完成率。</p>
+                <span>DST</span><span>澄清策略</span>
+            </div>
+            <div class="pzy_research_card">
+                <h3><em>R4</em>答案可信度评估</h3>
+                <p>研究幻觉检测、引用标注与置信度校准方法，为「转人工」决策提供可量化的置信信号。</p>
+                <span>幻觉检测</span><span>置信度校准</span>
+            </div>
+            <div class="pzy_research_card">
+                <h3><em>R5</em>知识自动更新与持续学习</h3>
+                <p>研究用户反馈驱动的 badcase 归因、知识自动增补与冲突消解，构建知识库闭环进化机制。</p>
+                <span>持续学习</span><span>冲突消解</span>
+            </div>
+            <div class="pzy_research_card">
+                <h3><em>R6</em>多模态智能客服</h3>
+                <p>研究语音、图像（订单截图、商品图）与文本的融合理解，覆盖电话语音与视觉取证类咨询场景。</p>
+                <span>多模态融合</span><span>语音交互</span>
+            </div>
+        </div>
+
+        <div class="pzy_footer">18-3 基于知识库的智能客服系统架构图 · 庞智元 · Web 前端开发练习</div>
+    </div>
+</body>
+</html>

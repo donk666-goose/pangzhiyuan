@@ -168,3 +168,27 @@
 时间：2026-11-02-15-33
 模型：GLM-5.3-FlashX
 提示词：完成17-3.html 和17-3-detail.html,显示列表和列表详情，数据来源于接口，使用fetch。列表：`https://dummyjson.com/products?limit=8`，默认商品列表。详情：`https://dummyjson.com/products/1`，根据 ID 获取单个商品。完成17-4.html，对远程数据接口进行测试，支持get、post等，显示返回的数据和错误提示信息，示例post接口：`https://jsonplaceholder.typicode.com/posts`。完成17-5.html，展示javascript的两种定时器。完成17-6.html,使用promise和async完成异步操作的演示包饺子的流程。先买原料，取原料，买完原料之后同时和面、和馅，两个活动都完成之后包饺子，包完饺子吃饺子。使用 settimeout模拟每一个流程，如买原料6s。在页面上显示流程。
+
+---
+
+时间：2026-11-05-15-34
+模型：DeepSeek-V4.1-Flash
+提示词：完成18-1.html和18-2.html，第一个显示canvas动画，包括文字庞智元，第二个显示基于canvas的全站系统的系统架构图（电商系统）。
+
+---
+
+时间：2026-11-05-15-45
+模型：GLM-5.3-FlashX
+提示词：完成18-3.html，其中包括基于知识库智能客服的系统的系统架构图，图的格式为svg，科研方向。
+
+---
+
+时间：2026-11-05-16-05
+模型：DeepSeek-V4.1-Flash
+提示词：实现18-4.html，其中包括echarts的两个图（折线图 + 柱状图，电商销售数据），cdn文件下载到cdn目录下。
+
+---
+
+时间：2026-11-05-16-23
+模型：DeepSeek-V4.1-Flash
+提示词：4、实现18-6.html，实现基于mermaid的智能客服系统的流程图和er图，cdn文件下载到cdn目录下。5、实现18-7.html，实现基于three.js的两个图表，cdn文件下载到cdn目录下。6、实现18-8.html，实现基于three.js或echarts的数据大屏，大屏要求：三列，中间上面是某种地理信息的图，cdn文件下载到cdn目录下。

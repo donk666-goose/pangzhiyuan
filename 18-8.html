@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电商运营数据大屏</title>
+    <!-- 姓名：庞智元，日期：数据大屏。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            background:
+                radial-gradient(circle at 50% 0%, rgba(21, 75, 116, 0.45) 0%, transparent 55%),
+                linear-gradient(180deg, #04111d 0%, #051725 55%, #030c15 100%);
+            color: #dff0fb;
+            font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif;
+            overflow: hidden;
+        }
+
+        .pzy_screen {
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+            padding: 0 18px 16px;
+        }
+
+        /* ============ 顶部 ============ */
+        .pzy_head {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            height: 74px;
+            flex: 0 0 74px;
+            border-bottom: 1px solid rgba(53, 214, 255, 0.22);
+            background: linear-gradient(90deg, transparent, rgba(21, 88, 132, 0.22), transparent);
+        }
+        .pzy_head::after {
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            width: 42%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #35d6ff, transparent);
+            content: "";
+            transform: translateX(-50%);
+        }
+        .pzy_head_l, .pzy_head_r {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #7fa4c0;
+            font-size: 12px;
+        }
+        .pzy_head_r { justify-content: flex-end; }
+        .pzy_head_c { text-align: center; }
+        .pzy_head_c h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            background: linear-gradient(180deg, #ffffff 20%, #6fe4ff 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .pzy_head_c p {
+            margin-top: 4px;
+            color: #6f93ad;
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+        .pzy_dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #35d6b0;
+            box-shadow: 0 0 10px #35d6b0;
+            animation: pzy_blink 1.6s infinite;
+        }
+        @keyframes pzy_blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.25; }
+        }
+        #pzy_clock {
+            color: #7ef0d0;
+            font-family: Consolas, monospace;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+        .pzy_tag {
+            padding: 3px 9px;
+            border: 1px solid rgba(53, 214, 255, 0.3);
+            border-radius: 3px;
+            color: #8fb9d4;
+            font-size: 11px;
+        }
+
+        /* ============ 三列主体 ============ */
+        .pzy_body {
+            display: grid;
+            flex: 1;
+            grid-template-columns: 1fr 1.45fr 1fr;
+            gap: 14px;
+            min-height: 0;
+            padding-top: 14px;
+        }
+        .pzy_col {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: 0;
+            min-width: 0;
+        }
+
+        /* ============ 面板 ============ */
+        .pzy_panel {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            padding: 8px 12px 10px;
+            border: 1px solid rgba(53, 214, 255, 0.16);
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(11, 38, 60, 0.82), rgba(4, 16, 28, 0.9));
+            box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.5);
+        }
+        .pzy_panel::before, .pzy_panel::after {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-color: rgba(53, 214, 255, 0.55);
+            content: "";
+        }
+        .pzy_panel::before {
+            top: -1px;
+            left: -1px;
+            border-top: 2px solid;
+            border-left: 2px solid;
+        }
+        .pzy_panel::after {
+            right: -1px;
+            bottom: -1px;
+            border-right: 2px solid;
+            border-bottom: 2px solid;
+        }
+        .pzy_panel_t {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 0 0 auto;
+            padding: 2px 0 8px;
+            color: #cfe9f8;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+        .pzy_panel_t::before {
+            width: 3px;
+            height: 13px;
+            background: linear-gradient(180deg, #7ef0d0, #35b6ff);
+            content: "";
+        }
+        .pzy_panel_t span {
+            margin-left: auto;
+            color: #5f8199;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+        .pzy_chart {
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+        }
+
+        /* ============ 左列：KPI ============ */
+        .pzy_kpi_grid {
+            display: grid;
+            flex: 1;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            min-height: 0;
+            padding: 2px 2px 4px;
+        }
+        .pzy_kpi {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8px 12px;
+            border: 1px solid rgba(53, 214, 255, 0.12);
+            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(24, 74, 108, 0.45), rgba(7, 24, 39, 0.5));
+        }
+        .pzy_kpi_label { color: #80a6c2; font-size: 11px; letter-spacing: 1px; }
+        .pzy_kpi_val {
+            margin-top: 3px;
+            color: #7ef0d0;
+            font-family: Georgia, "Microsoft YaHei", sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            transition: color 300ms ease;
+        }
+        .pzy_kpi_val small { margin-left: 3px; font-size: 11px; font-weight: 400; color: #87a9c0; }
+        .pzy_kpi_val.pzy_flash { color: #ffd166; }
+        .pzy_kpi_delta { margin-top: 2px; font-size: 11px; color: #ff9d6b; }
+
+        /* ============ 地图 ============ */
+        .pzy_map_wrap {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .pzy_map_wrap .pzy_chart { height: 100%; }
+        .pzy_scan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            pointer-events: none;
+            background: linear-gradient(180deg, transparent, rgba(53, 214, 255, 0.13) 70%, rgba(53, 214, 255, 0.45));
+            animation: pzy_scanMove 4.6s linear infinite;
+        }
+        @keyframes pzy_scanMove {
+            0% { transform: translateY(-100px); }
+            100% { transform: translateY(460px); }
+        }
+
+        /* ============ 右列：工单流水 ============ */
+        .pzy_ticket_list {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 0;
+            overflow: hidden;
+            padding: 2px 2px 0;
+        }
+        .pzy_ticket {
+            display: grid;
+            grid-template-columns: 52px 1fr auto;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 9px;
+            border-left: 2px solid rgba(53, 214, 255, 0.35);
+            border-radius: 4px;
+            background: rgba(13, 38, 58, 0.6);
+            font-size: 11px;
+            animation: pzy_rowIn 420ms ease;
+        }
+        @keyframes pzy_rowIn {
+            from { opacity: 0; transform: translateX(14px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .pzy_ticket_time { color: #6f93ad; font-family: Consolas, monospace; }
+        .pzy_ticket_title { overflow: hidden; color: #c3dced; text-overflow: ellipsis; white-space: nowrap; }
+        .pzy_ticket_title em { color: #8fb2cc; font-style: normal; }
+        .pzy_state {
+            padding: 1px 7px;
+            border-radius: 10px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+        .pzy_state_ok { color: #7ef0d0; background: rgba(53, 214, 176, 0.14); }
+        .pzy_state_wait { color: #ffd166; background: rgba(255, 182, 72, 0.14); }
+        .pzy_state_hot { color: #ff9d6b; background: rgba(255, 123, 114, 0.14); }
+
+        .pzy_footer {
+            flex: 0 0 auto;
+            padding-top: 8px;
+            color: #43647c;
+            font-size: 11px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 1080px) {
+            body { overflow: auto; }
+            .pzy_screen { height: auto; }
+            .pzy_body { grid-template-columns: 1fr; }
+            .pzy_panel { min-height: 240px; }
+            .pzy_head { grid-template-columns: 1fr; height: auto; flex: 0 0 auto; padding: 14px 0; row-gap: 6px; }
+            .pzy_head_l, .pzy_head_r { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="pzy_screen">
+        <header class="pzy_head">
+            <div class="pzy_head_l">
+                <span class="pzy_dot"></span>
+                <span>实时数据 · 每 5 秒刷新</span>
+            </div>
+            <div class="pzy_head_c">
+                <h1>电商运营数据大屏</h1>
+                <p>庞智元 · 三列布局 · 地理分布 + 实时监控</p>
+            </div>
+            <div class="pzy_head_r">
+                <span id="pzy_clock">--:--:--</span>
+                <span class="pzy_tag">2026-11-05</span>
+            </div>
+        </header>
+
+        <main class="pzy_body">
+            <!-- ============ 左列 ============ -->
+            <section class="pzy_col">
+                <div class="pzy_panel" style="flex: 0.9;">
+                    <h2 class="pzy_panel_t">核心指标 <span>今日累计</span></h2>
+                    <div class="pzy_kpi_grid">
+                        <div class="pzy_kpi">
+                            <span class="pzy_kpi_label">成交金额 GMV</span>
+                            <span class="pzy_kpi_val" data-pzy-base="1286.4" data-pzy-dec="1">0<small>万</small></span>
+                            <span class="pzy_kpi_delta">▲ 12.6% 同比昨日</span>
+                        </div>
+                        <div class="pzy_kpi">
+                            <span class="pzy_kpi_label">订单量</span>
+                            <span class="pzy_kpi_val" data-pzy-base="32451" data-pzy-dec="0">0<small>单</small></span>
+                            <span class="pzy_kpi_delta">▲ 8.4% 同比昨日</span>
+                        </div>
+                        <div class="pzy_kpi">
+                            <span class="pzy_kpi_label">活跃用户</span>
+                            <span class="pzy_kpi_val" data-pzy-base="128760" data-pzy-dec="0">0<small>人</small></span>
+                            <span class="pzy_kpi_delta">▲ 5.2% 同比昨日</span>
+                        </div>
+                        <div class="pzy_kpi">
+                            <span class="pzy_kpi_label">客服会话</span>
+                            <span class="pzy_kpi_val" data-pzy-base="18942" data-pzy-dec="0">0<small>次</small></span>
+                            <span class="pzy_kpi_delta">▲ 3.9% 同比昨日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pzy_panel" style="flex: 1.15;">
+                    <h2 class="pzy_panel_t">各渠道咨询量 <span>单位：次</span></h2>
+                    <div class="pzy_chart" id="pzy_channel"></div>
+                </div>
+
+                <div class="pzy_panel" style="flex: 1;">
+                    <h2 class="pzy_panel_t">客服满意度 <span>近 7 日</span></h2>
+                    <div class="pzy_chart" id="pzy_gauge"></div>
+                </div>
+            </section>
+
+            <!-- ============ 中间列 ============ -->
+            <section class="pzy_col">
+                <div class="pzy_panel" style="flex: 1.4;">
+                    <h2 class="pzy_panel_t">全国订单地理分布 <span>省份热度 · 重点城市</span></h2>
+                    <div class="pzy_map_wrap">
+                        <div class="pzy_chart" id="pzy_map"></div>
+                        <div class="pzy_scan"></div>
+                    </div>
+                </div>
+
+                <div class="pzy_panel" style="flex: 1;">
+                    <h2 class="pzy_panel_t">近 30 天订单与咨询趋势 <span>订单 / 咨询</span></h2>
+                    <div class="pzy_chart" id="pzy_trend"></div>
+                </div>
+            </section>
+
+            <!-- ============ 右列 ============ -->
+            <section class="pzy_col">
+                <div class="pzy_panel" style="flex: 1.05;">
+                    <h2 class="pzy_panel_t">用户意图分布 <span>会话占比</span></h2>
+                    <div class="pzy_chart" id="pzy_intent"></div>
+                </div>
+
+                <div class="pzy_panel" style="flex: 1.05;">
+                    <h2 class="pzy_panel_t">品类经营健康度 <span>雷达评估</span></h2>
+                    <div class="pzy_chart" id="pzy_radar"></div>
+                </div>
+
+                <div class="pzy_panel" style="flex: 1.1;">
+                    <h2 class="pzy_panel_t">实时工单流水 <span>LIVE</span></h2>
+                    <div class="pzy_ticket_list" id="pzy_ticketList"></div>
+                </div>
+            </section>
+        </main>
+
+        <div class="pzy_footer">
+            18-8 数据大屏 · 庞智元 · 图表由 ECharts 5.5.1 与本地中国地图数据渲染 · 库文件位于 cdn/
+        </div>
+    </div>
+
+    <script src="cdn/echarts.min.js"></script>
+    <script src="cdn/china-map.js"></script>
+    <script>
+        (function () {
+            'use strict';
+
+            // ============ 公共配色 ============
+            var pzy_c = {
+                cyan: '#35d6ff',
+                teal: '#35d6b0',
+                orange: '#ffb648',
+                red: '#ff7b72',
+                purple: '#a78bfa',
+                text: '#8fb2cc',
+                line: 'rgba(53, 214, 255, 0.14)'
+            };
+
+            var pzy_charts = [];
+
+            function pzy_reg(id) {
+                var pzy_chart = echarts.init(document.getElementById(id));
+                pzy_charts.push(pzy_chart);
+                return pzy_chart;
+            }
+
+            // ============ 时钟 ============
+            var pzy_clockEl = document.getElementById('pzy_clock');
+            function pzy_pad(n) { return n < 10 ? '0' + n : String(n); }
+            function pzy_tickClock() {
+                var pzy_d = new Date();
+                pzy_clockEl.textContent = pzy_pad(pzy_d.getHours()) + ':' + pzy_pad(pzy_d.getMinutes()) + ':' + pzy_pad(pzy_d.getSeconds());
+            }
+            pzy_tickClock();
+            setInterval(pzy_tickClock, 1000);
+
+            // ============ KPI 数字滚动 ============
+            function pzy_countUp(el) {
+                var pzy_base = parseFloat(el.getAttribute('data-pzy-base'));
+                var pzy_dec = parseInt(el.getAttribute('data-pzy-dec'), 10);
+                var pzy_unit = el.querySelector('small') ? el.querySelector('small').outerHTML : '';
+                var pzy_start = null;
+                function pzy_step(ts) {
+                    if (!pzy_start) { pzy_start = ts; }
+                    var pzy_p = Math.min(1, (ts - pzy_start) / 1300);
+                    var pzy_eased = 1 - Math.pow(1 - pzy_p, 3);
+                    var pzy_v = pzy_base * pzy_eased;
+                    var pzy_txt = pzy_dec === 1
+                        ? pzy_v.toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                        : Math.round(pzy_v).toLocaleString('zh-CN');
+                    el.innerHTML = pzy_txt + pzy_unit;
+                    if (pzy_p < 1) { requestAnimationFrame(pzy_step); }
+                }
+                requestAnimationFrame(pzy_step);
+            }
+            document.querySelectorAll('.pzy_kpi_val').forEach(pzy_countUp);
+
+            // ============ 一、中国地图 ============
+            echarts.registerMap('pzy_china', window.pzy_chinaGeo);
+
+            var pzy_provData = [
+                { name: '北京市', value: 860 }, { name: '上海市', value: 820 },
+                { name: '广东省', value: 760 }, { name: '浙江省', value: 640 },
+                { name: '江苏省', value: 610 }, { name: '山东省', value: 480 },
+                { name: '四川省', value: 420 }, { name: '湖北省', value: 360 },
+                { name: '河南省', value: 330 }, { name: '福建省', value: 300 },
+                { name: '湖南省', value: 280 }, { name: '河北省', value: 260 },
+                { name: '安徽省', value: 240 }, { name: '陕西省', value: 220 },
+                { name: '辽宁省', value: 200 }, { name: '江西省', value: 180 },
+                { name: '重庆市', value: 175 }, { name: '云南省', value: 160 },
+                { name: '广西壮族自治区', value: 150 }, { name: '山西省', value: 130 },
+                { name: '黑龙江省', value: 120 }, { name: '贵州省', value: 115 },
+                { name: '天津市', value: 110 }, { name: '吉林省', value: 95 },
+                { name: '内蒙古自治区', value: 90 }, { name: '新疆维吾尔自治区', value: 85 },
+                { name: '甘肃省', value: 70 }, { name: '海南省', value: 60 },
+                { name: '香港特别行政区', value: 45 }, { name: '宁夏回族自治区', value: 40 },
+                { name: '青海省', value: 35 }, { name: '台湾省', value: 30 },
+                { name: '西藏自治区', value: 25 }, { name: '澳门特别行政区', value: 12 }
+            ];
+
+            var pzy_cityData = [
+                { name: '北京', value: [116.405, 39.905, 860] },
+                { name: '上海', value: [121.473, 31.230, 820] },
+                { name: '广州', value: [113.264, 23.129, 620] },
+                { name: '深圳', value: [114.057, 22.543, 700] },
+                { name: '杭州', value: [120.155, 30.274, 540] },
+                { name: '成都', value: [104.066, 30.572, 420] },
+                { name: '武汉', value: [114.305, 30.593, 380] },
+                { name: '西安', value: [108.940, 34.341, 260] },
+                { name: '沈阳', value: [123.431, 41.805, 200] },
+                { name: '重庆', value: [106.551, 29.563, 300] },
+                { name: '乌鲁木齐', value: [87.617, 43.792, 85] },
+                { name: '哈尔滨', value: [126.535, 45.803, 95] },
+                { name: '昆明', value: [102.833, 24.880, 160] },
+                { name: '福州', value: [119.296, 26.074, 190] }
+            ];
+
+            var pzy_mapChart = pzy_reg('pzy_map');
+            pzy_mapChart.setOption({
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: 'rgba(6, 22, 36, 0.94)',
+                    borderColor: 'rgba(53, 214, 255, 0.45)',
+                    textStyle: { color: '#dff0fb', fontSize: 12 },
+                    formatter: function (p) {
+                        if (p.seriesType === 'effectScatter') {
+                            return p.name + '（重点城市）<br/>订单量：' + p.value[2] + ' 单';
+                        }
+                        return p.name + '<br/>订单量：' + (p.value || 0) + ' 单';
+                    }
+                },
+                visualMap: {
+                    type: 'continuous',
+                    seriesIndex: 0,
+                    min: 0,
+                    max: 900,
+                    left: 6,
+                    bottom: 6,
+                    itemWidth: 10,
+                    itemHeight: 110,
+                    calculable: false,
+                    text: ['高', '低'],
+                    textStyle: { color: pzy_c.text, fontSize: 10 },
+                    inRange: { color: ['#0a2438', '#0f4468', '#1a7fae', '#35d6ff'] }
+                },
+                geo: {
+                    map: 'pzy_china',
+                    roam: false,
+                    zoom: 1.12,
+                    layoutCenter: ['50%', '52%'],
+                    layoutSize: '112%',
+                    label: { show: false },
+                    itemStyle: {
+                        areaColor: '#08202f',
+                        borderColor: '#2f7fb0',
+                        borderWidth: 0.8,
+                        shadowColor: 'rgba(53, 214, 255, 0.45)',
+                        shadowBlur: 14,
+                        shadowOffsetY: 4
+                    },
+                    emphasis: {
+                        label: { show: true, color: '#ffffff', fontSize: 11 },
+                        itemStyle: { areaColor: '#1a5c8a' }
+                    }
+                },
+                series: [
+                    {
+                        name: '省份订单',
+                        type: 'map',
+                        map: 'pzy_china',
+                        geoIndex: 0,
+                        data: pzy_provData,
+                        label: { show: false },
+                        emphasis: { label: { show: true, color: '#fff', fontSize: 11 } }
+                    },
+                    {
+                        name: '重点城市',
+                        type: 'effectScatter',
+                        coordinateSystem: 'geo',
+                        geoIndex: 0,
+                        data: pzy_cityData,
+                        symbolSize: function (pzy_val) {
+                            return 4 + pzy_val[2] / 110;
+                        },
+                        rippleEffect: { brushType: 'stroke', scale: 3.4, period: 3.6 },
+                        itemStyle: {
+                            color: '#ffd166',
+                            shadowBlur: 12,
+                            shadowColor: 'rgba(255, 209, 102, 0.8)'
+                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                            formatter: '{b}',
+                            color: '#ffe9b0',
+                            fontSize: 10
+                        },
+                        zlevel: 2
+                    }
+                ]
+            });
+
+            // ============ 二、30 天趋势 ============
+            var pzy_days = [];
+            var pzy_orders = [];
+            var pzy_asks = [];
+            for (var pzy_i = 0; pzy_i < 30; pzy_i++) {
+                var pzy_day = new Date(2026, 9, 7);
+                pzy_day.setDate(pzy_day.getDate() + pzy_i);
+                pzy_days.push((pzy_day.getMonth() + 1) + '-' + pzy_pad(pzy_day.getDate()));
+                var pzy_wave = Math.sin(pzy_i * 0.55) * 900 + Math.sin(pzy_i * 0.17) * 1500;
+                pzy_orders.push(Math.round(8600 + pzy_i * 95 + pzy_wave));
+                pzy_asks.push(Math.round(4300 + pzy_i * 42 + pzy_wave * 0.45));
+            }
+
+            var pzy_trendChart = pzy_reg('pzy_trend');
+            pzy_trendChart.setOption({
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(6, 22, 36, 0.94)',
+                    borderColor: 'rgba(53, 214, 255, 0.45)',
+                    textStyle: { color: '#dff0fb', fontSize: 12 }
+                },
+                legend: {
+                    top: 0,
+                    right: 6,
+                    itemWidth: 12,
+                    itemHeight: 6,
+                    textStyle: { color: pzy_c.text, fontSize: 11 },
+                    data: ['订单量', '咨询量']
+                },
+                grid: { left: 42, right: 16, top: 30, bottom: 26 },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: pzy_days,
+                    axisLine: { lineStyle: { color: 'rgba(53, 214, 255, 0.22)' } },
+                    axisTick: { show: false },
+                    axisLabel: { color: '#6f93ad', fontSize: 10, interval: 4 }
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '单',
+                        nameTextStyle: { color: '#5f8199', fontSize: 10 },
+                        axisLine: { show: false },
+                        axisTick: { show: false },
+                        splitLine: { lineStyle: { color: pzy_c.line } },
+                        axisLabel: { color: '#6f93ad', fontSize: 10 }
+                    },
+                    {
+                        type: 'value',
+                        name: '次',
+                        nameTextStyle: { color: '#5f8199', fontSize: 10 },
+                        axisLine: { show: false },
+                        axisTick: { show: false },
+                        splitLine: { show: false },
+                        axisLabel: { color: '#6f93ad', fontSize: 10 }
+                    }
+                ],
+                series: [
+                    {
+                        name: '订单量',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'none',
+                        lineStyle: { width: 2, color: pzy_c.cyan },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(53, 214, 255, 0.35)' },
+                                { offset: 1, color: 'rgba(53, 214, 255, 0.02)' }
+                            ])
+                        },
+                        data: pzy_orders
+                    },
+                    {
+                        name: '咨询量',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        smooth: true,
+                        symbol: 'none',
+                        lineStyle: { width: 2, color: pzy_c.orange },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(255, 182, 72, 0.22)' },
+                                { offset: 1, color: 'rgba(255, 182, 72, 0.02)' }
+                            ])
+                        },
+                        data: pzy_asks
+                    }
+                ]
+            });
+
+            // ============ 三、渠道咨询量 ============
+            var pzy_channelData = [
+                { name: 'APP', value: 6240 },
+                { name: '小程序', value: 5810 },
+                { name: '网页', value: 4020 },
+                { name: 'H5', value: 3120 },
+                { name: '电话', value: 1180 }
+            ];
+            var pzy_channelColors = [pzy_c.cyan, pzy_c.teal, pzy_c.purple, pzy_c.orange, pzy_c.red];
+
+            var pzy_channelChart = pzy_reg('pzy_channel');
+            pzy_channelChart.setOption({
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' },
+                    backgroundColor: 'rgba(6, 22, 36, 0.94)',
+                    borderColor: 'rgba(53, 214, 255, 0.45)',
+                    textStyle: { color: '#dff0fb', fontSize: 12 }
+                },
+                grid: { left: 54, right: 46, top: 12, bottom: 8 },
+                xAxis: {
+                    type: 'value',
+                    axisLine: { show: false },
+                    axisTick: { show: false },
+                    splitLine: { lineStyle: { color: pzy_c.line } },
+                    axisLabel: { color: '#6f93ad', fontSize: 10 }
+                },
+                yAxis: {
+                    type: 'category',
+                    inverse: true,
+                    data: pzy_channelData.map(function (pzy_it) { return pzy_it.name; }),
+                    axisLine: { show: false },
+                    axisTick: { show: false },
+                    axisLabel: { color: '#a9c6da', fontSize: 11 }
+                },
+                series: [{
+                    type: 'bar',
+                    barWidth: 10,
+                    data: pzy_channelData.map(function (pzy_it, pzy_idx) {
+                        return {
+                            value: pzy_it.value,
+                            itemStyle: {
+                                borderRadius: 5,
+                                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                    { offset: 0, color: 'rgba(53, 214, 255, 0.12)' },
+                                    { offset: 1, color: pzy_channelColors[pzy_idx] }
+                                ])
+                            }
+                        };
+                    }),
+                    label: {
+                        show: true,
+                        position: 'right',
+                        color: '#7ef0d0',
+                        fontSize: 11
+                    }
+                }]
+            });
+
+            // ============ 四、满意度仪表盘 ============
+            var pzy_gaugeChart = pzy_reg('pzy_gauge');
+            pzy_gaugeChart.setOption({
+                backgroundColor: 'transparent',
+                series: [{
+                    type: 'gauge',
+                    startAngle: 210,
+                    endAngle: -30,
+                    min: 0,
+                    max: 100,
+                    splitNumber: 5,
+                    radius: '88%',
+                    center: ['50%', '56%'],
+                    progress: { show: true, width: 10, itemStyle: { color: pzy_c.teal } },
+                    axisLine: {
+                        lineStyle: {
+                            width: 10,
+                            color: [
+                                [0.7, 'rgba(255, 123, 114, 0.55)'],
+                                [0.9, 'rgba(255, 182, 72, 0.55)'],
+                                [1, 'rgba(53, 214, 176, 0.55)']
+                            ]
+                        }
+                    },
+                    pointer: {
+                        width: 5,
+                        length: '62%',
+                        itemStyle: { color: '#eaf7ff' }
+                    },
+                    axisTick: { show: false },
+                    splitLine: { length: 9, lineStyle: { color: 'rgba(53, 214, 255, 0.35)', width: 1 } },
+                    axisLabel: { color: '#7f9db5', fontSize: 10, distance: 14 },
+                    detail: {
+                        valueAnimation: true,
+                        offsetCenter: [0, '62%'],
+                        formatter: '{value}%',
+                        color: '#7ef0d0',
+                        fontSize: 26,
+                        fontWeight: 'bold'
+                    },
+                    title: { offsetCenter: [0, '86%'], color: '#7f9db5', fontSize: 11 },
+                    data: [{ value: 92.6, name: '好评率' }]
+                }]
+            });
+
+            // ============ 五、用户意图环形图 ============
+            var pzy_intentChart = pzy_reg('pzy_intent');
+            pzy_intentChart.setOption({
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: 'rgba(6, 22, 36, 0.94)',
+                    borderColor: 'rgba(53, 214, 255, 0.45)',
+                    textStyle: { color: '#dff0fb', fontSize: 12 },
+                    formatter: '{b}<br/>{c} 次（{d}%）'
+                },
+                legend: {
+                    orient: 'vertical',
+                    right: 4,
+                    top: 'center',
+                    itemWidth: 8,
+                    itemHeight: 8,
+                    itemGap: 9,
+                    textStyle: { color: pzy_c.text, fontSize: 10 }
+                },
+                series: [{
+                    type: 'pie',
+                    radius: ['46%', '72%'],
+                    center: ['40%', '52%'],
+                    avoidLabelOverlap: true,
+                    itemStyle: { borderColor: '#061624', borderWidth: 2 },
+                    label: {
+                        show: true,
+                        position: 'center',
+                        formatter: '{d}%',
+                        color: '#e8f7ff',
+                        fontSize: 11
+                    },
+                    emphasis: {
+                        label: { fontSize: 15, fontWeight: 'bold', color: '#7ef0d0' },
+                        scale: true,
+                        scaleSize: 6
+                    },
+                    labelLine: { show: false },
+                    data: [
+                        { name: '售前咨询', value: 32, itemStyle: { color: pzy_c.cyan } },
+                        { name: '订单查询', value: 26, itemStyle: { color: pzy_c.teal } },
+                        { name: '物流跟踪', value: 18, itemStyle: { color: pzy_c.orange } },
+                        { name: '售后维权', value: 14, itemStyle: { color: pzy_c.purple } },
+                        { name: '其他', value: 10, itemStyle: { color: pzy_c.red } }
+                    ]
+                }]
+            });
+
+            // ============ 六、品类雷达图 ============
+            var pzy_radarChart = pzy_reg('pzy_radar');
+            pzy_radarChart.setOption({
+                backgroundColor: 'transparent',
+                tooltip: {
+                    backgroundColor: 'rgba(6, 22, 36, 0.94)',
+                    borderColor: 'rgba(53, 214, 255, 0.45)',
+                    textStyle: { color: '#dff0fb', fontSize: 12 }
+                },
+                legend: {
+                    bottom: 0,
+                    itemWidth: 10,
+                    itemHeight: 6,
+                    itemGap: 12,
+                    textStyle: { color: pzy_c.text, fontSize: 10 }
+                },
+                radar: {
+                    indicator: [
+                        { name: '销量', max: 100 },
+                        { name: '复购率', max: 100 },
+                        { name: '客单价', max: 100 },
+                        { name: '满意度', max: 100 },
+                        { name: '利润率', max: 100 }
+                    ],
+                    radius: '60%',
+                    center: ['50%', '48%'],
+                    axisName: { color: '#8fb2cc', fontSize: 10 },
+                    axisLine: { lineStyle: { color: 'rgba(53, 214, 255, 0.22)' } },
+                    splitLine: { lineStyle: { color: 'rgba(53, 214, 255, 0.14)' } },
+                    splitArea: { areaStyle: { color: ['rgba(10, 38, 58, 0.4)', 'rgba(5, 20, 32, 0.4)'] } }
+                },
+                series: [{
+                    type: 'radar',
+                    symbolSize: 4,
+                    data: [
+                        {
+                            name: '手机数码', value: [88, 72, 64, 92, 58],
+                            itemStyle: { color: pzy_c.cyan }, lineStyle: { color: pzy_c.cyan },
+                            areaStyle: { color: 'rgba(53, 214, 255, 0.16)' }
+                        },
+                        {
+                            name: '家用电器', value: [76, 64, 72, 88, 62],
+                            itemStyle: { color: pzy_c.teal }, lineStyle: { color: pzy_c.teal },
+                            areaStyle: { color: 'rgba(53, 214, 176, 0.12)' }
+                        },
+                        {
+                            name: '服饰鞋包', value: [64, 80, 56, 90, 70],
+                            itemStyle: { color: pzy_c.orange }, lineStyle: { color: pzy_c.orange },
+                            areaStyle: { color: 'rgba(255, 182, 72, 0.12)' }
+                        }
+                    ]
+                }]
+            });
+
+            // ============ 七、实时工单流水 ============
+            var pzy_ticketList = document.getElementById('pzy_ticketList');
+            var pzy_ticketTitles = [
+                '物流延迟催件', '发票开具申请', '七天无理由退货', '商品规格咨询',
+                '优惠券无法使用', '订单地址修改', '退款进度查询', '以旧换新补贴',
+                '屏幕色差换货', '满减活动规则'
+            ];
+            var pzy_statePool = [
+                { cls: 'pzy_state_wait', text: '处理中' },
+                { cls: 'pzy_state_ok', text: '已解决' },
+                { cls: 'pzy_state_hot', text: '待跟进' }
+            ];
+            var pzy_ticketNo = 2026110500;
+
+            function pzy_nowStr() {
+                var pzy_d = new Date();
+                return pzy_pad(pzy_d.getHours()) + ':' + pzy_pad(pzy_d.getMinutes()) + ':' + pzy_pad(pzy_d.getSeconds());
+            }
+
+            function pzy_addTicket() {
+                var pzy_title = pzy_ticketTitles[Math.floor(Math.random() * pzy_ticketTitles.length)];
+                var pzy_st = pzy_statePool[Math.floor(Math.random() * pzy_statePool.length)];
+                pzy_ticketNo += Math.floor(Math.random() * 7) + 1;
+                var pzy_row = document.createElement('div');
+                pzy_row.className = 'pzy_ticket';
+                pzy_row.innerHTML =
+                    '<span class="pzy_ticket_time">' + pzy_nowStr() + '</span>' +
+                    '<span class="pzy_ticket_title"><em>#' + pzy_ticketNo + '</em> ' + pzy_title + '</span>' +
+                    '<span class="pzy_state ' + pzy_st.cls + '">' + pzy_st.text + '</span>';
+                pzy_ticketList.insertBefore(pzy_row, pzy_ticketList.firstChild);
+                while (pzy_ticketList.children.length > 7) {
+                    pzy_ticketList.removeChild(pzy_ticketList.lastChild);
+                }
+            }
+
+            for (var pzy_t = 0; pzy_t < 7; pzy_t++) {
+                pzy_addTicket();
+            }
+            setInterval(pzy_addTicket, 4200);
+
+            // ============ 八、每 5 秒刷新 KPI ============
+            setInterval(function () {
+                document.querySelectorAll('.pzy_kpi_val').forEach(function (pzy_el) {
+                    var pzy_base = parseFloat(pzy_el.getAttribute('data-pzy-base'));
+                    var pzy_dec = parseInt(pzy_el.getAttribute('data-pzy-dec'), 10);
+                    var pzy_unit = pzy_el.querySelector('small') ? pzy_el.querySelector('small').outerHTML : '';
+                    var pzy_inc = pzy_dec === 1
+                        ? Math.random() * 2.4
+                        : Math.floor(Math.random() * 60) + 8;
+                    pzy_el.setAttribute('data-pzy-base', (pzy_base + pzy_inc).toFixed(3));
+                    var pzy_now = pzy_base + pzy_inc;
+                    var pzy_txt = pzy_dec === 1
+                        ? pzy_now.toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                        : Math.round(pzy_now).toLocaleString('zh-CN');
+                    pzy_el.innerHTML = pzy_txt + pzy_unit;
+                    pzy_el.classList.add('pzy_flash');
+                    setTimeout(function () { pzy_el.classList.remove('pzy_flash'); }, 900);
+                });
+            }, 5000);
+
+            // ============ 自适应 ============
+            window.addEventListener('resize', function () {
+                pzy_charts.forEach(function (pzy_chart) { pzy_chart.resize(); });
+            });
+        })();
+    </script>
+</body>
+</html>

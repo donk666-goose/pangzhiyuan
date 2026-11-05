@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts 数据可视化 - 电商销售</title>
+    <!-- 姓名：庞智元，日期：ECharts 折线图与柱状图。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #070d14;
+            color: #dfe9f5;
+            font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif;
+        }
+        .pzy_container { max-width: 1180px; margin: 0 auto; padding: 34px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 26px; }
+        .pzy_header h1 { font-size: 26px; letter-spacing: 2px; color: #e8f2ff; }
+        .pzy_header p { font-size: 13px; color: #6b8099; margin-top: 8px; letter-spacing: 1px; }
+        .pzy_grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+        @media (max-width: 900px) { .pzy_grid { grid-template-columns: 1fr; } }
+        .pzy_card {
+            background: linear-gradient(180deg, rgba(18, 32, 48, 0.92), rgba(10, 18, 28, 0.92));
+            border: 1px solid rgba(99, 179, 255, 0.18);
+            border-radius: 14px;
+            padding: 20px 18px 12px;
+            box-shadow: 0 16px 44px rgba(0, 0, 0, 0.42);
+        }
+        .pzy_card_head { padding: 0 6px 4px; }
+        .pzy_card_head h2 { font-size: 16px; color: #e8f2ff; font-weight: normal; }
+        .pzy_card_head h2 b { color: #35d6b0; font-weight: bold; }
+        .pzy_card_head p { font-size: 12px; color: #7d94ac; margin-top: 6px; }
+        .pzy_chart { width: 100%; height: 380px; }
+        .pzy_note {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #5f7488;
+            text-align: center;
+            line-height: 1.9;
+        }
+        .pzy_note code { color: #7ef0d0; font-family: Consolas, monospace; }
+        .pzy_footer { text-align: center; font-size: 13px; color: #4d6076; margin-top: 18px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>ECharts 数据可视化</h1>
+            <p>折线图 · 柱状图 | 电商销售数据 | 庞智元</p>
+        </div>
+
+        <div class="pzy_grid">
+            <div class="pzy_card">
+                <div class="pzy_card_head">
+                    <h2>月度销售额趋势（<b>折线图</b>）</h2>
+                    <p>2024 与 2025 年逐月销售额对比，单位：万元</p>
+                </div>
+                <div class="pzy_chart" id="pzy_lineChart"></div>
+            </div>
+
+            <div class="pzy_card">
+                <div class="pzy_card_head">
+                    <h2>各品类销量对比（<b>柱状图</b>）</h2>
+                    <p>六大品类年度销量，2024 与 2025 年分组对比，单位：万件</p>
+                </div>
+                <div class="pzy_chart" id="pzy_barChart"></div>
+            </div>
+        </div>
+
+        <div class="pzy_note">
+            图表由 ECharts 5.5.1 渲染，库文件已下载到本地 <code>cdn/echarts.min.js</code>，页面不依赖任何外部网络请求。<br>
+            页面数据为模拟数据，仅用于图表展示练习。
+        </div>
+
+        <div class="pzy_footer">18-4 ECharts 折线图与柱状图 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script src="cdn/echarts.min.js"></script>
+    <script>
+        // ============ 公共样式配置 ============
+        var pzy_axisColor = 'rgba(120, 150, 180, 0.38)';
+        var pzy_labelColor = '#8ea6bf';
+        var pzy_splitColor = 'rgba(120, 150, 180, 0.14)';
+        var pzy_color2024 = '#5b8def';
+        var pzy_color2025 = '#35d6b0';
+
+        function pzy_baseOption(pzy_hasLegend) {
+            return {
+                backgroundColor: 'transparent',
+                textStyle: { fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif' },
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(10, 20, 32, 0.94)',
+                    borderColor: 'rgba(99, 179, 255, 0.38)',
+                    borderWidth: 1,
+                    padding: [10, 14],
+                    textStyle: { color: '#dfe9f5', fontSize: 13 },
+                    axisPointer: {
+                        type: 'line',
+                        lineStyle: { color: 'rgba(99, 179, 255, 0.45)', width: 1 }
+                    }
+                },
+                legend: pzy_hasLegend ? {
+                    top: 4,
+                    right: 6,
+                    itemWidth: 12,
+                    itemHeight: 8,
+                    itemGap: 18,
+                    icon: 'roundRect',
+                    textStyle: { color: '#a9bfd4', fontSize: 12 }
+                } : undefined,
+                grid: { left: 14, right: 24, top: 52, bottom: 12, containLabel: true }
+            };
+        }
+
+        function pzy_axisStyle() {
+            return {
+                axisLine: { lineStyle: { color: pzy_axisColor } },
+                axisTick: { show: false },
+                axisLabel: { color: pzy_labelColor, fontSize: 12 }
+            };
+        }
+
+        // ============ 图一：折线图 ============
+        var pzy_lineChart = echarts.init(document.getElementById('pzy_lineChart'));
+        var pzy_months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+        var pzy_sales2024 = [62, 58, 71, 69, 85, 92, 88, 96, 105, 118, 156, 143];
+        var pzy_sales2025 = [78, 72, 89, 95, 108, 124, 119, 132, 148, 165, 218, 186];
+
+        var pzy_lineOption = pzy_baseOption(true);
+        pzy_lineOption.xAxis = Object.assign({ type: 'category', boundaryGap: false, data: pzy_months }, pzy_axisStyle());
+        pzy_lineOption.yAxis = Object.assign({
+            type: 'value',
+            name: '万元',
+            nameTextStyle: { color: '#7d94ac', fontSize: 11, padding: [0, 0, 6, -18] },
+            splitLine: { lineStyle: { color: pzy_splitColor, type: 'dashed' } }
+        }, pzy_axisStyle());
+        pzy_lineOption.axisPointer = { type: 'line' };
+        pzy_lineOption.series = [
+            {
+                name: '2024 年',
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 5,
+                data: pzy_sales2024,
+                itemStyle: { color: pzy_color2024 },
+                lineStyle: { width: 2, color: pzy_color2024 }
+            },
+            {
+                name: '2025 年',
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 6,
+                data: pzy_sales2025,
+                itemStyle: { color: pzy_color2025, borderColor: '#ffffff', borderWidth: 1 },
+                lineStyle: { width: 2.6, color: pzy_color2025 },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(53, 214, 176, 0.30)' },
+                        { offset: 1, color: 'rgba(53, 214, 176, 0)' }
+                    ])
+                },
+                // 标出全年最高点
+                markPoint: {
+                    symbol: 'pin',
+                    symbolSize: 44,
+                    data: [{ type: 'max', name: '全年峰值' }],
+                    itemStyle: { color: 'rgba(53, 214, 176, 0.85)' },
+                    label: { color: '#04140f', fontSize: 11, fontWeight: 'bold' }
+                }
+            }
+        ];
+        pzy_lineChart.setOption(pzy_lineOption);
+
+        // ============ 图二：柱状图 ============
+        var pzy_barChart = echarts.init(document.getElementById('pzy_barChart'));
+        var pzy_categories = ['手机通讯', '电脑数码', '家用电器', '服饰鞋包', '食品生鲜', '美妆个护'];
+        var pzy_bar2024 = [156, 121, 104, 82, 61, 47];
+        var pzy_bar2025 = [182, 146, 128, 96, 74, 58];
+
+        var pzy_barOption = pzy_baseOption(true);
+        pzy_barOption.xAxis = Object.assign({ type: 'category', data: pzy_categories }, pzy_axisStyle());
+        pzy_barOption.yAxis = Object.assign({
+            type: 'value',
+            name: '万件',
+            nameTextStyle: { color: '#7d94ac', fontSize: 11, padding: [0, 0, 6, -18] },
+            splitLine: { lineStyle: { color: pzy_splitColor, type: 'dashed' } }
+        }, pzy_axisStyle());
+        pzy_barOption.axisPointer = { type: 'shadow' };
+        pzy_barOption.series = [
+            {
+                name: '2024 年',
+                type: 'bar',
+                barWidth: 15,
+                barGap: '12%',
+                data: pzy_bar2024,
+                itemStyle: {
+                    borderRadius: [4, 4, 0, 0],
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: pzy_color2024 },
+                        { offset: 1, color: 'rgba(91, 141, 239, 0.28)' }
+                    ])
+                }
+            },
+            {
+                name: '2025 年',
+                type: 'bar',
+                barWidth: 15,
+                data: pzy_bar2025,
+                itemStyle: {
+                    borderRadius: [4, 4, 0, 0],
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: pzy_color2025 },
+                        { offset: 1, color: 'rgba(53, 214, 176, 0.28)' }
+                    ])
+                },
+                label: {
+                    show: true,
+                    position: 'top',
+                    color: '#9fe6d4',
+                    fontSize: 11
+                }
+            }
+        ];
+        pzy_barChart.setOption(pzy_barOption);
+
+        // ============ 窗口尺寸变化自适应 ============
+        window.addEventListener('resize', function () {
+            pzy_lineChart.resize();
+            pzy_barChart.resize();
+        });
+    </script>
+</body>
+</html>

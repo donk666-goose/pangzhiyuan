@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas 粒子动画</title>
+    <!-- 姓名：庞智元，日期：Canvas 粒子动画。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #070d14;
+            color: #dfe9f5;
+            font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif;
+        }
+        .pzy_container { max-width: 1120px; margin: 0 auto; padding: 34px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 22px; }
+        .pzy_header h1 { font-size: 26px; letter-spacing: 2px; color: #e8f2ff; }
+        .pzy_header p { font-size: 13px; color: #6b8099; margin-top: 8px; letter-spacing: 1px; }
+        .pzy_stage {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(99, 179, 255, 0.18);
+            background: #0a1420;
+        }
+        #pzy_canvas { display: block; width: 100%; height: auto; cursor: crosshair; }
+        .pzy_hint {
+            position: absolute;
+            left: 16px;
+            bottom: 14px;
+            font-size: 12px;
+            color: rgba(190, 214, 240, 0.55);
+            background: rgba(9, 20, 33, 0.7);
+            border: 1px solid rgba(99, 179, 255, 0.22);
+            border-radius: 20px;
+            padding: 5px 14px;
+            pointer-events: none;
+        }
+        .pzy_controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+        .pzy_btn {
+            border: 1px solid rgba(99, 179, 255, 0.45);
+            background: rgba(30, 58, 88, 0.55);
+            color: #cfe3f8;
+            border-radius: 8px;
+            padding: 9px 20px;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .pzy_btn:hover { background: rgba(47, 100, 150, 0.75); border-color: #63b3ff; color: #ffffff; }
+        .pzy_slider_box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #8ea6bf;
+            background: rgba(20, 38, 58, 0.6);
+            border: 1px solid rgba(99, 179, 255, 0.2);
+            border-radius: 8px;
+            padding: 7px 16px;
+        }
+        .pzy_slider_box input[type="range"] { width: 120px; accent-color: #63b3ff; cursor: pointer; }
+        .pzy_slider_box b { color: #7ef0d0; font-family: Consolas, monospace; min-width: 24px; text-align: right; }
+        .pzy_fps {
+            font-size: 13px;
+            color: #7ef0d0;
+            font-family: Consolas, monospace;
+            background: rgba(20, 38, 58, 0.6);
+            border: 1px solid rgba(99, 179, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 16px;
+        }
+        .pzy_footer { text-align: center; font-size: 13px; color: #4d6076; margin-top: 26px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>Canvas 粒子动画</h1>
+            <p>HTML5 Canvas 原生绘制：粒子连线 · 发光文字 · 鼠标交互 | 庞智元</p>
+        </div>
+
+        <div class="pzy_stage">
+            <canvas id="pzy_canvas" width="1060" height="600"></canvas>
+            <div class="pzy_hint">移动鼠标扰动粒子 · 点击画面产生涟漪</div>
+        </div>
+
+        <div class="pzy_controls">
+            <button class="pzy_btn" id="pzy_pauseBtn">暂停动画</button>
+            <button class="pzy_btn" id="pzy_resetBtn">重置粒子</button>
+            <div class="pzy_slider_box">
+                <span>粒子数量</span>
+                <input type="range" id="pzy_countRange" min="40" max="160" step="10" value="90">
+                <b id="pzy_countShow">90</b>
+            </div>
+            <div class="pzy_fps" id="pzy_fps">FPS --</div>
+        </div>
+
+        <div class="pzy_footer">18-1 Canvas 粒子动画 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        var pzy_canvas = document.getElementById('pzy_canvas');
+        var pzy_ctx = pzy_canvas.getContext('2d');
+        var pzy_W = 1060;            // 逻辑宽度
+        var pzy_H = 600;             // 逻辑高度
+        var pzy_dpr = window.devicePixelRatio || 1;
+
+        // ============ 画布按设备像素比初始化，避免高清屏模糊 ============
+        (function pzy_setupCanvas() {
+            pzy_canvas.width = pzy_W * pzy_dpr;
+            pzy_canvas.height = pzy_H * pzy_dpr;
+            pzy_ctx.setTransform(pzy_dpr, 0, 0, pzy_dpr, 0, 0);
+        })();
+
+        // ============ 全局状态 ============
+        var pzy_particles = [];
+        var pzy_count = 90;
+        var pzy_paused = false;
+        var pzy_rafId = null;
+        var pzy_lastTime = 0;
+        var pzy_elapsed = 0;                 // 动画累计时间，用于呼吸/旋转
+        var pzy_mouse = { x: -999, y: -999, active: false };
+        var pzy_ripples = [];                // 点击涟漪
+        var pzy_linkDist = 124;              // 粒子连线距离阈值
+        var pzy_palette = ['#63b3ff', '#7ef0d0', '#c084fc', '#fbbf77'];
+
+        // 背景渐变只创建一次
+        var pzy_bgGrad = pzy_ctx.createRadialGradient(
+            pzy_W / 2, pzy_H / 2, 60, pzy_W / 2, pzy_H / 2, pzy_W * 0.72
+        );
+        pzy_bgGrad.addColorStop(0, '#122637');
+        pzy_bgGrad.addColorStop(0.55, '#0b1725');
+        pzy_bgGrad.addColorStop(1, '#060b12');
+
+        function pzy_randomRange(pzy_min, pzy_max) {
+            return pzy_min + Math.random() * (pzy_max - pzy_min);
+        }
+
+        // ============ 创建粒子 ============
+        function pzy_initParticles() {
+            pzy_particles = [];
+            for (var pzy_i = 0; pzy_i < pzy_count; pzy_i++) {
+                pzy_particles.push({
+                    x: pzy_randomRange(20, pzy_W - 20),
+                    y: pzy_randomRange(20, pzy_H - 20),
+                    vx: pzy_randomRange(-0.45, 0.45),
+                    vy: pzy_randomRange(-0.45, 0.45),
+                    r: pzy_randomRange(1, 2.6),
+                    color: pzy_palette[pzy_i % pzy_palette.length],
+                    alpha: pzy_randomRange(0.45, 1)
+                });
+            }
+        }
+
+        // ============ 粒子运动 + 鼠标排斥 ============
+        function pzy_updateParticles(pzy_dt) {
+            for (var pzy_i = 0; pzy_i < pzy_particles.length; pzy_i++) {
+                var pzy_p = pzy_particles[pzy_i];
+
+                // 鼠标周围 140px 内的粒子被推开
+                if (pzy_mouse.active) {
+                    var pzy_dx = pzy_p.x - pzy_mouse.x;
+                    var pzy_dy = pzy_p.y - pzy_mouse.y;
+                    var pzy_dist = Math.sqrt(pzy_dx * pzy_dx + pzy_dy * pzy_dy);
+                    if (pzy_dist < 140 && pzy_dist > 0.01) {
+                        var pzy_force = (140 - pzy_dist) / 140 * 0.9;
+                        pzy_p.vx += (pzy_dx / pzy_dist) * pzy_force * pzy_dt;
+                        pzy_p.vy += (pzy_dy / pzy_dist) * pzy_force * pzy_dt;
+                    }
+                }
+
+                // 限制速度，防止粒子被甩飞
+                var pzy_speed = Math.sqrt(pzy_p.vx * pzy_p.vx + pzy_p.vy * pzy_p.vy);
+                if (pzy_speed > 1.6) {
+                    pzy_p.vx = (pzy_p.vx / pzy_speed) * 1.6;
+                    pzy_p.vy = (pzy_p.vy / pzy_speed) * 1.6;
+                }
+
+                pzy_p.x += pzy_p.vx * pzy_dt;
+                pzy_p.y += pzy_p.vy * pzy_dt;
+
+                // 边界反弹
+                if (pzy_p.x < 0) { pzy_p.x = 0; pzy_p.vx = -pzy_p.vx; }
+                if (pzy_p.x > pzy_W) { pzy_p.x = pzy_W; pzy_p.vx = -pzy_p.vx; }
+                if (pzy_p.y < 0) { pzy_p.y = 0; pzy_p.vy = -pzy_p.vy; }
+                if (pzy_p.y > pzy_H) { pzy_p.y = pzy_H; pzy_p.vy = -pzy_p.vy; }
+            }
+        }
+
+        // ============ 粒子之间的连线 ============
+        function pzy_drawLinks() {
+            for (var pzy_i = 0; pzy_i < pzy_particles.length; pzy_i++) {
+                for (var pzy_j = pzy_i + 1; pzy_j < pzy_particles.length; pzy_j++) {
+                    var pzy_a = pzy_particles[pzy_i];
+                    var pzy_b = pzy_particles[pzy_j];
+                    var pzy_dx = pzy_a.x - pzy_b.x;
+                    var pzy_dy = pzy_a.y - pzy_b.y;
+                    var pzy_dist = Math.sqrt(pzy_dx * pzy_dx + pzy_dy * pzy_dy);
+                    if (pzy_dist < pzy_linkDist) {
+                        var pzy_opacity = (1 - pzy_dist / pzy_linkDist) * 0.45;
+                        pzy_ctx.beginPath();
+                        pzy_ctx.strokeStyle = 'rgba(99, 179, 255, ' + pzy_opacity + ')';
+                        pzy_ctx.lineWidth = 0.8;
+                        pzy_ctx.moveTo(pzy_a.x, pzy_a.y);
+                        pzy_ctx.lineTo(pzy_b.x, pzy_b.y);
+                        pzy_ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        // ============ 绘制粒子 ============
+        function pzy_drawParticles() {
+            for (var pzy_i = 0; pzy_i < pzy_particles.length; pzy_i++) {
+                var pzy_p = pzy_particles[pzy_i];
+                pzy_ctx.beginPath();
+                pzy_ctx.arc(pzy_p.x, pzy_p.y, pzy_p.r, 0, Math.PI * 2);
+                pzy_ctx.fillStyle = pzy_p.color;
+                pzy_ctx.globalAlpha = pzy_p.alpha;
+                pzy_ctx.fill();
+                // 粒子外圈柔光
+                pzy_ctx.beginPath();
+                pzy_ctx.arc(pzy_p.x, pzy_p.y, pzy_p.r * 2.6, 0, Math.PI * 2);
+                pzy_ctx.fillStyle = pzy_p.color;
+                pzy_ctx.globalAlpha = pzy_p.alpha * 0.12;
+                pzy_ctx.fill();
+            }
+            pzy_ctx.globalAlpha = 1;
+        }
+
+        // ============ 环绕文字的光点轨道 ============
+        function pzy_drawOrbit() {
+            var pzy_total = 44;
+            for (var pzy_i = 0; pzy_i < pzy_total; pzy_i++) {
+                var pzy_angle = pzy_elapsed * 0.0006 + (pzy_i / pzy_total) * Math.PI * 2;
+                var pzy_rx = 268;
+                var pzy_ry = 158;
+                var pzy_x = pzy_W / 2 + Math.cos(pzy_angle) * pzy_rx;
+                var pzy_y = pzy_H / 2 + Math.sin(pzy_angle) * pzy_ry;
+                // 后半圈的点更小更暗，形成空间纵深感
+                var pzy_depth = (Math.sin(pzy_angle) + 1) / 2;
+                var pzy_size = 1.2 + pzy_depth * 2.2;
+                var pzy_alpha = 0.2 + pzy_depth * 0.6;
+
+                pzy_ctx.beginPath();
+                pzy_ctx.arc(pzy_x, pzy_y, pzy_size, 0, Math.PI * 2);
+                pzy_ctx.fillStyle = 'rgba(126, 240, 208, ' + pzy_alpha + ')';
+                pzy_ctx.fill();
+            }
+        }
+
+        // ============ 中心发光文字「庞智元」 ============
+        function pzy_drawCenterText() {
+            // 文字背后的柔光
+            var pzy_glow = pzy_ctx.createRadialGradient(pzy_W / 2, pzy_H / 2, 0, pzy_W / 2, pzy_H / 2, 300);
+            pzy_glow.addColorStop(0, 'rgba(63, 132, 204, 0.32)');
+            pzy_glow.addColorStop(0.5, 'rgba(48, 104, 164, 0.12)');
+            pzy_glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            pzy_ctx.fillStyle = pzy_glow;
+            pzy_ctx.fillRect(0, 0, pzy_W, pzy_H);
+
+            // 呼吸缩放
+            var pzy_scale = 1 + Math.sin(pzy_elapsed * 0.0016) * 0.035;
+
+            pzy_ctx.save();
+            pzy_ctx.translate(pzy_W / 2, pzy_H / 2);
+            pzy_ctx.scale(pzy_scale, pzy_scale);
+            pzy_ctx.textAlign = 'center';
+            pzy_ctx.textBaseline = 'middle';
+            pzy_ctx.font = 'bold 104px "Microsoft YaHei", "PingFang SC", sans-serif';
+
+            var pzy_textGrad = pzy_ctx.createLinearGradient(-170, -60, 170, 60);
+            pzy_textGrad.addColorStop(0, '#7ef0d0');
+            pzy_textGrad.addColorStop(0.5, '#78bdff');
+            pzy_textGrad.addColorStop(1, '#c084fc');
+
+            // 外发光
+            pzy_ctx.shadowColor = 'rgba(99, 179, 255, 0.9)';
+            pzy_ctx.shadowBlur = 36;
+            pzy_ctx.fillStyle = pzy_textGrad;
+            pzy_ctx.fillText('庞智元', 0, 0);
+
+            // 第二遍加强光晕
+            pzy_ctx.shadowBlur = 14;
+            pzy_ctx.fillText('庞智元', 0, 0);
+            pzy_ctx.restore();
+
+            // 文字下方的小字说明
+            pzy_ctx.textAlign = 'center';
+            pzy_ctx.textBaseline = 'middle';
+            pzy_ctx.font = '13px "Microsoft YaHei", sans-serif';
+            pzy_ctx.fillStyle = 'rgba(160, 190, 220, 0.62)';
+            pzy_ctx.fillText('H T M L 5   C A N V A S', pzy_W / 2, pzy_H / 2 + 92);
+        }
+
+        // ============ 点击涟漪 ============
+        function pzy_handleRipples(pzy_dt) {
+            for (var pzy_i = pzy_ripples.length - 1; pzy_i >= 0; pzy_i--) {
+                var pzy_r = pzy_ripples[pzy_i];
+                pzy_r.radius += 3.2 * pzy_dt;
+                pzy_r.alpha -= 0.018 * pzy_dt;
+
+                if (pzy_r.alpha <= 0 || pzy_r.radius > 420) {
+                    pzy_ripples.splice(pzy_i, 1);
+                    continue;
+                }
+                pzy_ctx.beginPath();
+                pzy_ctx.arc(pzy_r.x, pzy_r.y, pzy_r.radius, 0, Math.PI * 2);
+                pzy_ctx.strokeStyle = 'rgba(126, 240, 208, ' + pzy_r.alpha + ')';
+                pzy_ctx.lineWidth = 2;
+                pzy_ctx.stroke();
+
+                pzy_ctx.beginPath();
+                pzy_ctx.arc(pzy_r.x, pzy_r.y, pzy_r.radius * 0.62, 0, Math.PI * 2);
+                pzy_ctx.strokeStyle = 'rgba(195, 132, 252, ' + (pzy_r.alpha * 0.55) + ')';
+                pzy_ctx.lineWidth = 1;
+                pzy_ctx.stroke();
+            }
+        }
+
+        // ============ 主循环 ============
+        function pzy_frame(pzy_now) {
+            if (pzy_paused) { return; }
+
+            var pzy_dt = 1;
+            if (pzy_lastTime) {
+                pzy_dt = Math.min((pzy_now - pzy_lastTime) / 16.67, 2.2);
+            }
+            pzy_lastTime = pzy_now;
+            pzy_elapsed += pzy_dt * 16.67;
+
+            // 背景（直接覆盖来清屏）
+            pzy_ctx.fillStyle = pzy_bgGrad;
+            pzy_ctx.fillRect(0, 0, pzy_W, pzy_H);
+
+            // 极淡的网格
+            pzy_ctx.strokeStyle = 'rgba(99, 179, 255, 0.045)';
+            pzy_ctx.lineWidth = 1;
+            for (var pzy_g = 0; pzy_g < pzy_W; pzy_g += 60) {
+                pzy_ctx.beginPath();
+                pzy_ctx.moveTo(pzy_g, 0);
+                pzy_ctx.lineTo(pzy_g, pzy_H);
+                pzy_ctx.stroke();
+            }
+            for (var pzy_g2 = 0; pzy_g2 < pzy_H; pzy_g2 += 60) {
+                pzy_ctx.beginPath();
+                pzy_ctx.moveTo(0, pzy_g2);
+                pzy_ctx.lineTo(pzy_W, pzy_g2);
+                pzy_ctx.stroke();
+            }
+
+            pzy_updateParticles(pzy_dt);
+            pzy_drawLinks();
+            pzy_drawParticles();
+            pzy_drawOrbit();
+            pzy_drawCenterText();
+            pzy_handleRipples(pzy_dt);
+
+            pzy_rafId = requestAnimationFrame(pzy_frame);
+        }
+
+        // ============ 交互 ============
+        function pzy_getPos(pzy_event) {
+            var pzy_rect = pzy_canvas.getBoundingClientRect();
+            return {
+                x: (pzy_event.clientX - pzy_rect.left) * (pzy_W / pzy_rect.width),
+                y: (pzy_event.clientY - pzy_rect.top) * (pzy_H / pzy_rect.height)
+            };
+        }
+
+        pzy_canvas.addEventListener('mousemove', function (pzy_e) {
+            var pzy_pos = pzy_getPos(pzy_e);
+            pzy_mouse.x = pzy_pos.x;
+            pzy_mouse.y = pzy_pos.y;
+            pzy_mouse.active = true;
+        });
+
+        pzy_canvas.addEventListener('mouseleave', function () {
+            pzy_mouse.active = false;
+            pzy_mouse.x = -999;
+            pzy_mouse.y = -999;
+        });
+
+        pzy_canvas.addEventListener('click', function (pzy_e) {
+            var pzy_pos = pzy_getPos(pzy_e);
+            pzy_ripples.push({ x: pzy_pos.x, y: pzy_pos.y, radius: 6, alpha: 0.9 });
+
+            // 点击处爆发一圈新粒子
+            for (var pzy_i = 0; pzy_i < 6; pzy_i++) {
+                var pzy_ang = Math.random() * Math.PI * 2;
+                pzy_particles.push({
+                    x: pzy_pos.x,
+                    y: pzy_pos.y,
+                    vx: Math.cos(pzy_ang) * 1.1,
+                    vy: Math.sin(pzy_ang) * 1.1,
+                    r: pzy_randomRange(1, 2.4),
+                    color: pzy_palette[pzy_i % pzy_palette.length],
+                    alpha: 1
+                });
+            }
+        });
+
+        var pzy_pauseBtn = document.getElementById('pzy_pauseBtn');
+        pzy_pauseBtn.onclick = function () {
+            pzy_paused = !pzy_paused;
+            if (pzy_paused) {
+                this.textContent = '继续动画';
+                if (pzy_rafId) { cancelAnimationFrame(pzy_rafId); pzy_rafId = null; }
+            } else {
+                this.textContent = '暂停动画';
+                pzy_lastTime = 0;
+                pzy_rafId = requestAnimationFrame(pzy_frame);
+            }
+        };
+
+        document.getElementById('pzy_resetBtn').onclick = function () {
+            pzy_initParticles();
+            pzy_ripples = [];
+        };
+
+        var pzy_countRange = document.getElementById('pzy_countRange');
+        var pzy_countShow = document.getElementById('pzy_countShow');
+        pzy_countRange.oninput = function () {
+            pzy_count = Number(this.value);
+            pzy_countShow.textContent = pzy_count;
+            pzy_initParticles();
+        };
+
+        // ============ FPS 统计 ============
+        var pzy_fpsEl = document.getElementById('pzy_fps');
+        var pzy_frames = 0;
+        var pzy_fpsStart = performance.now();
+
+        setInterval(function () {
+            var pzy_now = performance.now();
+            var pzy_fps = Math.round(pzy_frames * 1000 / (pzy_now - pzy_fpsStart));
+            pzy_fpsEl.textContent = 'FPS ' + (pzy_paused ? '0' : pzy_fps);
+            pzy_frames = 0;
+            pzy_fpsStart = pzy_now;
+        }, 500);
+
+        // 每帧计数（独立于主循环统计，避免暂停时干扰）
+        (function pzy_countFrames() {
+            if (!pzy_paused) { pzy_frames++; }
+            requestAnimationFrame(pzy_countFrames);
+        })();
+
+        // ============ 启动 ============
+        pzy_initParticles();
+        pzy_rafId = requestAnimationFrame(pzy_frame);
+    </script>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电商系统全站架构图 - Canvas 绘制</title>
+    <!-- 姓名：庞智元，日期：Canvas 电商系统架构图。 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #070d14;
+            color: #dfe9f5;
+            font-family: "Microsoft YaHei", "PingFang SC", "宋体", sans-serif;
+        }
+        .pzy_container { max-width: 1120px; margin: 0 auto; padding: 34px 20px 60px; }
+        .pzy_header { text-align: center; margin-bottom: 22px; }
+        .pzy_header h1 { font-size: 26px; letter-spacing: 2px; color: #e8f2ff; }
+        .pzy_header p { font-size: 13px; color: #6b8099; margin-top: 8px; letter-spacing: 1px; }
+        .pzy_stage {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(99, 179, 255, 0.18);
+            background: #0a1420;
+        }
+        #pzy_canvas { display: block; width: 100%; height: auto; cursor: default; }
+        .pzy_hint {
+            position: absolute;
+            right: 16px;
+            bottom: 14px;
+            font-size: 12px;
+            color: rgba(190, 214, 240, 0.55);
+            background: rgba(9, 20, 33, 0.7);
+            border: 1px solid rgba(99, 179, 255, 0.22);
+            border-radius: 20px;
+            padding: 5px 14px;
+            pointer-events: none;
+        }
+        .pzy_legend {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        @media (max-width: 860px) { .pzy_legend { grid-template-columns: repeat(2, 1fr); } }
+        .pzy_legend_item {
+            background: rgba(20, 38, 58, 0.55);
+            border: 1px solid rgba(99, 179, 255, 0.16);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+        .pzy_legend_item strong {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .pzy_legend_item i {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .pzy_legend_item p { font-size: 12px; color: #8299b1; line-height: 1.7; }
+        .pzy_footer { text-align: center; font-size: 13px; color: #4d6076; margin-top: 24px; }
+    </style>
+</head>
+<body>
+    <div class="pzy_container">
+        <div class="pzy_header">
+            <h1>电商系统全站架构图</h1>
+            <p>全部图形由 HTML5 Canvas 原生绘制：分层架构 · 流动箭头 · 悬停说明 | 庞智元</p>
+        </div>
+
+        <div class="pzy_stage">
+            <canvas id="pzy_canvas" width="1060" height="570"></canvas>
+            <div class="pzy_hint">鼠标悬停在节点上查看功能说明</div>
+        </div>
+
+        <div class="pzy_legend">
+            <div class="pzy_legend_item">
+                <strong><i style="background:#4f9cf9"></i>用户层</strong>
+                <p>PC 商城、H5、小程序、App 等各端统一入口</p>
+            </div>
+            <div class="pzy_legend_item">
+                <strong><i style="background:#2fc4b2"></i>接入层</strong>
+                <p>CDN、API 网关、负载均衡与安全风控</p>
+            </div>
+            <div class="pzy_legend_item">
+                <strong><i style="background:#a78bfa"></i>业务层</strong>
+                <p>用户、商品、订单、支付、库存等核心微服务</p>
+            </div>
+            <div class="pzy_legend_item">
+                <strong><i style="background:#f5a623"></i>支撑层</strong>
+                <p>缓存、消息队列、搜索引擎与任务调度</p>
+            </div>
+            <div class="pzy_legend_item">
+                <strong><i style="background:#4ade80"></i>数据层</strong>
+                <p>MySQL 集群、对象存储、数据仓库与容灾备份</p>
+            </div>
+        </div>
+
+        <div class="pzy_footer">18-2 Canvas 电商系统架构图 · 庞智元 · Web 前端开发练习</div>
+    </div>
+
+    <script>
+        var pzy_canvas = document.getElementById('pzy_canvas');
+        var pzy_ctx = pzy_canvas.getContext('2d');
+        var pzy_W = 1060;
+        var pzy_H = 570;
+        var pzy_dpr = window.devicePixelRatio || 1;
+
+        (function pzy_setupCanvas() {
+            pzy_canvas.width = pzy_W * pzy_dpr;
+            pzy_canvas.height = pzy_H * pzy_dpr;
+            pzy_ctx.setTransform(pzy_dpr, 0, 0, pzy_dpr, 0, 0);
+        })();
+
+        // ============ 架构分层数据 ============
+        var pzy_layers = [
+            {
+                label: '用户层', en: 'CLIENT', color: '#4f9cf9', cols: 4,
+                items: [
+                    { n: 'PC 商城', d: '浏览器端完整购物流程' },
+                    { n: '移动 H5', d: '手机浏览器轻量访问' },
+                    { n: '微信小程序', d: '社交渠道购物入口' },
+                    { n: 'App 客户端', d: 'iOS / Android 原生体验' }
+                ]
+            },
+            {
+                label: '接入层', en: 'GATEWAY', color: '#2fc4b2', cols: 4,
+                items: [
+                    { n: 'CDN 加速', d: '静态资源就近分发' },
+                    { n: 'API 网关', d: '统一路由、鉴权与限流' },
+                    { n: '负载均衡', d: '流量分发与服务容错' },
+                    { n: '安全风控', d: '防刷、防爬与交易风控' }
+                ]
+            },
+            {
+                label: '业务层', en: 'SERVICE', color: '#a78bfa', cols: 5,
+                items: [
+                    { n: '用户服务', d: '注册登录、会员与地址' },
+                    { n: '商品服务', d: '商品、SKU 与类目管理' },
+                    { n: '搜索服务', d: '关键词搜索与筛选排序' },
+                    { n: '购物车服务', d: '加购、勾选与结算' },
+                    { n: '订单服务', d: '下单、拆单与状态机' },
+                    { n: '支付服务', d: '支付渠道与退款对账' },
+                    { n: '库存服务', d: '库存扣减、锁定与回补' },
+                    { n: '促销服务', d: '优惠券、满减与秒杀' },
+                    { n: '消息服务', d: '短信、站内信与推送' },
+                    { n: '物流服务', d: '运费计算与配送跟踪' }
+                ]
+            },
+            {
+                label: '支撑层', en: 'MIDDLEWARE', color: '#f5a623', cols: 4,
+                items: [
+                    { n: 'Redis 缓存', d: '热点数据与会话缓存' },
+                    { n: 'RabbitMQ', d: '订单异步消息与削峰' },
+                    { n: 'Elasticsearch', d: '商品全文检索与聚合' },
+                    { n: '任务调度', d: '定时任务与数据对账' }
+                ]
+            },
+            {
+                label: '数据层', en: 'DATA', color: '#4ade80', cols: 4,
+                items: [
+                    { n: 'MySQL 集群', d: '订单、用户等核心主数据' },
+                    { n: '对象存储 OSS', d: '商品图片与视频资源' },
+                    { n: '数据仓库', d: '埋点、报表与行为分析' },
+                    { n: '备份容灾', d: '主从同步与异地容灾' }
+                ]
+            }
+        ];
+
+        // ============ 布局参数 ============
+        var pzy_startY = 78;
+        var pzy_labelX = 16;
+        var pzy_labelW = 96;
+        var pzy_contentX = 130;
+        var pzy_contentRight = pzy_W - 24;
+        var pzy_boxH = 34;
+        var pzy_rowGap = 10;
+        var pzy_colGap = 14;
+        var pzy_layerGap = 30;
+        var pzy_boxes = [];
+        var pzy_hoverBox = null;
+        var pzy_mouse = { x: -999, y: -999 };
+
+        function pzy_hexToRgba(pzy_hex, pzy_alpha) {
+            var pzy_r = parseInt(pzy_hex.slice(1, 3), 16);
+            var pzy_g = parseInt(pzy_hex.slice(3, 5), 16);
+            var pzy_b = parseInt(pzy_hex.slice(5, 7), 16);
+            return 'rgba(' + pzy_r + ',' + pzy_g + ',' + pzy_b + ',' + pzy_alpha + ')';
+        }
+
+        function pzy_roundRect(pzy_x, pzy_y, pzy_w, pzy_h, pzy_r, pzy_fill, pzy_stroke, pzy_lineW) {
+            pzy_ctx.beginPath();
+            pzy_ctx.moveTo(pzy_x + pzy_r, pzy_y);
+            pzy_ctx.arcTo(pzy_x + pzy_w, pzy_y, pzy_x + pzy_w, pzy_y + pzy_h, pzy_r);
+            pzy_ctx.arcTo(pzy_x + pzy_w, pzy_y + pzy_h, pzy_x, pzy_y + pzy_h, pzy_r);
+            pzy_ctx.arcTo(pzy_x, pzy_y + pzy_h, pzy_x, pzy_y, pzy_r);
+            pzy_ctx.arcTo(pzy_x, pzy_y, pzy_x + pzy_w, pzy_y, pzy_r);
+            pzy_ctx.closePath();
+            if (pzy_fill) {
+                pzy_ctx.fillStyle = pzy_fill;
+                pzy_ctx.fill();
+            }
+            if (pzy_stroke) {
+                pzy_ctx.strokeStyle = pzy_stroke;
+                pzy_ctx.lineWidth = pzy_lineW || 1;
+                pzy_ctx.stroke();
+            }
+        }
+
+        // ============ 计算所有节点坐标 ============
+        function pzy_buildLayout() {
+            pzy_boxes = [];
+            var pzy_y = pzy_startY;
+            var pzy_contentW = pzy_contentRight - pzy_contentX;
+
+            for (var pzy_i = 0; pzy_i < pzy_layers.length; pzy_i++) {
+                var pzy_layer = pzy_layers[pzy_i];
+                var pzy_cols = pzy_layer.cols;
+                var pzy_rows = Math.ceil(pzy_layer.items.length / pzy_cols);
+                var pzy_h = pzy_rows * pzy_boxH + (pzy_rows - 1) * pzy_rowGap + 20;
+                var pzy_boxW = (pzy_contentW - (pzy_cols - 1) * pzy_colGap) / pzy_cols;
+
+                pzy_layer.top = pzy_y;
+                pzy_layer.height = pzy_h;
+                pzy_layer.boxW = pzy_boxW;
+                pzy_layer.colCenters = [];
+
+                for (var pzy_j = 0; pzy_j < pzy_cols; pzy_j++) {
+                    pzy_layer.colCenters.push(pzy_contentX + pzy_j * (pzy_boxW + pzy_colGap) + pzy_boxW / 2);
+                }
+
+                for (var pzy_k = 0; pzy_k < pzy_layer.items.length; pzy_k++) {
+                    var pzy_row = Math.floor(pzy_k / pzy_cols);
+                    var pzy_col = pzy_k % pzy_cols;
+                    var pzy_bx = pzy_contentX + pzy_col * (pzy_boxW + pzy_colGap);
+                    var pzy_by = pzy_y + 10 + pzy_row * (pzy_boxH + pzy_rowGap);
+
+                    pzy_boxes.push({
+                        x: pzy_bx, y: pzy_by, w: pzy_boxW, h: pzy_boxH,
+                        name: pzy_layer.items[pzy_k].n,
+                        desc: pzy_layer.items[pzy_k].d,
+                        color: pzy_layer.color,
+                        layerIndex: pzy_i
+                    });
+                }
+
+                pzy_y += pzy_h + pzy_layerGap;
+            }
+            pzy_diagramBottom = pzy_y - pzy_layerGap;
+        }
+
+        // ============ 背景 ============
+        function pzy_drawBackground() {
+            var pzy_grad = pzy_ctx.createLinearGradient(0, 0, 0, pzy_H);
+            pzy_grad.addColorStop(0, '#0b1725');
+            pzy_grad.addColorStop(1, '#060b12');
+            pzy_ctx.fillStyle = pzy_grad;
+            pzy_ctx.fillRect(0, 0, pzy_W, pzy_H);
+
+            // 细网格
+            pzy_ctx.strokeStyle = 'rgba(99, 179, 255, 0.045)';
+            pzy_ctx.lineWidth = 1;
+            for (var pzy_x = 0; pzy_x <= pzy_W; pzy_x += 40) {
+                pzy_ctx.beginPath();
+                pzy_ctx.moveTo(pzy_x, 0);
+                pzy_ctx.lineTo(pzy_x, pzy_H);
+                pzy_ctx.stroke();
+            }
+            for (var pzy_y = 0; pzy_y <= pzy_H; pzy_y += 40) {
+                pzy_ctx.beginPath();
+                pzy_ctx.moveTo(0, pzy_y);
+                pzy_ctx.lineTo(pzy_W, pzy_y);
+                pzy_ctx.stroke();
+            }
+
+            // 标题
+            pzy_ctx.textAlign = 'center';
+            pzy_ctx.textBaseline = 'middle';
+            pzy_ctx.font = 'bold 19px "Microsoft YaHei", "PingFang SC", sans-serif';
+            pzy_ctx.fillStyle = '#e8f2ff';
+            pzy_ctx.fillText('电商系统全站架构图', pzy_W / 2, 34);
+
+            pzy_ctx.font = '11px "Microsoft YaHei", sans-serif';
+            pzy_ctx.fillStyle = 'rgba(140, 168, 195, 0.75)';
+            pzy_ctx.fillText('用户 → 接入 → 业务 → 支撑 → 数据   ·   Canvas 原生绘制', pzy_W / 2, 56);
+        }
+
+        // ============ 左侧分层标签 ============
+        function pzy_drawLayerLabels() {
+            for (var pzy_i = 0; pzy_i < pzy_layers.length; pzy_i++) {
+                var pzy_layer = pzy_layers[pzy_i];
+                pzy_roundRect(
+                    pzy_labelX, pzy_layer.top, pzy_labelW, pzy_layer.height, 8,
+                    pzy_hexToRgba(pzy_layer.color, 0.13),
+                    pzy_hexToRgba(pzy_layer.color, 0.5),
+                    1
+                );
+
+                // 左侧色条
+                pzy_ctx.fillStyle = pzy_layer.color;
+                pzy_ctx.fillRect(pzy_labelX, pzy_layer.top + 8, 4, pzy_layer.height - 16);
+
+                pzy_ctx.textAlign = 'center';
+                pzy_ctx.textBaseline = 'middle';
+                pzy_ctx.font = 'bold 14px "Microsoft YaHei", sans-serif';
+                pzy_ctx.fillStyle = pzy_layer.color;
+                pzy_ctx.fillText(pzy_layer.label, pzy_labelX + pzy_labelW / 2 + 2, pzy_layer.top + pzy_layer.height / 2 - 7);
+
+                pzy_ctx.font = '9px Consolas, monospace';
+                pzy_ctx.fillStyle = 'rgba(150, 176, 200, 0.7)';
+                pzy_ctx.fillText(pzy_layer.en, pzy_labelX + pzy_labelW / 2 + 2, pzy_layer.top + pzy_layer.height / 2 + 12);
+            }
+        }
+
+        // ============ 节点 ============
+        function pzy_drawBoxes() {
+            for (var pzy_i = 0; pzy_i < pzy_boxes.length; pzy_i++) {
+                var pzy_b = pzy_boxes[pzy_i];
+                var pzy_isHover = (pzy_hoverBox === pzy_b);
+                var pzy_tint = pzy_isHover ? 0.3 : 0.12;
+                var pzy_border = pzy_isHover ? 0.95 : (0.42 + Math.sin(pzy_elapsedTime * 0.0015 + pzy_i) * 0.08);
+
+                if (pzy_isHover) {
+                    pzy_ctx.shadowColor = pzy_hexToRgba(pzy_b.color, 0.85);
+                    pzy_ctx.shadowBlur = 18;
+                }
+
+                pzy_roundRect(
+                    pzy_b.x, pzy_b.y, pzy_b.w, pzy_b.h, 7,
+                    pzy_hexToRgba(pzy_b.color, pzy_tint),
+                    pzy_hexToRgba(pzy_b.color, pzy_border),
+                    pzy_isHover ? 2 : 1
+                );
+                pzy_ctx.shadowBlur = 0;
+
+                pzy_ctx.textAlign = 'center';
+                pzy_ctx.textBaseline = 'middle';
+                pzy_ctx.font = (pzy_isHover ? 'bold ' : '') + '13px "Microsoft YaHei", sans-serif';
+                pzy_ctx.fillStyle = pzy_isHover ? '#ffffff' : '#dce9f7';
+                pzy_ctx.fillText(pzy_b.name, pzy_b.x + pzy_b.w / 2, pzy_b.y + pzy_b.h / 2);
+            }
+        }
+
+        // ============ 层与层之间的流动箭头 ============
+        function pzy_drawFlows() {
+            for (var pzy_i = 0; pzy_i < pzy_layers.length - 1; pzy_i++) {
+                var pzy_upper = pzy_layers[pzy_i];
+                var pzy_lower = pzy_layers[pzy_i + 1];
+                var pzy_topY = pzy_upper.top + pzy_upper.height;
+                var pzy_botY = pzy_lower.top;
+                var pzy_gapH = pzy_botY - pzy_topY;
+                var pzy_centers = pzy_upper.colCenters;
+
+                for (var pzy_j = 0; pzy_j < pzy_centers.length; pzy_j++) {
+                    var pzy_cx = pzy_centers[pzy_j];
+
+                    // 竖直引导线
+                    var pzy_lineGrad = pzy_ctx.createLinearGradient(0, pzy_topY, 0, pzy_botY);
+                    pzy_lineGrad.addColorStop(0, pzy_hexToRgba(pzy_upper.color, 0.45));
+                    pzy_lineGrad.addColorStop(1, pzy_hexToRgba(pzy_lower.color, 0.45));
+                    pzy_ctx.beginPath();
+                    pzy_ctx.strokeStyle = pzy_lineGrad;
+                    pzy_ctx.lineWidth = 1.2;
+                    pzy_ctx.moveTo(pzy_cx, pzy_topY + 2);
+                    pzy_ctx.lineTo(pzy_cx, pzy_botY - 7);
+                    pzy_ctx.stroke();
+
+                    // 箭头（指向下层）
+                    pzy_ctx.beginPath();
+                    pzy_ctx.moveTo(pzy_cx, pzy_botY - 2);
+                    pzy_ctx.lineTo(pzy_cx - 3.6, pzy_botY - 8);
+                    pzy_ctx.lineTo(pzy_cx + 3.6, pzy_botY - 8);
+                    pzy_ctx.closePath();
+                    pzy_ctx.fillStyle = pzy_hexToRgba(pzy_lower.color, 0.8);
+                    pzy_ctx.fill();
+
+                    // 流动光点：从上往下循环
+                    var pzy_phase = ((pzy_elapsedTime * 0.0006 + pzy_j * 0.18 + pzy_i * 0.1) % 1);
+                    var pzy_dotY = pzy_topY + 4 + pzy_phase * (pzy_gapH - 12);
+                    pzy_ctx.beginPath();
+                    pzy_ctx.arc(pzy_cx, pzy_dotY, 2.4, 0, Math.PI * 2);
+                    pzy_ctx.fillStyle = pzy_lower.color;
+                    pzy_ctx.shadowColor = pzy_lower.color;
+                    pzy_ctx.shadowBlur = 10;
+                    pzy_ctx.fill();
+                    pzy_ctx.shadowBlur = 0;
+                }
+            }
+        }
+
+        // ============ 悬停提示框 ============
+        function pzy_drawTooltip() {
+            if (!pzy_hoverBox) { return; }
+
+            var pzy_b = pzy_hoverBox;
+            pzy_ctx.font = 'bold 13px "Microsoft YaHei", sans-serif';
+            var pzy_nameW = pzy_ctx.measureText(pzy_b.name).width;
+            pzy_ctx.font = '12px "Microsoft YaHei", sans-serif';
+            var pzy_descW = pzy_ctx.measureText(pzy_b.desc).width;
+
+            var pzy_tipW = Math.max(pzy_nameW, pzy_descW) + 26;
+            var pzy_tipH = 52;
+            var pzy_tipX = pzy_mouse.x + 16;
+            var pzy_tipY = pzy_mouse.y - pzy_tipH - 12;
+
+            // 防止超出画布
+            if (pzy_tipX + pzy_tipW > pzy_W - 8) { pzy_tipX = pzy_mouse.x - pzy_tipW - 16; }
+            if (pzy_tipY < 8) { pzy_tipY = pzy_mouse.y + 18; }
+
+            pzy_roundRect(
+                pzy_tipX, pzy_tipY, pzy_tipW, pzy_tipH, 8,
+                'rgba(8, 20, 32, 0.96)',
+                pzy_hexToRgba(pzy_b.color, 0.9),
+                1
+            );
+
+            pzy_ctx.textAlign = 'left';
+            pzy_ctx.textBaseline = 'middle';
+            pzy_ctx.font = 'bold 13px "Microsoft YaHei", sans-serif';
+            pzy_ctx.fillStyle = pzy_b.color;
+            pzy_ctx.fillText(pzy_b.name, pzy_tipX + 13, pzy_tipY + 18);
+
+            pzy_ctx.font = '12px "Microsoft YaHei", sans-serif';
+            pzy_ctx.fillStyle = '#a8bdd2';
+            pzy_ctx.fillText(pzy_b.desc, pzy_tipX + 13, pzy_tipY + 37);
+        }
+
+        // ============ 底部落款 ============
+        function pzy_drawFooter() {
+            pzy_ctx.textAlign = 'center';
+            pzy_ctx.textBaseline = 'middle';
+            pzy_ctx.font = '12px "Microsoft YaHei", sans-serif';
+            pzy_ctx.fillStyle = 'rgba(120, 145, 170, 0.65)';
+            pzy_ctx.fillText('庞智元 · 电商系统全站架构示意 · HTML5 Canvas 原生绘制', pzy_W / 2, pzy_H - 16);
+        }
+
+        // ============ 动画循环 ============
+        var pzy_elapsedTime = 0;
+        var pzy_lastTime = 0;
+
+        function pzy_frame(pzy_now) {
+            var pzy_dt = pzy_lastTime ? Math.min(pzy_now - pzy_lastTime, 60) : 16;
+            pzy_lastTime = pzy_now;
+            pzy_elapsedTime += pzy_dt;
+
+            pzy_ctx.clearRect(0, 0, pzy_W, pzy_H);
+            pzy_drawBackground();
+            pzy_drawLayerLabels();
+            pzy_drawFlows();
+            pzy_drawBoxes();
+            pzy_drawTooltip();
+            pzy_drawFooter();
+
+            requestAnimationFrame(pzy_frame);
+        }
+
+        // ============ 鼠标悬停命中检测 ============
+        function pzy_getPos(pzy_event) {
+            var pzy_rect = pzy_canvas.getBoundingClientRect();
+            return {
+                x: (pzy_event.clientX - pzy_rect.left) * (pzy_W / pzy_rect.width),
+                y: (pzy_event.clientY - pzy_rect.top) * (pzy_H / pzy_rect.height)
+            };
+        }
+
+        function pzy_hitTest(pzy_x, pzy_y) {
+            for (var pzy_i = 0; pzy_i < pzy_boxes.length; pzy_i++) {
+                var pzy_b = pzy_boxes[pzy_i];
+                if (pzy_x >= pzy_b.x && pzy_x <= pzy_b.x + pzy_b.w
+                    && pzy_y >= pzy_b.y && pzy_y <= pzy_b.y + pzy_b.h) {
+                    return pzy_b;
+                }
+            }
+            return null;
+        }
+
+        pzy_canvas.addEventListener('mousemove', function (pzy_e) {
+            var pzy_pos = pzy_getPos(pzy_e);
+            pzy_mouse.x = pzy_pos.x;
+            pzy_mouse.y = pzy_pos.y;
+            pzy_hoverBox = pzy_hitTest(pzy_pos.x, pzy_pos.y);
+            pzy_canvas.style.cursor = pzy_hoverBox ? 'pointer' : 'default';
+        });
+
+        pzy_canvas.addEventListener('mouseleave', function () {
+            pzy_hoverBox = null;
+            pzy_mouse.x = -999;
+            pzy_mouse.y = -999;
+            pzy_canvas.style.cursor = 'default';
+        });
+
+        // ============ 启动 ============
+        pzy_buildLayout();
+        requestAnimationFrame(pzy_frame);
+    </script>
+</body>
+</html>
